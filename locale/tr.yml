@@ -3,3 +3,6 @@ lobby_text: Lobide harita açıklamaları
 lobby_description: Seçilen haritanın açıklamasını lobide görünür tutar.
 unique_preview_text: Yerleştirmeden sonra benzersiz bina önizlemesini kapat
 unique_preview_description: Başarılı yerleştirmeden sonra pazar, kışla, paralı asker kampı ve lonca seçimini kaldırır.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.

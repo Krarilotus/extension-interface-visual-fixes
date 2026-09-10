@@ -9,6 +9,9 @@ return {
     if config["clear-unique-building-preview"] == true then
       require("unique-placement").enable()
     end
+    if config["building-preview-during-camera-movement"] == true then
+      require("camera-preview").enable()
+    end
     enabled = true
   end,
   disable = function()

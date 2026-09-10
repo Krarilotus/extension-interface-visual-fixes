@@ -3,3 +3,6 @@ lobby_text: Pályaleírások az előszobában
 lobby_description: Látható marad a kiválasztott pálya leírása az előszobában.
 unique_preview_text: Egyedi épületek előnézetének törlése építés után
 unique_preview_description: Sikeres építés után megszünteti a piac, laktanya, zsoldostábor és céhek kijelölését.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.

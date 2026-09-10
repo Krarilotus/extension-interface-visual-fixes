@@ -17,3 +17,11 @@ options:
     url: interface-visual-fixes.clear-unique-building-preview
     contents:
       value: false
+  - name: building_preview_during_camera_movement
+    category: ['{{interface_visual_fixes}}']
+    text: '{{camera_preview_text}}'
+    description: '{{camera_preview_description}}'
+    display: Switch
+    url: interface-visual-fixes.building-preview-during-camera-movement
+    contents:
+      value: false

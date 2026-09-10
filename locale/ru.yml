@@ -3,3 +3,6 @@ lobby_text: Описания карт в лобби
 lobby_description: Сохраняет видимость описания выбранной карты в лобби.
 unique_preview_text: Убирать предпросмотр уникальных зданий после постройки
 unique_preview_description: Снимает выбор рынка, казарм, лагеря наёмников и гильдий после успешного строительства.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.
