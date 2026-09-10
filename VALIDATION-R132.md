@@ -38,6 +38,11 @@ remain unchanged. The patch is separate from R0070x4287bd and R1300x516a0f.
   preview call without resource/command calls; other call traces match baseline.
 -Original signature matches once; missing, duplicated, shifted or already-changed
   layouts are rejected. Original executable bytes are not distributed in tests.
+- A read-only original call-graph audit of the added eligibility, construction,
+  rotation, bridge, brush, pitch/moat and floating-preview helpers finds no RNG
+  function or unresolved indirect call. The unchanged tooltip call precedes the
+  scroll guard and is not part of the additional work; its wider graph can use
+  RNG. This complements the original-handler cases and is not MP/replay testing.
 -Windows local invocation uses `pytest -p no:faulthandler` because Unicorn's
   handled virtual-memory exceptions otherwise print misleading fatal-exception
   traces despite successful assertions. Linux CI runs the ordinary pytest command.
