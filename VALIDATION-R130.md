@@ -37,7 +37,8 @@ added. Only the existing local selection changes after successful placement.
   Developer loader, official UCP3.0.7 code, winProcHandler0.2.0,
   graphicsApiReplacer1.3.0, R007 enabled. Original executable unchanged.
 - Baseline repeatable woodcutter and expandable granary remain selected after
-  placement. Patched ordinary and other unique native cases are still pending.
+  placement. Patched woodcutter repeat placement also passes; patched expandable
+  storage remains pending.
 - Clean restart loads/enables the actual module successfully with both R007/R130
   options enabled. Installed unique-placement.lua matches the tested source SHA256
   8a04f3950829bb339ef7bbb845d255d09da598b2819adfe2587967e951d8420e.
@@ -46,6 +47,17 @@ added. Only the existing local selection changes after successful placement.
   the original BigD Arena report map starts with native resources; barracks
   mapper87 commits local building39/type9 and clears0, costing15stone.
   AI construction continues independently. The current video setting is1920x1080.
+- Follow-up actual-module skirmish: tunnelers mapper89 commits local building45,
+  type25 at214,66 and clears0. Engineers mapper88 survives occupied-keep rejection
+  with no resource charge, then commits local building47/type24 at205,69 and
+  clears0. Both show no second preview when the pointer moves. Native resource
+  initialization only; no inventory seed or diagnostic code injection.
+- Patched woodcutter mapper51 commits local building28/type3 at198,74, costs3wood
+  and remains selected with a visible next preview. Right-click cancellation
+  removes that preview (visual observation; sampler ended before cancellation).
+- A separate native g.sav preserves both guilds and the woodcutter:880856bytes,
+  SHA256bf32e750ea38cfaeae0bd7387fc0b133b9b8e0be06cc53aa2c6aec0dadba378e.
+  The prior Castle Builder save is preserved; this new save's reload is pending.
 - Native wrapper microbenchmark, five alternating paired runs of two million
   calls per case: marketplace median4.641ns added/call (4.398–5.495), ordinary
   tool median4.556ns (4.056–5.288). The actual emitted wrapper uses a terminal
@@ -54,15 +66,19 @@ added. Only the existing local selection changes after successful placement.
 [Original stale preview](docs/native-market-stale-preview.png) and
 [patched native result](docs/native-market-cleared-after.png).
 
+Actual module: [engineers cleared](docs/native-engineers-cleared.png),
+[tunnelers cleared](docs/native-tunnelers-cleared.png), and
+[ordinary preview retained](docs/native-ordinary-retained.png).
+
 ## Remaining acceptance
 
-Engineers/tunnelers guilds; patched ordinary/expandable
-placement; insufficient resources after selection, cancel/reselect; native delayed
+Patched expandable placement; insufficient resources after selection,
+unique-tool cancel/reselect; native delayed
 and remote commands. Multiplayer/replay/Extreme compatibility
 is not established. Same-type reselect while a command is delayed is treated as
 matching the still-selected tool; no selection generation or extra input hook exists.
 
 Package currently14runtime files/6,065compressed bytes, +2,314bytes over R007;
 no runtime dependency. One startup allocation87bytes and5changed call-site bytes;
-no per-frame work. CI activation still needs workflow-authorized credentials
-(see .ci/test.yml); independent review and normal approved merge remain required.
+no per-frame work. CI is now activated in .github/workflows/test.yml; its results,
+independent review and normal approved merge remain required.
