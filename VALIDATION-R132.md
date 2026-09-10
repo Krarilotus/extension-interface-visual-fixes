@@ -2,7 +2,7 @@
 
 Related issue: [#5](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/5).
 Stacked on R130 PR #4, which is stacked on R007 PR #2. Independent review and
-native patched acceptance remain required; this is not a merged/released fix.
+the remaining native checks remain required; this is not a merged/released fix.
 
 ## Cause and change
 
@@ -45,13 +45,28 @@ remain unchanged. The patch is separate from R0070x4287bd and R1300x516a0f.
 Runtime package:15 files,7467 bytes,1402 bytes above R130; no new dependency.
 One39-byte startup allocation and six changed code bytes. Additional camera-frame
 work is the existing idle eligibility/preview path. Whole-game frame cost and
-patched native layout/placement checks are pending. English and German labels are
+remaining native layout checks are pending. English and German labels are
 provided; other existing locales use explicit English fallback for this option.
 
 ## Native gates still pending
 
-Patched edge scrolling, preview-to-commit tile equality, valid/invalid targets,
-zoom/orientation and supported layout checks; drag/release regression and relevant
-frame cost. Multiplayer, Extreme and replay compatibility are not claimed.
+Patched native edge scrolling passes on source 9446b48: the woodcutter preview
+remains visible and its tile updates while scrolling is active. At rest, the
+preview at (195, 332) commits local building 51/type 3 at that exact tile, costs
+3 wood (77 to 74), and retains repeat placement. Clicking the occupied tile is
+rejected without further charge and retains the selection. Right-click cancels.
+Flat-view scrolling updates preview coordinates; its edge ghost was clipped, so
+that observation does not establish flat-view visual acceptance at the edge.
+The isolated t.sav fixture was loaded; the test placement was not saved.
+
+An additional 128 positive-size tools pass original-handler idle-scroll probes
+using the original size lookup and terminal helper stubs. No resource or command
+calls occur on the added idle path. The actual emitted wrapper's native benchmark
+adds median 4.523 ns without scrolling and 4.537 ns while scrolling, over five
+paired runs of two million calls. This excludes the existing renderer and is not
+whole-game frame timing. Screenshot: docs/native-patched-scrolling-visible.png.
+
+Zoom/orientation, supported layout, drag/release regression and relevant full-game
+frame cost remain pending. Multiplayer, Extreme and replay are not claimed.
 R007/R130 remain independently selectable; all options default off and require
 a game restart to change.
