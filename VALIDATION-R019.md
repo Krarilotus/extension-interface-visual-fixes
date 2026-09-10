@@ -1,7 +1,8 @@
 # R019: distinct dead-tree stages
 
 Related issue: [#7](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/7).
-This draft is stacked on R132 PR #6. Full-game native acceptance remains pending.
+This draft is stacked on R132 PR #6. Native lifecycle/chop/reload acceptance
+remains pending; the four-species visual comparison now passes.
 
 Original SHC 1.41 UpdateTree1 at 0x4F2380 selects native frame 146 for both stages
 5 and 6 of species 1–4. Inspection of all four original sheets confirms frame
@@ -38,8 +39,29 @@ over five paired runs of two million calls. This excludes the original renderer;
 full-game render cost remains pending.
 All options default off.
 
-Before readiness: full-game original/patched comparison for all four species,
-dead-stage transition, flat/living/wind/chop views, save/reload and unchanged
-simulation traces. Multiplayer, Extreme and replay remain untested. English and
+Full-game comparison now uses an isolated synthetic w.sav: eight native-constructor
+trees at existing grid positions, with surrounding trees in native pending-removal
+state to avoid occlusion. Original native cleanup clears the neighbors. All four
+species retain stage 5 and stored frame 146 while the patch renders standing-dead
+art. Four living controls retain their existing art and animated frame range.
+P pauses the test before the original short decay period removes a sample.
+
+[Original view](docs/native-trees-original.png) and
+[patched view](docs/native-trees-patched.png) use the same camera and fixture.
+The flat-view fixture region (510,180)-(800,345), in 1282x746 captures, is pixel
+identical between original and patched. The game is configured at 1920x1080,
+rendered in a 1280x720 graphicsApiReplacer window. R007/R130/R132 are also enabled.
+The actual installed R019 Lua SHA256 is
+`8ed9562d818a5502d12c826a350578432ef210de9d45ab16993f4f70a0fef9e8`.
+
+A new native d.sav is 876,248 bytes, SHA256
+`160ec5609a00b15ee0f78bcf92be0aaf247613df8665976f07162dc0f572df03`.
+Original-decoder/checksum verification confirms all four dead records are still
+stage 5/frame 146 in that save. Reload is pending; writing and decoding a save
+does not establish native reload acceptance. The original and patched native
+sessions were closed normally, and the shared desktop released after each.
+
+Before readiness: native dead-stage transition, chop, reload and remaining
+simulation/cost checks. Multiplayer, Extreme and replay remain untested. English and
 German option labels are provided; other existing locales use English fallback.
 Independent review and normal approved merge remain required.
