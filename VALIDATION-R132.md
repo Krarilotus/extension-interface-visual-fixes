@@ -66,7 +66,13 @@ adds median 4.523 ns without scrolling and 4.537 ns while scrolling, over five
 paired runs of two million calls. This excludes the existing renderer and is not
 whole-game frame timing. Screenshot: docs/native-patched-scrolling-visible.png.
 
-Zoom/orientation, supported layout, drag/release regression and relevant full-game
+An additional native pass uses the original Z/C/X controls: zoomed-out scrolling
+and a clockwise quarter-turn both retain the visible preview, which also returns
+correctly to the interior. Right-click cancellation passes. Read-only traces
+confirm zoom=1, scrolling=1 and changing preview/world/camera coordinates.
+Only that rotated orientation was exercised; this is not an all-rotations claim.
+
+Additional supported layouts, drag/release regression and relevant full-game
 frame cost remain pending. Multiplayer, Extreme and replay are not claimed.
 R007/R130 remain independently selectable; all options default off and require
 a game restart to change.
