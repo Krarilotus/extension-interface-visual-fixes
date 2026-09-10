@@ -56,7 +56,9 @@ added. Only the existing local selection changes after successful placement.
   removes that preview (visual observation; sampler ended before cancellation).
 - A separate native g.sav preserves both guilds and the woodcutter:880856bytes,
   SHA256bf32e750ea38cfaeae0bd7387fc0b133b9b8e0be06cc53aa2c6aec0dadba378e.
-  The prior Castle Builder save is preserved; this new save's reload is pending.
+  The prior Castle Builder save is preserved. A clean native restart/reload of
+  g.sav also passes: both guilds and the woodcutter remain present, with 77 wood
+  and 1800 gold. Screenshot: docs/native-g-reload.png.
 - Patched granary mapper80 commits local building51/type19 at235,84, then an
   adjacent section52 at235,80. Each costs5wood, mapper80 remains selected, and
   right-click clears it. Marketplace cancellation/reselection retains resources
