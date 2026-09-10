@@ -41,8 +41,23 @@ Original report/fixtures:
   was installed using bounded debugger-style instrumentation in the isolated
   process. Both supplied custom descriptions appear. Repeated switching to
   shipped maps preserves their descriptions; leaving/re-entering the lobby
-  preserves the fix. This is native visual acceptance of emitted code, not yet
-  module-loader acceptance.
+  preserves the fix. This comparison used emitted-code instrumentation.
+- Actual module-loader acceptance: developer UCP loader, official 3.0.7 code,
+  the same two compatibility modules, and only this fix enabled. The startup log
+  confirms successful module load/enable. Both report fixtures, shipped maps,
+  screen re-entry, German umlauts/eszett and wrapping pass. An original-code
+  encoder/decoder round-trip verified three additional map fixtures. Long text
+  scrolls to its final marker using the existing controls; selecting an empty
+  description removes all previous text. The alternate saved resolution was
+  1280x1024, displayed through the compatibility module's scaled window.
+- The native TCP/IP multiplayer host lobby also passes shipped/custom switching,
+  German text, scrolling to the end and empty-after-long clearing. Description
+  clipping stays within its existing pane alongside the player/chat/map controls.
+  This was a host-only session: a remote client and synchronization are untested.
+- A native x86 microbenchmark of the actual 15-byte wrapper used five paired
+  runs of 20 million calls with alternating baseline/patched order. Added cost
+  was 0.330–0.512 ns per call (median 0.451 ns) on this desktop. This measures
+  wrapper overhead against a terminal lookup stub, not whole-game frame time.
 - Original scrollbar emulation (44 cases) rejected an earlier range-clamp
   hypothesis; no scrollbar patch is included.
 - SHC and Extreme signatures each match once. Extreme static addresses are
@@ -53,10 +68,12 @@ Original report/fixtures:
 
 Native comparison: [before](docs/native-test-missing-before.png),
 [after](docs/native-test-visible-after.png).
+Module acceptance: [German text](docs/native-module-german.png),
+[multiplayer host long-text end](docs/native-module-mp-long-end.png),
+[empty after long](docs/native-module-mp-empty.png).
 
-Actual module-loader test; generated empty/long/German descriptions; alternate
-native layouts; MP host/client lobby; measured native overhead and package size;
-independent review and normal approved merge. Extreme, multiplayer synchronization,
+CI activation, independent review and normal approved merge remain pending.
+Remote-client lobby acceptance needs a second test session. Extreme, multiplayer synchronization,
 save/replay and full compatibility are not claimed from the automated tests.
 No simulation, command, save-format or asset changes are made.
 
