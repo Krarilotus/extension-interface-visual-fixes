@@ -1,3 +1,5 @@
 interface_visual_fixes: Interface and Visual Fixes
 lobby_text: Show lobby map descriptions
 lobby_description: Keeps the selected map's description visible in the lobby.
+unique_preview_text: Clear unique-building preview after placement
+unique_preview_description: Deselects the marketplace, barracks, mercenary post and guilds after successful placement.
