@@ -9,7 +9,7 @@ Original SHC 1.41 UpdateTree1 at 0x4F2380 selects native frame 146 for both stag
 146 is the fallen log, 147 the standing dead tree and 148 the flat-view stump.
 These are one-based native frame numbers. No new or modified art is included.
 
-The existing renderMap frame load at 0x4EB831 now uses a 48-byte wrapper. Only
+The existing renderMap frame load at 0x4EB831 now uses a 58-byte wrapper. Only
 species 1–4 at stage 5 with stored frame 146 produce local EDX frame 147. Every
 other register and the flags from the preceding TEST remain intact. Stored tree
 fields are never written. Stage 6 still selects 146 and follows its original
@@ -17,12 +17,15 @@ removal lifecycle; the fix does not extend dead-tree lifetime.
 
 Validation so far:
 
-- 282 new tests execute the actual Lua-emitted x86 across eight species values,
+- 290 new tests execute the actual Lua-emitted x86 across eight species values,
   five stages and seven frames, checking local frame, ABI and unchanged complete
-  tree records, plus signature rejection and disabled/repeated enable.
-- All 420 repository tests pass, including the earlier R007/R130/R132 cases.
+  tree records, plus eight felled-tree regressions, signature rejection and disabled/repeated enable.
+- All 428 repository tests pass, including the earlier R007/R130/R132 cases.
 - The reused original-code native component harness covers 56 frame cases and
-  eight decay boundaries. It executes original functions, with no running game
+  eight decay boundaries and eight harvest flows. Harvest eligibility and resource
+  depletion leave stage 5 intact while setting harvest state 2; these original
+  functions exposed a draft regression, reproduced by eight failing emitted-code
+  cases before adding the guard. It executes original functions, with no running game
   attached; it is not full-game visual acceptance.
 - The existing native skirmish save contains 59 species-2 trees at stage 5. Its
   compressed tree section was decoded with the original game decoder and verified
@@ -31,15 +34,16 @@ Validation so far:
 Reference executable SHA256:
 `3bb0a8c1e72331b3a30a5aa93ed94beca0081b476b04c1960e26d5b45387ac5a`.
 Only this SHC 1.41 layout is supported. The separate Extreme signature is not
-accepted. No new dependency, asset or draw/input hook is introduced. One 48-byte
+accepted. No new dependency, asset or draw/input hook is introduced. One 58-byte
 startup allocation and six changed code bytes. The runtime package has 16 files
-and is 8,800 bytes, 1,333 bytes above R132. A native benchmark of the actual
-emitted wrapper adds median 3.611 ns for living trees and 4.336 ns for dead trees
+and is 8,851 bytes, 1,384 bytes above R132. A native benchmark of the actual
+emitted wrapper adds median 4.028 ns for living trees and 4.571 ns for dead trees
 over five paired runs of two million calls. This excludes the original renderer;
 full-game render cost remains pending.
 All options default off.
 
-Full-game comparison now uses an isolated synthetic w.sav: eight native-constructor
+The native comparisons below exercised the earlier 48-byte wrapper; the new
+harvest guard still needs its native recheck. Full-game comparison uses an isolated synthetic w.sav: eight native-constructor
 trees at existing grid positions, with surrounding trees in native pending-removal
 state to avoid occlusion. Original native cleanup clears the neighbors. All four
 species retain stage 5 and stored frame 146 while the patch renders standing-dead

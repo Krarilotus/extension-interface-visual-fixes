@@ -1,4 +1,4 @@
-"""Run actual Lua-emitted code through the original input/scroll branch."""
+"""Execute the Lua-emitted tree frame load, preserving native harvest state."""
 from pathlib import Path
 import itertools
 import re
@@ -43,14 +43,14 @@ def emit(blob=PATTERN, base=SITE-15):
         'jmpTo': lambda target: lambda address: b'\xe9'+struct.pack('<i', target-address-5),
     })
     lua.execute((ROOT/'dead-tree-sprites.lua').read_text()).enable()
-    assert allocations == [48]
-    assert [len(code) for _, code in writes] == [48, 6]
+    assert allocations == [58]
+    assert [len(code) for _, code in writes] == [58, 6]
     return writes
 
 
 @pytest.mark.parametrize('kind,stage,frame', list(itertools.product(
     (0, 1, 2, 3, 4, 5, 15, 65535), (0, 3, 4, 5, 6), (1, 26, 51, 76, 146, 147, 148))))
-def test_only_standing_dead_frame_changes_without_state_writes(kind, stage, frame):
+def test_only_standing_dead_frame_changes_without_state_writes(kind, stage, frame, harvest_state=0):
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
     uc.mem_map(0x4eb000, 0x1000)
     uc.mem_map(0xf2c000, 0x2000)
@@ -60,6 +60,7 @@ def test_only_standing_dead_frame_changes_without_state_writes(kind, stage, fram
     tree = bytearray(b'\xab' * 156)
     struct.pack_into('<i', tree, 0, frame)
     struct.pack_into('<H', tree, 0x46, kind)
+    struct.pack_into('<H', tree, 0x76, harvest_state)
     struct.pack_into('<i', tree, 0x80, stage)
     uc.mem_write(0xf2cc54+156, bytes(tree))
     regs = [UC_X86_REG_EAX, UC_X86_REG_EBX, UC_X86_REG_ECX, UC_X86_REG_EDI,
@@ -68,10 +69,17 @@ def test_only_standing_dead_frame_changes_without_state_writes(kind, stage, fram
     for reg, value in zip(regs, values):
         uc.reg_write(reg, value)
     uc.emu_start(SITE, RESUME, count=30)
-    expected = 147 if 1 <= kind <= 4 and stage == 5 and frame == 146 else frame
+    expected = 147 if 1 <= kind <= 4 and stage == 5 and frame == 146 and harvest_state == 0 else frame
     assert uc.reg_read(UC_X86_REG_EDX) == expected
     assert [uc.reg_read(reg) for reg in regs] == values
     assert bytes(uc.mem_read(0xf2cc54+156, 156)) == bytes(tree)
+
+
+@pytest.mark.parametrize('kind,harvest_state', list(itertools.product(range(1, 5), (1, 2))))
+def test_felled_stage_five_tree_keeps_original_log(kind, harvest_state):
+    # Original damageTreeAndTriggerDeathIfDepleted writes 1; harvest writes 2.
+    # Neither advances stage 5, and original UpdateTree1 keeps frame 146.
+    test_only_standing_dead_frame_changes_without_state_writes(kind, 5, 146, harvest_state)
 
 
 def test_unknown_moved_or_already_changed_renderer_rejected():
