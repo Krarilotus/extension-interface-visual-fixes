@@ -24,6 +24,11 @@ added. Only the existing local selection changes after successful placement.
 - 14 local original-executable caller-flow cases pass. Terminal simulation calls
   are stubbed: this verifies original eligibility branches and acknowledgement
   stack offsets, not full simulation. Failed eligibility bypasses the wrapper.
+- 36 original command-flow cases pass with terminal serialization/simulation
+  stubs: schedule-only and resource rejection never enter placement; eligibility
+  rejection bypasses acknowledgement; successful local matching unique tools
+  clear. Remote actors, changed tools and ordinary building commits retain the
+  selection. This is original-code flow evidence, not a live multiplayer test.
 - Native emitted-code instrumentation in the isolated SHC1.41 process: invalid
   marketplace placement retains mapper77; valid placement commits building19,
   type26/owner1 and clears mapper0. Moving the pointer draws no stale preview.
@@ -36,6 +41,11 @@ added. Only the existing local selection changes after successful placement.
 - Clean restart loads/enables the actual module successfully with both R007/R130
   options enabled. Installed unique-placement.lua matches the tested source SHA256
   8a04f3950829bb339ef7bbb845d255d09da598b2819adfe2587967e951d8420e.
+- The saved Castle Builder fixture reloads successfully. With the actual module,
+  mercenary-post mapper86 commits type8/owner1 and clears0. A normal skirmish on
+  the original BigD Arena report map starts with native resources; barracks
+  mapper87 commits local building39/type9 and clears0, costing15stone.
+  AI construction continues independently. The current video setting is1920x1080.
 - Native wrapper microbenchmark, five alternating paired runs of two million
   calls per case: marketplace median4.641ns added/call (4.398–5.495), ordinary
   tool median4.556ns (4.056–5.288). The actual emitted wrapper uses a terminal
@@ -46,8 +56,8 @@ added. Only the existing local selection changes after successful placement.
 
 ## Remaining acceptance
 
-All five unique types; patched ordinary/expandable
-placement; insufficient resources, cancel/reselect, save/reload; native delayed
+Engineers/tunnelers guilds; patched ordinary/expandable
+placement; insufficient resources after selection, cancel/reselect; native delayed
 and remote commands. Multiplayer/replay/Extreme compatibility
 is not established. Same-type reselect while a command is delayed is treated as
 matching the still-selected tool; no selection generation or extra input hook exists.
