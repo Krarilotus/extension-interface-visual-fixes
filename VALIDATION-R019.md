@@ -32,7 +32,10 @@ Reference executable SHA256:
 Only this SHC 1.41 layout is supported. The separate Extreme signature is not
 accepted. No new dependency, asset or draw/input hook is introduced. One 48-byte
 startup allocation and six changed code bytes. The runtime package has 16 files
-and is 8,800 bytes, 1,333 bytes above R132; native render cost remains pending.
+and is 8,800 bytes, 1,333 bytes above R132. A native benchmark of the actual
+emitted wrapper adds median 3.611 ns for living trees and 4.336 ns for dead trees
+over five paired runs of two million calls. This excludes the original renderer;
+full-game render cost remains pending.
 All options default off.
 
 Before readiness: full-game original/patched comparison for all four species,
