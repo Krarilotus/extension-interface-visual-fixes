@@ -21,4 +21,6 @@ Enable **Distinguish dead tree stages** to show the existing standing-dead tree
 art before the fallen-log stage (R019). This changes drawing only; tree lifetime
 and save data stay unchanged. See [tree validation](VALIDATION-R019.md).
 
-R023 shares this module owner and will arrive in a separate PR.
+Enable **Align tower doors with wall height** to align existing stone-tower
+doorways with their connecting walls (R023). See [door validation](VALIDATION-R023.md)
+for the draft's evidence and outstanding native checks.

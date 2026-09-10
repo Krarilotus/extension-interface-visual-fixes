@@ -9,3 +9,6 @@ camera_preview_description: Keeps the selected building preview visible while mo
 
 dead_tree_text: Distinguish dead tree stages
 dead_tree_description: Shows standing dead trees before they become fallen logs.
+
+tower_door_text: Align tower doors with wall height
+tower_door_description: Aligns existing tower doors with the highest connecting wall.
