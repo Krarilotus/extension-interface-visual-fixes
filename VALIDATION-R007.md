@@ -48,8 +48,9 @@ Original report/fixtures:
   screen re-entry, German umlauts/eszett and wrapping pass. An original-code
   encoder/decoder round-trip verified three additional map fixtures. Long text
   scrolls to its final marker using the existing controls; selecting an empty
-  description removes all previous text. The alternate saved resolution was
-  1280x1024, displayed through the compatibility module's scaled window.
+  description removes all previous text. The compatibility module scales the
+  native window. The video-options screen subsequently confirms 1920x1080;
+  the earlier 1280x1024 selection was not verified and is not claimed tested.
 - The native TCP/IP multiplayer host lobby also passes shipped/custom switching,
   German text, scrolling to the end and empty-after-long clearing. Description
   clipping stays within its existing pane alongside the player/chat/map controls.
