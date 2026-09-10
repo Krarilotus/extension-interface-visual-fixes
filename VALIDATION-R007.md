@@ -73,8 +73,8 @@ Module acceptance: [German text](docs/native-module-german.png),
 [multiplayer host long-text end](docs/native-module-mp-long-end.png),
 [empty after long](docs/native-module-mp-empty.png).
 
-CI activation, independent review and normal approved merge remain pending.
-Remote-client lobby acceptance needs a second test session. Extreme, multiplayer synchronization,
+CI is configured; independent review and normal approved merge remain pending.
+Remote-client lobby behavior needs a second test session to verify. Extreme, multiplayer synchronization,
 save/replay and full compatibility are not claimed from the automated tests.
 No simulation, command, save-format or asset changes are made.
 
