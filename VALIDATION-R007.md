@@ -63,3 +63,9 @@ No simulation, command, save-format or asset changes are made.
 The original legacy graphics path failed during startup on this desktop.
 Tests therefore use the existing graphics/window compatibility modules above.
 Audio and active replay installations/branches remain separate.
+
+Candidate package: 13 runtime files, 3,751 bytes compressed; no dependencies
+added. The build manifest excludes tests, diagnostics, screenshots and tooling.
+CI has not run: the current OAuth credential cannot publish GitHub workflows.
+The intended workflow is preserved in `.ci/test.yml`; activation at
+`.github/workflows/test.yml` requires credentials with `workflow` scope.
