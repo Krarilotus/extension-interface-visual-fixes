@@ -37,8 +37,7 @@ added. Only the existing local selection changes after successful placement.
   Developer loader, official UCP3.0.7 code, winProcHandler0.2.0,
   graphicsApiReplacer1.3.0, R007 enabled. Original executable unchanged.
 - Baseline repeatable woodcutter and expandable granary remain selected after
-  placement. Patched woodcutter repeat placement also passes; patched expandable
-  storage remains pending.
+  placement. Patched woodcutter repeat placement and granary expansion also pass.
 - Clean restart loads/enables the actual module successfully with both R007/R130
   options enabled. Installed unique-placement.lua matches the tested source SHA256
   8a04f3950829bb339ef7bbb845d255d09da598b2819adfe2587967e951d8420e.
@@ -58,6 +57,10 @@ added. Only the existing local selection changes after successful placement.
 - A separate native g.sav preserves both guilds and the woodcutter:880856bytes,
   SHA256bf32e750ea38cfaeae0bd7387fc0b133b9b8e0be06cc53aa2c6aec0dadba378e.
   The prior Castle Builder save is preserved; this new save's reload is pending.
+- Patched granary mapper80 commits local building51/type19 at235,84, then an
+  adjacent section52 at235,80. Each costs5wood, mapper80 remains selected, and
+  right-click clears it. Marketplace cancellation/reselection retains resources
+  and restores its visible preview. No marketplace was committed in this case.
 - Native wrapper microbenchmark, five alternating paired runs of two million
   calls per case: marketplace median4.641ns added/call (4.398–5.495), ordinary
   tool median4.556ns (4.056–5.288). The actual emitted wrapper uses a terminal
@@ -69,11 +72,11 @@ added. Only the existing local selection changes after successful placement.
 Actual module: [engineers cleared](docs/native-engineers-cleared.png),
 [tunnelers cleared](docs/native-tunnelers-cleared.png), and
 [ordinary preview retained](docs/native-ordinary-retained.png).
+[Expanded granary](docs/native-granary-expanded.png) uses the original controls.
 
 ## Remaining acceptance
 
-Patched expandable placement; insufficient resources after selection,
-unique-tool cancel/reselect; native delayed
+Insufficient resources after selection; native delayed
 and remote commands. Multiplayer/replay/Extreme compatibility
 is not established. Same-type reselect while a command is delayed is treated as
 matching the still-selected tool; no selection generation or extra input hook exists.
