@@ -12,6 +12,9 @@ return {
     if config["building-preview-during-camera-movement"] == true then
       require("camera-preview").enable()
     end
+    if config["distinct-dead-tree-sprites"] == true then
+      require("dead-tree-sprites").enable()
+    end
     enabled = true
   end,
   disable = function()

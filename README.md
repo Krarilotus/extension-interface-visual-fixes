@@ -17,4 +17,8 @@ Enable **Show building previews while scrolling** to keep the existing building
 ghost visible during camera movement (R132). Placement uses the same native
 coordinates and command path. See [camera preview validation](VALIDATION-R132.md).
 
-R019 and R023 share this module owner and will arrive in separate PRs.
+Enable **Distinguish dead tree stages** to show the existing standing-dead tree
+art before the fallen-log stage (R019). This changes drawing only; tree lifetime
+and save data stay unchanged. See [tree validation](VALIDATION-R019.md).
+
+R023 shares this module owner and will arrive in a separate PR.

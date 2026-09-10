@@ -25,3 +25,11 @@ options:
     url: interface-visual-fixes.building-preview-during-camera-movement
     contents:
       value: false
+  - name: distinct_dead_tree_sprites
+    category: ['{{interface_visual_fixes}}']
+    text: '{{dead_tree_text}}'
+    description: '{{dead_tree_description}}'
+    display: Switch
+    url: interface-visual-fixes.distinct-dead-tree-sprites
+    contents:
+      value: false

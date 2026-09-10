@@ -6,3 +6,6 @@ unique_preview_description: Désélectionne le marché, la caserne, le camp de m
 
 camera_preview_text: Show building previews while scrolling
 camera_preview_description: Keeps the selected building preview visible while moving the camera.
+
+dead_tree_text: Distinguish dead tree stages
+dead_tree_description: Shows standing dead trees before they become fallen logs.

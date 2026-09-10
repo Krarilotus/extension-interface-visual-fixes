@@ -5,3 +5,5 @@ unique_preview_text: Clear unique-building preview after placement
 unique_preview_description: Deselects the marketplace, barracks, mercenary post and guilds after successful placement.
 camera_preview_text: Show building previews while scrolling
 camera_preview_description: Keeps the selected building preview visible while moving the camera.
+dead_tree_text: Distinguish dead tree stages
+dead_tree_description: Shows standing dead trees before they become fallen logs.

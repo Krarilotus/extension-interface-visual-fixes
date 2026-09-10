@@ -6,6 +6,7 @@
     <file src="lobby-description.lua" />
     <file src="unique-placement.lua" />
     <file src="camera-preview.lua" />
+    <file src="dead-tree-sprites.lua" />
     <file src="locale" />
   </files>
 </module>
