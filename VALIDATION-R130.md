@@ -33,15 +33,22 @@ added. Only the existing local selection changes after successful placement.
   graphicsApiReplacer1.3.0, R007 enabled. Original executable unchanged.
 - Baseline repeatable woodcutter and expandable granary remain selected after
   placement. Patched ordinary and other unique native cases are still pending.
+- Clean restart loads/enables the actual module successfully with both R007/R130
+  options enabled. Installed unique-placement.lua matches the tested source SHA256
+  8a04f3950829bb339ef7bbb845d255d09da598b2819adfe2587967e951d8420e.
+- Native wrapper microbenchmark, five alternating paired runs of two million
+  calls per case: marketplace median4.641ns added/call (4.398–5.495), ordinary
+  tool median4.556ns (4.056–5.288). The actual emitted wrapper uses a terminal
+  notification stub and reproduced stack; this is not whole-game timing.
 
 [Original stale preview](docs/native-market-stale-preview.png) and
 [patched native result](docs/native-market-cleared-after.png).
 
 ## Remaining acceptance
 
-Actual module-loader restart; all five unique types; patched ordinary/expandable
+All five unique types; patched ordinary/expandable
 placement; insufficient resources, cancel/reselect, save/reload; native delayed
-and remote commands; relevant native cost. Multiplayer/replay/Extreme compatibility
+and remote commands. Multiplayer/replay/Extreme compatibility
 is not established. Same-type reselect while a command is delayed is treated as
 matching the still-selected tool; no selection generation or extra input hook exists.
 
