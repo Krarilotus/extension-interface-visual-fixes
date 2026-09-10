@@ -1,0 +1,9 @@
+<module>
+  <files>
+    <file src="definition.yml" />
+    <file src="options.yml" />
+    <file src="init.lua" />
+    <file src="lobby-description.lua" />
+    <file src="locale" />
+  </files>
+</module>
