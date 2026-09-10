@@ -10,3 +10,4 @@ jobs:
           python-version: '3.13'
       - run: pip install -r requirements-test.txt
       - run: python -m pytest -q
+      - run: python tools/build.py
