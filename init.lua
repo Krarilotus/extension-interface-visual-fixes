@@ -21,6 +21,9 @@ return {
     if config["lobby-load"] == true then
       require("lobby-load").enable()
     end
+    if config["cliff-texture-direction"] == true then
+      require("cliff-texture-direction").enable()
+    end
     enabled = true
   end,
   disable = function()

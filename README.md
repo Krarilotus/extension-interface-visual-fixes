@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Six optional fixes for Stronghold Crusader 1.41, using the game's existing
+Seven optional fixes for Stronghold Crusader 1.41, using the game's existing
 controls, text areas and artwork.
 
 - **Show lobby map descriptions:** keeps custom descriptions visible when
@@ -17,6 +17,8 @@ controls, text areas and artwork.
 tie. The doorway moves along the face as well as vertically.
 - **Show Load in skirmish lobby:** makes the existing single-player Load control
   visible between the portrait and Start, including lobbies without an AI opponent.
+- **Continue cliff textures after rotation:** makes cliff textures advance along
+  both visible faces when the map is rotated, using the current texture pack.
 
 Enable the module, choose the fixes you want, apply your settings and restart the
 game. Each option starts disabled. The module targets UCP 3.0.7 and SHC 1.41.
@@ -67,12 +69,23 @@ cache without rescanning walls. The measured added draw cost was 0.031 ms for
 
 ![The original Load control fits between portrait and Start at800x600](docs/r001/lobby-800.png)
 
+### Cliff textures
+
+Cliff textures follow the direction of each face in all four map orientations.
+The fix uses the existing textures and terrain graphics refresh. It adds no
+render hook, drawing pass, allocation or per-frame check.
+
+![Both cliff faces use the existing texture sequence after rotation](docs/cliffs/after-6.png)
+
+See [the comparison and validation](VALIDATION-CLIFF-TEXTURES.md).
+
 ## Validation
 
 Native screenshots come from an isolated SHC 1.41 test installation with UCP3.0.7,
 winProcHandler0.2.0 and graphicsApiReplacer1.3.0. Exact revisions, tests and limits:
 [R007](VALIDATION-R007.md), [R130](VALIDATION-R130.md),
 [R132](VALIDATION-R132.md), [R019](VALIDATION-R019.md),
-[R023](VALIDATION-R023.md), [R001](VALIDATION-R001.md).
+[R023](VALIDATION-R023.md), [R001](VALIDATION-R001.md),
+[cliff textures](VALIDATION-CLIFF-TEXTURES.md).
 Automated and original-code tests are distinguished from native results;
 multiplayer, replay and broader compatibility are not inferred from them.

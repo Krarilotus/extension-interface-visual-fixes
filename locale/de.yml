@@ -16,3 +16,6 @@ lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelsp
 
 tags.bugfixes: Fehlerkorrekturen
 tags.interface: Oberfläche
+
+cliff_texture_text: Klippen-Texturen beim Drehen verbinden
+cliff_texture_description: Verbindet Klippen-Texturen auf beiden sichtbaren Seiten auch nach dem Drehen der Kamera. Verwendet das aktuelle Texturpaket.
