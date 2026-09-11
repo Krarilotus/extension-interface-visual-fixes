@@ -53,14 +53,25 @@ Validation:
 
 One 343-byte startup allocation, 25 replaced code bytes, no per-frame allocation;
 each doorway scans at most six tiles. Runtime package: 17 files, 10,654 bytes, 1,803 bytes
-above R019. Added rendering/startup cost measurement remains pending.
+above R019. A paired native benchmark of the original overlay function adds median32.190 ns
+per six-tile tower with both doorways, five runs of200,000 calls. Terminal
+rasterization is excluded; this measures the added boundary scan, not game FPS.
+Isolated startup timing remains unmeasured.
 
 Reference executable SHA256:
 `3bb0a8c1e72331b3a30a5aa93ed94beca0081b476b04c1960e26d5b45387ac5a`.
 Only this SHC 1.41 layout is accepted. Default off; English and German labels,
 English fallback for other current locales. No Extreme/MP/replay claim.
 
-Before readiness: corrected native low/high/no-wall views, both sides and four
-types/rotations; mixed heights, elevation, removal/rebuild and save/reload;
+Native b5df175 now starts and reloads h.sav successfully. Tower54/type75 shows the
+lowered door beside its low wall on both visible sides; the high-wall door keeps
+its anchor and the unconnected sides get no extra door. All four native camera
+orientations and frame selections were sampled. [Original](docs/native-tower-original.png)
+and [corrected](docs/native-tower-corrected.png) views show the same fixture.
+Tower/wall coordinates, heights and entrance flags remain unchanged. This is a
+visual/coordinate result; the full screenshot regions are not pixel-identical.
+The game was closed normally and desktop released at02:06:39.
+
+Before readiness: the other three native tower types; mixed heights, elevation, removal/rebuild and save/reload;
 clipping/layout, preserved collision/pathfinding/simulation and relevant costs.
 Independent review and normal approved merge remain required.
