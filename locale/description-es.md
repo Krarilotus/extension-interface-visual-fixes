@@ -8,7 +8,9 @@ Siete correcciones para SHC/SHCE 1.41 y UCP 3.0.7, activadas por defecto. Cada u
 - Distingue los árboles muertos en pie de los troncos caídos.
 - Alinea las puertas con las conexiones y prolonga la mampostería bajo las torres al borde de acantilados.
 - Muestra el botón Cargar existente en la sala de un jugador.
-- Conecta las texturas de acantilados tras girar la cámara.
+- Mejora la continuidad de los acantilados al girar la cámara y en escalones diagonales.
+
+Los escalones de frente usan texturas consecutivas; los que se alejan mantienen una variación estable donde el solapamiento impide la continuidad.
 
 La puerta elige la conexión válida más alta; en caso de empate, la más central. En los extremos se desplaza media casilla hacia dentro. Stair6 de la IA permite una puerta a nivel del suelo; las escaleras elevadas no cuentan.
 

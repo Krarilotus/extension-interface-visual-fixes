@@ -8,7 +8,9 @@ Seven fixes for SHC/SHCE 1.41 and UCP 3.0.7, enabled by default. Each can be swi
 - Show distinct standing-dead trees before fallen logs.
 - Align tower doors with connections and extend wall masonry beneath cliff-edge towers.
 - Show the existing Load button in the single-player lobby.
-- Keep cliff textures connected after camera rotation.
+- Improve cliff continuity after rotation and on diagonal steps.
+
+Front-facing steps use consecutive strips; receding steps use stable variation where overlap prevents continuity.
 
 Tower doors choose the highest eligible connection; nearest centre breaks ties. Outer doors move half a tile inward. AI stair6 alone allows a ground door; raised stairs do not count.
 

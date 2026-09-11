@@ -8,7 +8,9 @@ SHC/SHCE 1.41 ve UCP 3.0.7 için varsayılan olarak etkin yedi düzeltme. Her bi
 - Ayakta duran ölü ağaçları devrilmiş kütüklerden ayırır.
 - Kule kapılarını bağlantılara hizalar ve uçurum kenarındaki kulelerin altına duvar dokusunu uzatır.
 - Tek oyunculu lobide mevcut Yükle düğmesini gösterir.
-- Kamera döndürüldüğünde uçurum dokularını kesintisiz sürdürür.
+- Kamera dönüşünden sonra ve çapraz basamaklarda uçurum dokularının birleşimini iyileştirir.
+
+Öne bakan basamaklar ardışık dokular kullanır; geriye uzanan basamaklar, örtüşmenin sürekliliği engellediği yerlerde sabit çeşitlilik kullanır.
 
 Kapı en yüksek uygun bağlantıyı seçer; eşit yükseklikte merkeze en yakın olan kazanır. Uçlardaki kapılar yarım kare içeri kayar. Yapay zekânın Stair6 bağlantısı tek başına zemin kapısı sağlar; yükseltilmiş merdivenler sayılmaz.
 
