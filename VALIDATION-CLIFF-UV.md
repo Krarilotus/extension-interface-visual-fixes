@@ -80,7 +80,7 @@ doors remain intact. This checks the alternative cliff resource, not installatio
 of the entire texture pack. Its SHA256 is
 48b3c6cc38fef1ddbd085f336efeff18c8c9479b9c9c2d266a5800b3ae5622bc.
 Native captures are native-cliff-uv-europe-{0,6,4,2,zoom}.png; the viewport record
-confirms orientation 2 and zoom 1. The game closed normally, process absence was
+confirms zoom 1 after the final rotation. The game closed normally, process absence was
 verified, and the desktop was released at 17:19:25 on 11 September 2026. The
 private installation's stock GM9 was then restored and its original hash verified.
 
