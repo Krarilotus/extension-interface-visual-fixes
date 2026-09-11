@@ -3,3 +3,6 @@ lobby_text: Descriptions des cartes du salon
 lobby_description: Garde visible la description de la carte sélectionnée dans le salon.
 unique_preview_text: Fermer l’aperçu des bâtiments uniques après construction
 unique_preview_description: Désélectionne le marché, la caserne, le camp de mercenaires et les guildes après une construction réussie.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.

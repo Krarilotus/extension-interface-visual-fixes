@@ -1,0 +1,121 @@
+# R132: building preview during camera movement
+
+Related issue: [#5](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/5).
+R007 PR #2 and R130 PR #4 are merged; this focused PR now targets main.
+This validation record does not by itself claim merge or release.
+
+## Cause and change
+
+Original SHC1.41 handler0x4451c0 computes mouse world coordinates, then skips its
+preview/placement path while scrolling unless a new left click starts. The
+native read-only trace confirmed camera movement and scrolling=1 while the
+selected woodcutter51 preview stayed at333,194. The ghost disappeared and returned
+after scrolling stopped. This was reproduced with graphicsApiReplacer1.3.0's
+existing control.padding=20, UCP3.0.7 and winProcHandler0.2.0, at1920x1080 rendered
+in a1280x720 window. The reference executable SHA256 is
+`3bb0a8c1e72331b3a30a5aa93ed94beca0081b476b04c1960e26d5b45387ac5a`.
+
+The six-byte conditional branch at0x445263 now enters a39-byte wrapper. When
+scrolling, it permits the existing path only if the already-computed building
+size is positive and neither a held left button nor release event is pending.
+New clicks still bypass this guard through the original jump. Every register,
+stack slot and the incoming comparison flags are preserved. No second renderer,
+input registration, polling callback or command format is added.
+
+Original size lookup0x4fa550 was evaluated for mapper0..399. Positive sizes cover
+buildings, siege tents and brush previews; assembly points, editor units and
+special sprite tools are excluded by their nonpositive size. Other handler paths
+remain unchanged. The patch is separate from R0070x4287bd and R1300x516a0f.
+
+## Automated evidence
+
+-138 repository tests pass:82 R132 cases plus the existing56 regressions. Actual
+  Lua-emitted x86 executes through the original new-click/scroll gate for all
+  combinations of scrolling/start/held/release and sizes-1,0,1,3,13.
+-The actual emitted patch also passes48 comparisons against the original full
+  UI handler for woodcutter, marketplace and engineers guild. Terminal transform,
+  eligibility, render and command helpers are stubbed. Idle scrolling adds the
+  preview call without resource/command calls; other call traces match baseline.
+-Original signature matches once; missing, duplicated, shifted or already-changed
+  layouts are rejected. Original executable bytes are not distributed in tests.
+- A read-only original call-graph audit of the added eligibility, construction,
+  rotation, bridge, brush, pitch/moat and floating-preview helpers finds no RNG
+  function or unresolved indirect call. The unchanged tooltip call precedes the
+  scroll guard and is not part of the additional work; its wider graph can use
+  RNG. This complements the original-handler cases and is not MP/replay testing.
+-Windows local invocation uses `pytest -p no:faulthandler` because Unicorn's
+  handled virtual-memory exceptions otherwise print misleading fatal-exception
+  traces despite successful assertions. Linux CI runs the ordinary pytest command.
+
+Runtime package:15 files,7467 bytes,1402 bytes above R130; no new dependency.
+One39-byte startup allocation and six changed code bytes. Additional camera-frame
+work is the existing idle eligibility/preview path. The added original preview-path cost is measured below; rasterization and
+whole-game FPS are outside that component measurement. English and German labels are
+provided; other existing locales use explicit English fallback for this option.
+
+## Native acceptance and limits
+
+Patched native edge scrolling passes on source 9446b48: the woodcutter preview
+remains visible and its tile updates while scrolling is active. At rest, the
+preview at (195, 332) commits local building 51/type 3 at that exact tile, costs
+3 wood (77 to 74), and retains repeat placement. Clicking the occupied tile is
+rejected without further charge and retains the selection. Right-click cancels.
+Flat-view scrolling updates preview coordinates; its edge ghost was clipped, so
+that observation does not establish flat-view visual acceptance at the edge.
+The isolated t.sav fixture was loaded; the test placement was not saved.
+
+An additional 128 positive-size tools pass original-handler idle-scroll probes
+using the original size lookup and terminal helper stubs. No resource or command
+calls occur on the added idle path. The actual emitted wrapper's native benchmark
+adds median 4.523 ns without scrolling and 4.537 ns while scrolling, over five
+paired runs of two million calls. This excludes the existing renderer and is not
+whole-game frame timing. Screenshot: docs/native-patched-scrolling-visible.png.
+
+An additional native pass uses the original Z/C/X controls: zoomed-out scrolling
+and a clockwise quarter-turn both retain the visible preview, which also returns
+correctly to the interior. Right-click cancellation passes. Read-only traces
+confirm zoom=1, scrolling=1 and changing preview/world/camera coordinates.
+Only that rotated orientation was exercised; this is not an all-rotations claim.
+
+An interior native drag/release check on9446b48 placed one woodcutter at(267,258)
+for3 wood (144 to141), retained mapper51, and cleared held/release flags. Moving
+the pointer resumed the existing repeat preview. This covers ordinary release
+behavior, not a simultaneous held-button/edge-scroll sequence.
+Two Right-key attempts and Alt+1 in the Castle Builder fixture did not change
+the sampled camera or set scrolling; keyboard-scroll acceptance is inconclusive.
+Flat-view switching preserved the interior preview initially, but the later
+stationary capture omitted it; no flat scrolling success is inferred.
+
+The current native pass below completes the focused flat-view acceptance and
+added-path cost check. Simultaneous held-button scrolling is covered by emitted
+code/original-handler tests, but was not captured natively; neither were keyboard
+scrolling or every resolution. Multiplayer, Extreme and replay are not claimed.
+R007/R130 remain independently selectable; all options default off and require
+a game restart to change.
+
+## Combined native pass and original-path cost, 11 September
+
+The six-option combined package (archive SHA256
+`fd25e2d05ca69584247312084da609621df7a13278667634103ce6e59343995a`)
+uses unchanged R132 runtime 9446b48. Native PID4488 loaded m.sav through the
+existing menu, selected the woodcutter and switched to flat view. Its ghost
+remained visible at both scrolling edges and returned to the interior. The
+read-only recording contains 86 scrolling samples with 86 distinct viewport-X
+positions and changing preview positions. Reads are not frame-atomic; their
+transient cursor/preview offsets are not used as an exact-coordinate assertion.
+Screenshot: docs/native-combined-flat-edge.png. A subsequent drag did not yield
+a sampled held/release event, so no additional held-edge success is claimed.
+The game closed normally and the desktop was released at09:46:25 CEST.
+
+A paused, private native-image snapshot supplied geometry and resources for an
+offline native benchmark. Pausing cancels the tool, so the helper explicitly
+restores the immediately preceding woodcutter51 selection. It executes original
+handler0x4451c0 and all newly enabled original preview/eligibility helpers with
+the actual39-byte wrapper. Only the unchanged tooltip, which runs before the
+scroll guard, is excluded equally from baseline and candidate. The baseline
+retains sentinel preview coordinates; the candidate updates to the native
+size-3 anchor (cursor tile minus1 on each axis). Five alternating20,000-call
+pairs measured additional312.310?335.700ns, median321.655ns (0.000322ms) per
+idle scrolling call. This includes placement checks and construction-preview
+updates; it excludes rasterization and is not whole-game FPS or a worst-case
+map benchmark. The original game image remains private and is not distributed.

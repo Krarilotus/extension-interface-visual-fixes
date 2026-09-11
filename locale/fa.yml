@@ -3,3 +3,6 @@ lobby_text: نمایش توضیحات نقشه در لابی
 lobby_description: توضیحات نقشهٔ انتخاب‌شده را در لابی قابل مشاهده نگه می‌دارد.
 unique_preview_text: بستن پیش‌نمایش ساختمان‌های یکتا پس از ساخت
 unique_preview_description: پس از ساخت موفق، انتخاب بازار، سربازخانه، اردوگاه مزدوران و انجمن‌ها را لغو می‌کند.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.
