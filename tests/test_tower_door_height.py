@@ -28,7 +28,7 @@ SITES = {
 DATA = 0x60010000
 UPDATES = {0x41B7FF:'89 9C 0F 94 02 00 00',
            0x41B855:'03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9',
-           0x512100:'53 55 56 8B F1 57 33 FF 89 BE 1C 29 55 00'}
+           0x512450:'51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C'}
 
 
 @lru_cache
@@ -299,16 +299,18 @@ def test_height_then_centre_then_boundary_order(width,kind):
     assert selected_index(ctx)==(width-1)//2
 
 
-def test_map_setup_invalidates_same_uid_and_geometry_on_reload():
+def test_final_map_preparation_invalidates_same_uid_and_geometry_on_reload():
     ctx=execute(context=True); uc=ctx['uc']
     tile=ctx['tile'](*ctx['points'][2][0])
     uc.mem_write(HEIGHT+tile,bytes([98]))
     uc.reg_write(UC_X86_REG_ESP,STACK)
     uc.reg_write(UC_X86_REG_ECX,0x1A9B1F4)
     uc.reg_write(UC_X86_REG_EFLAGS,0xA93)
-    uc.emu_start(0x512100,0x512105,count=20)
-    assert uc.reg_read(UC_X86_REG_ESI)==0x1A9B1F4
-    assert uc.reg_read(UC_X86_REG_ESP)==STACK-12
+    uc.mem_write(0x21AEC54,struct.pack('<I',777))
+    uc.emu_start(0x512450,0x512456,count=20)
+    assert uc.reg_read(UC_X86_REG_EAX)==777
+    assert uc.reg_read(UC_X86_REG_ECX)==0x1A9B1F4
+    assert uc.reg_read(UC_X86_REG_ESP)==STACK-4
     assert uc.reg_read(UC_X86_REG_EFLAGS)==0xA93
     assert draw_again(ctx)==expected(rise=90)
 
