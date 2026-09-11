@@ -49,3 +49,11 @@ options:
     url: interface-visual-fixes.lobby-load
     contents:
       value: false
+  - name: cliff_texture_direction
+    category: ['{{interface_visual_fixes}}']
+    text: '{{cliff_texture_text}}'
+    description: '{{cliff_texture_description}}'
+    display: Switch
+    url: interface-visual-fixes.cliff-texture-direction
+    contents:
+      value: false

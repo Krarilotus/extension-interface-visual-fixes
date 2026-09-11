@@ -9,6 +9,7 @@
     <file src="dead-tree-sprites.lua" />
     <file src="tower-door-height.lua" />
     <file src="lobby-load.lua" />
+    <file src="cliff-texture-direction.lua" />
     <file src="locale" />
   </files>
 </module>

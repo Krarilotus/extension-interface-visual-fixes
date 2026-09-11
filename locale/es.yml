@@ -18,3 +18,6 @@ lobby_load_description: Muestra el botón Cargar existente en la sala de escaram
 
 tags.bugfixes: Correcciones
 tags.interface: Interfaz
+
+cliff_texture_text: Conectar texturas de acantilados al girar
+cliff_texture_description: Mantiene la continuidad de las texturas en ambas caras visibles al girar la c?mara. Usa el paquete de texturas actual.

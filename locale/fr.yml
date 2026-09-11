@@ -18,3 +18,6 @@ lobby_load_description: Affiche le bouton Charger existant dans le salon d’esc
 
 tags.bugfixes: Corrections
 tags.interface: Interface
+
+cliff_texture_text: Raccorder les textures des falaises
+cliff_texture_description: Pr?serve la continuit? des textures sur les deux faces visibles apr?s rotation de la cam?ra. Utilise le pack de textures actuel.

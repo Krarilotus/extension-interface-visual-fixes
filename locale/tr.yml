@@ -18,3 +18,6 @@ lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmes
 
 tags.bugfixes: Hata düzeltmeleri
 tags.interface: Arayüz
+
+cliff_texture_text: D?nd?r?rken u?urum dokular?n? birle?tir
+cliff_texture_description: Kamera d?nd?r?ld???nde u?urum dokular?n? g?r?nen iki y?zde de birbirine ba?lar. Mevcut doku paketini kullan?r.

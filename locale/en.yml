@@ -16,3 +16,6 @@ lobby_load_description: Shows the existing Load button in the single-player skir
 
 tags.bugfixes: Bug fixes
 tags.interface: Interface
+
+cliff_texture_text: Continue cliff textures after rotation
+cliff_texture_description: Keeps cliff textures connected along both visible faces when rotating the camera. Uses the current texture pack.

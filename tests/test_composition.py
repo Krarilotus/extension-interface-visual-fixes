@@ -1,4 +1,4 @@
-"""Exercise the real shared entry point against all six synthetic native sites."""
+"""Exercise the real shared entry point against all seven synthetic native sites."""
 from pathlib import Path
 import re
 import struct
@@ -13,12 +13,13 @@ import test_lobby_description as description
 import test_lobby_load as load
 import test_tower_door_height as doors
 import test_unique_placement as placement
+import test_cliff_texture_direction as cliffs
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE, CAVE = 0x400000, 0x60000000
 
 
-def test_six_options_compose_without_duplicate_or_overlapping_patches():
+def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     # Reuse narrow public regression fixtures; no game binary is distributed.
     memory = bytearray(b'\x90' * 0x200000)
     memory[:len(placement.fixture())] = placement.fixture()
@@ -33,6 +34,7 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
         seed(address, source[address-load.PREP:address-load.PREP+length])
     seed(camera.SITE-6, camera.PATTERN)
     seed(trees.SITE-15, trees.PATTERN)
+    seed(cliffs.SITE,cliffs.PATTERN)
     for address, pattern in doors.SITES.items():
         seed(address-10, bytes.fromhex(pattern))
 
@@ -100,15 +102,16 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
         'AOBScan': scan, 'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'allocateCode': allocate, 'allocateAssembly': assembly, 'allocate': data, 'writeCode': write,
         'jmpTo': lambda to: relative(0xe9, to), 'callTo': lambda to: relative(0xe8, to),
+        'assemble':lambda script,_mapping,origin:lua.table_from(list(doors.assemble(script,origin))),
     })
     lua.globals().require = require
     options = yaml.safe_load((ROOT/'options.yml').read_text())['options']
-    assert len(options) == 6
+    assert len(options) == 7
     assert all(option['contents']['value'] is False for option in options)
     config = {option['url'].split('.', 1)[1]: True for option in options}
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
-    assert len(cache) == 6
+    assert len(cache) == 7
     assert sum(size for _, size in allocations) == 66663
     for address, size in allocations:
         initialized = set()
@@ -117,7 +120,7 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
         assert len(initialized) == size, 'wrapper length does not match emitted native bytes'
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
-        0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES,
+        0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE,
     }
     before = list(writes)
     module.enable(module, lua.table_from(config))
