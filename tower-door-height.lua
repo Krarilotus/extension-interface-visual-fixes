@@ -41,7 +41,8 @@ function M.enable()
     ja finish
     shr ebx, 1
     inc ebx
-    cmp eax, 90
+    ; Original 0x40B7B0/frame81 reads the next side after 0x40B720/frame90.
+    cmp eax, 81
     jne side_ready
     inc ebx
   side_ready:

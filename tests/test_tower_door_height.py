@@ -100,7 +100,10 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
     uc.mem_write(BUILDING, bytes(record))
     uc.mem_write(TERRAIN+origin, bytes([ground]))
     uc.mem_write(0x1FE7AA4, struct.pack('<i', orientation))
-    side = (orientation//2+1+(frame == 90)) % 4
+    # Original 0x40B7B0 selects frame81; 0x40B720 selects frame90.
+    # Independent one-hot entrance probes give these sides (not implementation math).
+    side = {0:{81:2,90:1},2:{81:3,90:2},4:{81:0,90:3},6:{81:1,90:0}}.get(
+        orientation,{81:2,90:1}).get(frame,1)
     points = [[(x+n,y-1) for n in range(width)],
               [(x+width,y+n) for n in range(width)],
               [(x+width-1-n,y+width) for n in range(width)],

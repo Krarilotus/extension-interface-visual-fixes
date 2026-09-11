@@ -33,11 +33,17 @@ new assets, input hooks or additional draw calls.
 
 Validation:
 
+- A first native patched check caught swapped doorway sides in the draft.
+  Thirty-two original selector calls now independently establish the frame/side
+  mapping: at orientation0, frame81 reads side282 and frame90 reads side281.
+  The other rotations advance these sides modulo4. The regression failed before
+  the correction; the native component harness now includes asymmetric sides.
+
 - 246 focused tests run actual Lua-emitted code assembled with FASM, covering all
   four types, both door sides, four rotations, several terrain heights, low/high
   walls, last boundary tiles, mixed heights, ineligible/absent connections,
   unsupported contexts, signature checks, state/register preservation and ABI.
-- The reused native original-renderer harness captures 256 matching draw
+- The reused native original-renderer harness captures 320 matching draw
   coordinates through the actual 343-byte wrapper, including original per-tower
   offsets. Only terminal drawing is instrumented; this is component evidence,
   not full-game corrected pixels or pathfinding acceptance.
@@ -46,7 +52,7 @@ Validation:
   FASM CLI solely to execute the same assembly during tests.
 
 One 343-byte startup allocation, 25 replaced code bytes, no per-frame allocation;
-each doorway scans at most six tiles. Runtime package: 17 files, 10,612 bytes, 1,761 bytes
+each doorway scans at most six tiles. Runtime package: 17 files, 10,654 bytes, 1,803 bytes
 above R019. Added rendering/startup cost measurement remains pending.
 
 Reference executable SHA256:
