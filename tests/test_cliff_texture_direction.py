@@ -33,10 +33,14 @@ def execute(orientation,face,x,y,patched=True,configure=None):
     registers={UC_X86_REG_EAX:face,UC_X86_REG_ECX:MAP,UC_X86_REG_ESI:y,
                UC_X86_REG_ESP:STACK,UC_X86_REG_EBX:123,UC_X86_REG_EBP:234,UC_X86_REG_EDI:345}
     for reg,value in registers.items():uc.reg_write(reg,value)
+    writes=[]
+    uc.hook_add(UC_HOOK_MEM_WRITE,lambda _u,_a,at,size,_v,_d:writes.append((at,size)))
     # Valid rotations bypass the old 31 clamp; unsupported contexts retain it.
     finish=0x4fc9c0 if patched and orientation in (0,2,4,6) else END
     uc.emu_start(SITE,finish,count=500)
     assert uc.reg_read(UC_X86_REG_EIP)==finish
+    assert all(STACK-512<=at and at+size<=STACK+32 or
+               MAP+0x554908<=at and at+size<=MAP+0x55490c for at,size in writes)
     assert {r:uc.reg_read(r) for r in registers if r!=UC_X86_REG_ESI}=={
         r:v for r,v in registers.items() if r!=UC_X86_REG_ESI}
     value=struct.unpack('<I',uc.mem_read(MAP+0x554908,4))[0]
