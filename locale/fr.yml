@@ -15,3 +15,6 @@ tower_door_description: Aligns each tower door with the highest connected wall o
 lobby_load_text: Afficher Charger dans le salon d’escarmouche
 lobby_load_description: Affiche le bouton Charger existant dans le salon d’escarmouche solo et permet de charger
   une partie sans adversaire IA. Redémarrez le jeu pour appliquer les modifications.
+
+tags.bugfixes: Corrections
+tags.interface: Interface
