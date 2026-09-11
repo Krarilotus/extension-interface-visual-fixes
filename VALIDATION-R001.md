@@ -74,13 +74,21 @@ launcher locales (en/de/fr/ru/hu/tr/ch/es/fa) contain matching keys; independent
 translation review remains pending. In-game resources follow game language,
 launcher option follows GUI language.
 
-Runtime package14files6112bytes, +2361bytes over R007's3751byte archive, no new
+Runtime package14files6113bytes, +2362bytes over R007's3751byte archive, no new
 dependency.73 allocated code bytes,21 overwritten instruction bytes. Three
 startup AOB lookups, one extra original button draw in the SP lobby per frame;
 no per-frame allocation/scanning. Action guard executes only when Load reaches
 the existing team comparison. Whole-frame and startup timing not benchmarked.
 Position work runs only during native lobby preparation. Package SHA256:
-`bb9d9c1241633df968837cf79a86698b66af1bd05dcc9e06bd303ba144d6de98`.
+`cb0924ddd410dd41b1a365344e1a14cd100581696af98db8a634a7ec9daa1980`.
+
+The first repositioned native build exited on entering the lobby. Its replayed
+MOV used a nested small integer, which UCP compiles as one byte rather than a
+dword. Corrected to four explicit bytes and fixed the test compiler's matching
+mistake. All66 tests pass again; a private fixture now compares emitted bytes
+against the actual hash-checked UCP3.0.7 core.compile/writeCode/jmpTo at four
+allocation bases. Original-code gates also pass again. Revised native retry
+is required; the initial failed run is not acceptance.
 
 PR remains draft until material native gates pass. Independent review and normal
 approved merge remain required; no release or completed issue resolution.

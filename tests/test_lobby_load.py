@@ -35,11 +35,16 @@ def emit(blob=None,base=PREP,cave=CAVE,repeat=False):
         return base+found[0].start()
     def write(addr,table):
         out=bytearray()
-        for v in table.values():
-            if isinstance(v,int): out.append(v)
-            elif lua_type(v)=='table':
-                for number in v.values(): out.extend(struct.pack('<I',number&0xffffffff))
-            else: out.extend(v(addr+len(out)))
+        def compile_values(values):
+            for v in values.values():
+                if isinstance(v,int):
+                    # UCP core.compile recursively flattens tables. A nested
+                    # small integer still emits ONE byte, not a forced dword.
+                    if 0<=v<=255: out.append(v)
+                    else: out.extend(struct.pack('<I',v&0xffffffff))
+                elif lua_type(v)=='table': compile_values(v)
+                else: out.extend(v(addr+len(out)))
+        compile_values(table)
         writes.append((addr,bytes(out)))
     def allocate(size): allocations.append(size); return cave
     lua.globals().core=lua.table_from({'AOBScan':scan,'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
