@@ -7,6 +7,7 @@
     <file src="unique-placement.lua" />
     <file src="camera-preview.lua" />
     <file src="dead-tree-sprites.lua" />
+    <file src="tower-door-height.lua" />
     <file src="locale" />
   </files>
 </module>

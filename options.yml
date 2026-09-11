@@ -33,3 +33,11 @@ options:
     url: interface-visual-fixes.distinct-dead-tree-sprites
     contents:
       value: false
+  - name: tower_door_height
+    category: ['{{interface_visual_fixes}}']
+    text: '{{tower_door_text}}'
+    description: '{{tower_door_description}}'
+    display: Switch
+    url: interface-visual-fixes.tower-door-height
+    contents:
+      value: false

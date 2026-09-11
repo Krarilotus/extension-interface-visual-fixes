@@ -15,6 +15,9 @@ return {
     if config["distinct-dead-tree-sprites"] == true then
       require("dead-tree-sprites").enable()
     end
+    if config["tower-door-height"] == true then
+      require("tower-door-height").enable()
+    end
     enabled = true
   end,
   disable = function()
