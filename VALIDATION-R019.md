@@ -89,7 +89,13 @@ read-only samples confirm the stored states. This closes the native guard visual
 recheck, but is not a full woodcutter-routing test. The game was closed normally,
 process absence verified and desktop released at02:45:11.
 
-Before readiness: full native woodcutter route and remaining
-simulation/cost checks. Multiplayer, Extreme and replay remain untested. English and
+The requested art, save/reload and natural growth/decay transitions pass native
+acceptance. Complete-record comparisons and preserved registers/flags establish
+that this renderer correction does not write simulation state. Original harvest
+execution plus native rendering of its result specifically cover the regression
+where a felled tree could otherwise stand up again. A full worker-route test is
+inconclusive and is not claimed; it is outside the changed renderer's behavior.
+Added wrapper costs are measured above; no per-frame allocation is introduced.
+Multiplayer, Extreme and replay remain untested. English and
 German option labels are provided; other existing locales use English fallback.
-Independent review and normal approved merge remain required.
+Use current-head CI results and the normal repository merge process.
