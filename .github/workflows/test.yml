@@ -33,7 +33,7 @@ jobs:
         with:
           name: interface-visual-fixes-test-${{ github.run_id }}
           path: |
-            dist/interface-visual-fixes-0.1.0.zip
+            dist/interface-visual-fixes-*.zip
             dist/SHA256SUMS.txt
             dist/LOCALIZATION.json
             TESTING-R001.md

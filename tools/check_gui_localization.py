@@ -11,7 +11,8 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--gui',type=Path,required=True)
 args=parser.parse_args()
 root=Path(__file__).resolve().parents[1]
-archive=root/'dist/interface-visual-fixes-0.1.0.zip'
+definition=yaml.safe_load((root/'definition.yml').read_text(encoding='utf-8'))
+archive=root/'dist'/f"{definition['name']}-{definition['version']}.zip"
 languages=yaml.safe_load((args.gui/'resources/lang/languages.yaml').read_text(encoding='utf-8'))
 with zipfile.ZipFile(archive) as z:
     options=yaml.safe_load(z.read('options.yml'))['options']
