@@ -14,8 +14,8 @@ Die höchste geeignete Verbindung bestimmt die Tür; bei gleicher Höhe zählt d
 
 Turmfundament mit Türen auf Höhe der angeschlossenen Wälle.
 
-![Turmfundament mit Türen auf Höhe der angeschlossenen Wälle.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Turmfundament mit Türen auf Höhe der angeschlossenen Wälle.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Zusammenhängende Klippentexturen nach dem Drehen.
 
-![Zusammenhängende Klippentexturen nach dem Drehen.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Zusammenhängende Klippentexturen nach dem Drehen.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

@@ -14,8 +14,8 @@ Az ajtó a legmagasabb megfelelő csatlakozást követi; azonos magasságnál a 
 
 Falazat a torony alatt, ajtók a csatlakozó falak magasságában.
 
-![Falazat a torony alatt, ajtók a csatlakozó falak magasságában.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Falazat a torony alatt, ajtók a csatlakozó falak magasságában.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Összefüggő sziklatextúrák kameraforgatás után.
 
-![Összefüggő sziklatextúrák kameraforgatás után.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Összefüggő sziklatextúrák kameraforgatás után.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

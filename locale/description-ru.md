@@ -14,8 +14,8 @@
 
 Кладка под башней и двери на высоте примыкающих стен.
 
-![Кладка под башней и двери на высоте примыкающих стен.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Кладка под башней и двери на высоте примыкающих стен.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Стыкующиеся текстуры обрывов после поворота камеры.
 
-![Стыкующиеся текстуры обрывов после поворота камеры.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Стыкующиеся текстуры обрывов после поворота камеры.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

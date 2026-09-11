@@ -3,7 +3,7 @@
 Seven optional fixes for Stronghold Crusader 1.41, using the game's existing
 controls, text areas and artwork.
 
-The next patch corrects tower-door alignment and draw order, and completes cliff
+Version 0.1.2 corrects tower-door alignment and draw order, and completes cliff
 texture mapping across both faces. Updated native screenshots show the changes.
 See the [short description](locale/description-en.md).
 

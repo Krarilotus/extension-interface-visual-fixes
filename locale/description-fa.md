@@ -14,8 +14,8 @@
 
 سنگ‌چینی زیر برج و درهایی هم‌ارتفاع با دیوارهای متصل.
 
-![سنگ‌چینی زیر برج و درهایی هم‌ارتفاع با دیوارهای متصل.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![سنگ‌چینی زیر برج و درهایی هم‌ارتفاع با دیوارهای متصل.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 بافت‌های پیوستهٔ پرتگاه پس از چرخش دوربین.
 
-![بافت‌های پیوستهٔ پرتگاه پس از چرخش دوربین.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![بافت‌های پیوستهٔ پرتگاه پس از چرخش دوربین.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

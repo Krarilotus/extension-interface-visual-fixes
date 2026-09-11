@@ -1,4 +1,4 @@
-﻿# Tower doors: native examples
+# Tower doors: native examples
 
 Each side chooses its highest eligible connection. The connection nearest the centre breaks ties at that height. Doors follow the actual connection height and move along the face. At the extreme tiles, a doorway sits halfway between the outermost two tile positions, for4x4,5x5 and6x6 towers.
 
