@@ -3,6 +3,10 @@
 Seven optional fixes for Stronghold Crusader 1.41, using the game's existing
 controls, text areas and artwork.
 
+Version 0.1.1 adds concise descriptions and cropped screenshots to the Store and
+installed-extension viewers in all nine languages. Game patches are unchanged.
+See the [short description](locale/description-en.md).
+
 - **Show lobby map descriptions:** keeps custom descriptions visible when
   switching between custom and shipped maps.
 - **Clear unique-building preview after placement:** deselects the marketplace,
