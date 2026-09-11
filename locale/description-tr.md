@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-SHC/SHCE 1.41 ve UCP 3.0.7 için yedi isteğe bağlı düzeltme. İstediklerinizi etkinleştirip oyunu yeniden başlatın.
+SHC/SHCE 1.41 ve UCP 3.0.7 için varsayılan olarak etkin yedi düzeltme. Her biri ayrı ayrı kapatılabilir. Ayarları uygulayın ve oyunu yeniden başlatın.
 
 - Özel harita açıklamalarını lobide görünür tutar.
 - Benzersiz bir bina başarıyla yerleştirildiğinde inşa önizlemesini kaldırır.

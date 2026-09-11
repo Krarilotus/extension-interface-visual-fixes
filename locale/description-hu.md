@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Hét választható javítás az SHC/SHCE 1.41 és UCP 3.0.7 verzióhoz. Kapcsold be a kívánt javításokat, majd indítsd újra a játékot.
+Hét javítás az SHC/SHCE 1.41 és UCP 3.0.7 verzióhoz, alapértelmezetten bekapcsolva. Mindegyik külön kikapcsolható. Alkalmazd a beállításokat, majd indítsd újra a játékot.
 
 - Láthatóvá teszi az egyéni térképek leírását az előszobában.
 - Egyedi épület sikeres elhelyezése után eltünteti az építési előnézetet.

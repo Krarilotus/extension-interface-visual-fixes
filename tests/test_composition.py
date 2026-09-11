@@ -111,8 +111,8 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     lua.globals().require = require
     options = yaml.safe_load((ROOT/'options.yml').read_text())['options']
     assert len(options) == 7
-    assert all(option['contents']['value'] is False for option in options)
-    config = {option['url'].split('.', 1)[1]: True for option in options}
+    assert all(option['contents']['value'] is True for option in options)
+    config = {option['url'].split('.', 1)[1]: option['contents']['value'] for option in options}
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
     assert len(cache) == 10

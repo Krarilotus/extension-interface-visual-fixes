@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Seven optional fixes for SHC/SHCE 1.41 and UCP 3.0.7. Enable the ones you want, then restart the game.
+Seven fixes for SHC/SHCE 1.41 and UCP 3.0.7, enabled by default. Each can be switched off separately. Apply your settings and restart the game.
 
 - Keep custom map descriptions visible in the lobby.
 - Clear the building preview after successfully placing a unique building.
