@@ -102,6 +102,25 @@ released at11:41:47 CEST. A separate cliff-texture suggestion is outside this fi
 
 ## Earlier native acceptance of selection and cache lifecycle
 
+Supplementary native session on 11 September 2026, PID10388, tested the same
+2b589f5 runtime with all six options enabled at800x600. The AI fixture changed
+only the saved AI plan, resources/pause fields and camera; it pre-created no
+tower, wall, stair or terrain tile. Native AI player2 built towers51 at299,192
+and28 at307,192, then mapper186 at300,196 and mapper181 at308,196. Read-only
+samples confirmed logic0x8100,height8 for stair6 and0x900,height88 for stair1,
+both on terrain8. Tower51 selected only south index2,height8 and displayed a
+ground door. Tower28 selected no connection and displayed no door. The original
+AI subsequently retried its isolated stair steps, marking them unavailable after
+the tiles already existed; the fixture is an acceptance plan, not a shipped AIV.
+
+A second fixture raised plateau196..207,78..89 to104, ending exactly at tower54's
+east and south footprint boundaries. East wall208,86 remained at terrain8/top98;
+south wall206,90 remained at terrain8/top68. Neither qualified against tower
+base104, and no door appeared in the cliff. The native gallery includes this
+corner view and the actual AI-built comparison. These checks do not claim troop
+navigation changes. The game closed normally and the desktop was released at
+12:09:04 CEST. Cliff texture orientation is a separate option tracked in issue16.
+
 Earlier height-only implementation b5df175 passed native low/high joins for all
 four tower types, mixed-height selection, removal, rotations and save reload.
 New native captures of d3f43159 verify the same final drawing and connection-cache
