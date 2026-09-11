@@ -87,6 +87,19 @@ three types at orientations0/6/4/2. Each retains entrances[0,0,1,0] with frames
 low wall; unconnected faces gain no doors. Stored geometry remains unchanged.
 The game was closed and its process absence verified before release at02:35:13.
 
-Before readiness: mixed heights, elevation and removal/rebuild;
-clipping/layout, preserved collision/pathfinding/simulation and relevant costs.
-Independent review and normal approved merge remain required.
+The final six-option composition also passes a native low-to-mixed-to-low check:
+at tower20/type77, adding high wall300,252 (height98) beside low wall299,252
+(height68) raises its existing frame81 doorway. Native demolition of only the
+high wall lowers it to the remaining low connection. Entrances stay[0,0,1,0]
+and tower geometry is preserved. See [mixed connection](docs/native-tower-mixed.png)
+and [high wall removed](docs/native-tower-high-removed.png). Both captures use
+the unchanged343-byte wrapper. The game closed normally at09:20:46.
+
+Native all-type/rotation rendering, save/reload, mixed walls and dynamic removal
+now pass. Elevated-terrain combinations are verified by the320 original-renderer
+native component draws (terminal rasterization captured) and emitted-x86 tests;
+a full-game elevated-terrain matrix is not claimed. Complete-record/write-bound
+tests establish that the wrapper changes only the draw argument, preserving
+collision/pathfinding and simulation fields. Added cost is measured above;
+whole-game FPS and isolated startup timing remain unmeasured. Check current-head
+CI and use the normal repository merge process after the R019 prerequisite.
