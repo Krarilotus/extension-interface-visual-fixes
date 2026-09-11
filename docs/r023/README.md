@@ -30,17 +30,6 @@ are excluded, even when no other wall is present.
 
 ![Raised stair connection without a false doorway](review-stairs.png)
 
-A low wall below the tower's terrain base does not create a doorway in the cliff.
-The cliff appearance itself is unchanged by the door option.
-
-![No doorway in the cliff beneath the tower](review-cliff.png)
-
-Captured in the native SHC1.41 game with the extension enabled. These are existing
-game sprites; no explanatory overlays or new game panels are added. The last
-four images use isolated, controlled saves: the edge case retains naturally
-placed geometry, while the stair/cliff cases set the documented native tile
-values offline. They verify rendering, not placement or navigation changes.
-
 ## AI-built stairs and a tower directly on the cliff edge
 
 The AI built both towers and their adjacent stairs from a prepared construction
@@ -51,8 +40,22 @@ doorway; stair6 is an AI construction tile, not a player-buildable stair option.
 ![AI-built stair6 creates a ground door; raised stair1 does not](native-ai-stairs.png)
 
 The tower below stands directly at the plateau's corner. The high wall on the
-right and low wall on the left remain on the lower ground. Both wall tops are
-below the tower's base, so neither creates a door in the cliff. This controlled
-terrain fixture specifically checks the edge, not a tower set back from it.
+right and low wall on the left remain on lower ground. The exposed tower
+foundation now uses wall masonry, and both doors follow their connection heights.
+The outer high connection is inset half a tile. Terrain outside the footprint
+keeps its cliff texture.
 
-![Tower at the cliff corner with both connecting walls below its base](native-cliff-corner.png)
+![Tower masonry and high/low doors below the tower base](foundations/rotation-0.png)
+
+![The same tower after a quarter turn](foundations/rotation-6.png)
+
+The AI also built these two towers on prepared elevated terrain. Stair6 alone
+supplies the ground door in the left foundation. The raised stair beside the
+right tower supplies no door. The fixture prepares terrain and an AI plan; the
+native AI places both towers and stairs after loading.
+
+![AI stair6 creates the lower foundation door; raised stair does not](foundations/ai-stair6.png)
+
+See [foundation validation](../../VALIDATION-TOWER-FOUNDATIONS.md) for exact
+revisions, fixture values, performance and limits. These are native captures,
+with no explanatory overlays or added in-game panels.

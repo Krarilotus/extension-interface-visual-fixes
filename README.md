@@ -14,7 +14,8 @@ controls, text areas and artwork.
   without changing tree growth or saved state.
 - **Align tower doors with connecting walls:** moves each doorway to the highest
   connected wall on its side, choosing the nearest to the side centre when heights
-tie. The doorway moves along the face as well as vertically.
+  tie. The doorway moves along the face as well as vertically; exposed cliffs
+  beneath towers use the existing wall masonry.
 - **Show Load in skirmish lobby:** makes the existing single-player Load control
   visible between the portrait and Start, including lobbies without an AI opponent.
 - **Continue cliff textures after rotation:** makes cliff textures advance along
@@ -51,7 +52,13 @@ screenshots below show this selection and horizontal positioning.
 
 Outermost connections place the door half a tile inward from the corner.
 Ground-level stair6 connections work on their own; raised stair1–5 do not count.
-A connection below the tower's base does not create a doorway in the cliff.
+Exposed cliffs beneath tower footprints use the current wall textures. Lower
+connections create doors at their own height where that masonry backs the door.
+Bare terrain and raised stairs do not supply doors.
+
+![Masonry under a cliff-edge tower with doors at the lower wall heights](docs/r023/foundations/rotation-0.png)
+
+![AI-built stair6 alone creates a ground door in the left tower foundation](docs/r023/foundations/ai-stair6.png)
 
 ![The nearer of two high wall connections is selected](docs/r023/nearer-high.png)
 
@@ -62,8 +69,10 @@ though a low wall is nearer the centre. The camera moved between these captures.
 
 See [the native gallery](docs/r023/README.md) for the selected wall coordinates.
 Selection uses the game's existing connection refresh; warm drawing reads a
-cache without rescanning walls. The measured added draw cost was 0.031 ms for
-1000 synthetic tower records; see the validation for method and limits.
+cache without rescanning walls. The measured added draw cost was about 0.026 ms for
+1000 synthetic tower records. Foundation textures reuse the existing graphics
+refresh and drawing pass. See [foundation validation](VALIDATION-TOWER-FOUNDATIONS.md)
+for method and limits.
 
 ### Single-player lobby Load
 
@@ -85,7 +94,7 @@ Native screenshots come from an isolated SHC 1.41 test installation with UCP3.0.
 winProcHandler0.2.0 and graphicsApiReplacer1.3.0. Exact revisions, tests and limits:
 [R007](VALIDATION-R007.md), [R130](VALIDATION-R130.md),
 [R132](VALIDATION-R132.md), [R019](VALIDATION-R019.md),
-[R023](VALIDATION-R023.md), [R001](VALIDATION-R001.md),
+[R023](VALIDATION-R023.md), [tower foundations](VALIDATION-TOWER-FOUNDATIONS.md), [R001](VALIDATION-R001.md),
 [cliff textures](VALIDATION-CLIFF-TEXTURES.md).
 Automated and original-code tests are distinguished from native results;
 multiplayer, replay and broader compatibility are not inferred from them.

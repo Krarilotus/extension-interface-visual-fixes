@@ -1,5 +1,11 @@
 # R023: tower doors follow their connecting walls
 
+The later [tower foundation correction](VALIDATION-TOWER-FOUNDATIONS.md) supersedes
+the below-base exclusion and allocation/timing figures recorded here. The native
+history below documents the earlier revision; current cliff-edge screenshots
+are in the linked validation. Highest-first selection and centre tie-breaking
+remain unchanged.
+
 Closes [issue9](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/9).
 R019 PR8 is merged. This PR targets main. Native acceptance of horizontal
 positioning, connection refresh and load invalidation is complete. Earlier
