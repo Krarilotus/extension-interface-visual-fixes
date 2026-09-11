@@ -81,9 +81,12 @@ The normal Save control produced m.sav; the original decoder validates its CRC
 and all three tower records/entrances. SHA256:
 `b75d72691b945bb312b4501fdfec2e5c4c4d7919545ae21c521f158fc83de6a1`.
 This confirms native creation and low-wall rendering for all four types across
-the two fixtures. Reload of m.sav and its other rotations are still pending.
+the two fixtures. A fresh native process also reloaded m.sav and verified all
+three types at orientations0/6/4/2. Each retains entrances[0,0,1,0] with frames
+[81,0]/[0,0]/[0,0]/[0,90], respectively. Both visible connected sides meet the
+low wall; unconnected faces gain no doors. Stored geometry remains unchanged.
 The game was closed and its process absence verified before release at02:35:13.
 
-Before readiness: mixed heights, elevation, removal/rebuild and new-fixture reload;
+Before readiness: mixed heights, elevation and removal/rebuild;
 clipping/layout, preserved collision/pathfinding/simulation and relevant costs.
 Independent review and normal approved merge remain required.
