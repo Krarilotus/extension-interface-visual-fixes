@@ -21,6 +21,11 @@ Enable **Distinguish dead tree stages** to show the existing standing-dead tree
 art before the fallen-log stage (R019). This changes drawing only; tree lifetime
 and save data stay unchanged. See [tree validation](VALIDATION-R019.md).
 
-Enable **Align tower doors with wall height** to align existing stone-tower
-doorways with their connecting walls (R023). See [door validation](VALIDATION-R023.md)
-for the draft's evidence and outstanding native checks.
+Enable **Align tower doors with connecting walls** to move each existing stone-tower
+doorway to its highest connected wall (R023). Selection is independent for each
+side. If several walls are equally high, the connection nearest that side's
+centre wins; an exact tie uses the first connection in the game's fixed boundary
+order. The door moves along the tower face as well as vertically. Thus a higher,
+off-centre wall takes priority over a lower, centred wall. Removing the selected
+wall makes the door follow the next qualifying connection on the game's existing
+connection refresh. See [door validation](VALIDATION-R023.md).

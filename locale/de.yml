@@ -8,5 +8,5 @@ camera_preview_description: Hält die Vorschau des gewählten Gebäudes während
 dead_tree_text: Abgestorbene Baumstadien unterscheiden
 dead_tree_description: Zeigt abgestorbene Bäume zunächst stehend und danach als umgestürzte Stämme.
 
-tower_door_text: Turmt?ren an die Mauerh?he anpassen
-tower_door_description: Richtet vorhandene Turmt?ren an der h?chsten angrenzenden Mauer aus.
+tower_door_text: Turmtüren an verbindenden Mauern ausrichten
+tower_door_description: Richtet jede Turmtür an der höchsten verbundenen Mauer auf ihrer Seite aus. Bei gleicher Höhe wird die Verbindung nächst der Seitenmitte gewählt; die Tür verschiebt sich seitlich und in der Höhe.
