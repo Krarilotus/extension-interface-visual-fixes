@@ -40,3 +40,19 @@ game sprites; no explanatory overlays or new game panels are added. The last
 four images use isolated, controlled saves: the edge case retains naturally
 placed geometry, while the stair/cliff cases set the documented native tile
 values offline. They verify rendering, not placement or navigation changes.
+
+## AI-built stairs and a tower directly on the cliff edge
+
+The AI built both towers and their adjacent stairs from a prepared construction
+plan on initially empty tiles. On the left, stair6 alone creates the ground-level
+door. On the right, raised stair1 does not create a door. No wall supplies either
+doorway; stair6 is an AI construction tile, not a player-buildable stair option.
+
+![AI-built stair6 creates a ground door; raised stair1 does not](native-ai-stairs.png)
+
+The tower below stands directly at the plateau's corner. The high wall on the
+right and low wall on the left remain on the lower ground. Both wall tops are
+below the tower's base, so neither creates a door in the cliff. This controlled
+terrain fixture specifically checks the edge, not a tower set back from it.
+
+![Tower at the cliff corner with both connecting walls below its base](native-cliff-corner.png)
