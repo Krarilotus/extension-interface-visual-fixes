@@ -88,11 +88,18 @@ local A = {
   TreeKind = address(0xF2CC9A, 0xF2D11A),
 }
 local M = {addresses = A}
+-- UCP 3.0.7 gives FASM a 64 KB workspace. Expand only referenced operands:
+-- declaring the entire address table for every wrapper exhausts that budget.
+local function operands(script)
+  return (script:gsub("[%a_][%w_]*", function(name)
+    return A[name] and string.format("0x%X", A[name]) or name
+  end))
+end
 function M.allocateAssembly(script)
-  return core.allocateAssembly(script, A)
+  return core.allocateAssembly(operands(script))
 end
 function M.assemble(script, origin)
-  return core.assemble(script, A, origin)
+  return core.assemble(operands(script), nil, origin)
 end
 M.patterns = {
   CameraPreview = extreme and "39 1D F0 B4 12 01 0F 85 59 15 00 00 8B 3D E0 20 C4 02"
