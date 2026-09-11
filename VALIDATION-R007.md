@@ -73,7 +73,8 @@ Module acceptance: [German text](docs/native-module-german.png),
 [multiplayer host long-text end](docs/native-module-mp-long-end.png),
 [empty after long](docs/native-module-mp-empty.png).
 
-CI is configured; independent review and normal approved merge remain pending.
+R007 PR2 was merged normally as c7081a0a484173aa950c1a666ecf217be16b498c;
+its owning issue1 is closed and the final CI checks passed.
 Remote-client lobby behavior needs a second test session to verify. Extreme, multiplayer synchronization,
 save/replay and full compatibility are not claimed from the automated tests.
 No simulation, command, save-format or asset changes are made.
