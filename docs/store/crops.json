@@ -1,0 +1,24 @@
+[
+  {
+    "file": "tower-foundation.png",
+    "source": "docs/r023/foundations/rotation-0.png",
+    "crop": [
+      430,
+      80,
+      900,
+      500
+    ],
+    "source_sha256": "094b6de6ff11f352e077ad2f7242a45b690ee26f814080fbbdf53d314029a1e3"
+  },
+  {
+    "file": "cliff-textures.png",
+    "source": "docs/cliffs/after-6.png",
+    "crop": [
+      320,
+      260,
+      720,
+      520
+    ],
+    "source_sha256": "d1dffc29d3488221ab19326f47c6058cc5267bc10e32652e7e61b8710234b8c6"
+  }
+]
