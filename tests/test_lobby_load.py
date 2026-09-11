@@ -3,7 +3,8 @@ from pathlib import Path
 import re
 import struct
 import pytest
-from lupa import LuaRuntime, lua_type
+from lupa import lua_type
+from lua_support import LuaRuntime, with_symbols, flatten_code
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32
 from unicorn.x86_const import *
 

@@ -1,7 +1,7 @@
 """Execute emitted source resolution with synthetic, replaceable GM9 pixels."""
 from pathlib import Path
 import struct
-from lupa import LuaRuntime
+from lua_support import LuaRuntime, with_symbols, flatten_code
 import pytest
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_READ
 from unicorn.x86_const import *
@@ -29,7 +29,8 @@ def emit(module='cliff-texture-source', moved=None, missing=None):
         at=next_address;next_address+=size;allocations.append((at,size))
         if zero:writes.append((at,bytes(size)))
         return at
-    def assembly(source):
+    def assembly(source, mapping=None):
+        source=with_symbols(source,mapping)
         size=len(assemble(source,0));at=allocate(size)
         writes.append((at,assemble(source,at)));return at
     def write(at,table):
@@ -44,7 +45,7 @@ def emit(module='cliff-texture-source', moved=None, missing=None):
     lua.globals().require=require
     lua.globals().core=lua.table_from({
         'AOBScan':scan,'allocate':allocate,'allocateAssembly':assembly,'writeCode':write,
-        'assemble':lambda source,_m,at:lua.table_from(list(assemble(source,at))),
+        'assemble':lambda source,_m,at:lua.table_from(list(assemble(with_symbols(source,_m),at))),
         'jmpTo':lambda target:lambda at:b'\xe9'+struct.pack('<i',target-at-5),
     })
     require(module).enable()

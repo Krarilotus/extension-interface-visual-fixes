@@ -2,7 +2,7 @@
 from pathlib import Path
 import itertools
 import struct
-from lupa import LuaRuntime
+from lua_support import LuaRuntime, with_symbols, flatten_code
 import pytest
 from unicorn import Uc,UC_ARCH_X86,UC_MODE_32,UC_HOOK_MEM_WRITE
 from unicorn.x86_const import *

@@ -8,7 +8,7 @@ import struct
 import subprocess
 import tempfile
 
-from lupa import LuaRuntime
+from lua_support import LuaRuntime, with_symbols, flatten_code
 import pytest
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_WRITE, UC_HOOK_MEM_READ, UC_HOOK_CODE
 from unicorn.x86_const import *
@@ -65,7 +65,8 @@ def emit(moved=None, missing=None):
         site = matches[0]
         return site-(10 if site in SITES or site==0x50EDAF else 6 if site==0x41B855 else 0)+(1 if moved == site else 0)
 
-    def allocate(script):
+    def allocate(script, mapping=None):
+        script=with_symbols(script,mapping)
         origin = CAVE + sum(allocations)
         first, final = assemble(script, 0), assemble(script, origin)
         assert len(first) == len(final)

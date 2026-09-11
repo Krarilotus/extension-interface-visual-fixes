@@ -1,15 +1,17 @@
+local layout = require("native-layout")
+local A = layout.addresses
 local M = {}
 
 function M.enable()
-  -- This stack-sensitive acknowledgement is verified for SHC1.41 only.
+  -- This stack-sensitive acknowledgement is verified for both 1.41 executables.
   -- Failed eligibility/tutorial paths never reach the post-commit notification.
   local site = core.AOBScan("53 B9 ? ? ? ? E8 ? ? ? ? 8B 44 24 2C 83 F8 05 7F 07") + 6
   local entry = core.AOBScan("83 EC 08 53 55 8B 6C 24 18 56 8B F1 8B 4C 24 24")
-  if site ~= 0x516A0F or entry ~= 0x5162D0 then
+  if site ~= A.PlacementNotifyCall or entry ~= A.PlacementEntry then
     error("Interface and Visual Fixes: unsupported placement acknowledgement layout")
   end
   local original = site + 5 + core.readInteger(site + 1)
-  if original ~= 0x4B5300 then
+  if original ~= A.MinimapNotify then
     error("Interface and Visual Fixes: placement notification was changed")
   end
   -- At wrapper entry: return-to-command +0x20, actor +0x24, mapper +0x18.
@@ -20,16 +22,16 @@ function M.enable()
     -- Preserve the caller's flags and EAX.
     0x9C, 0x50,
     -- Only synchronized placement execution, never AI/setup callers.
-    0x81, 0x7C, 0x24, 0x28, 0x3C, 0x1F, 0x48, 0x00,
+    0x81, 0x7C, 0x24, 0x28, {A.PlacementCommandReturn},
     0x75, 0x44,
     -- Leave editor and siege-editor tools alone.
-    0x83, 0x3D, 0x78, 0x7D, 0xFE, 0x01, 0x01,
+    0x83, 0x3D, {A.GameMode}, 0x01,
     0x74, 0x3B,
     -- Siege-editor mode.
-    0x83, 0x3D, 0x78, 0x7D, 0xFE, 0x01, 0x06,
+    0x83, 0x3D, {A.GameMode}, 0x06,
     0x74, 0x32,
     -- Placement actor must be the local player.
-    0x8B, 0x44, 0x24, 0x2C, 0x3B, 0x05, 0xDC, 0x75, 0xA2, 0x01,
+    0x8B, 0x44, 0x24, 0x2C, 0x3B, 0x05, {A.LocalPlayer},
     0x75, 0x26,
     -- Read the original mapper saved by placeBuilding, not shared command scratch.
     0x8B, 0x44, 0x24, 0x20, 0x83, 0xF8, 0x4D,

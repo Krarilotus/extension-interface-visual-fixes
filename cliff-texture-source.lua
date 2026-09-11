@@ -1,9 +1,11 @@
+local layout = require("native-layout")
+local A = layout.addresses
 local M = {}
 
 function M.enable()
   local sites = {
-    {0x453BDB, "A1 74 31 ED 00 8B 14 85 10 BA D0 00 01 55 F0 A1 6C 31 ED 00 8B 14 85 10 BA D0 00 01 55 F8", 30},
-    {0x45417B, "8B 15 74 31 ED 00 8B 04 95 10 BA D0 00 01 45 EC 8B 15 6C 31 ED 00 8B 04 95 10 BA D0 00 01 45 FC", 32},
+    {A.CliffSource, layout.patterns.CliffSource, 30},
+    {A.CliffOffsetSource, layout.patterns.CliffOffsetSource, 32},
   }
   for _, site in ipairs(sites) do
     if core.AOBScan(site[2]) ~= site[1] then
@@ -32,20 +34,20 @@ function M.enable()
   -- (307,200 bytes) are compared in a frame; invisible strips do no work.
   local stride = 8 + 9600*2
   local bank = core.allocate(32*stride, true)
-  local resolve = core.allocateAssembly(string.format([[
+  local resolve = layout.allocateAssembly(string.format([[
     pushfd
     pushad
-    mov esi, [eax*4+0xD0BA10]
-    add esi, [0x1FEA108]
+    mov esi, [eax*4+ImageOffsets]
+    add esi, [ImageData]
     mov [esp+28], esi
     mov edx, eax
-    sub edx, [0xD7CEB4]
+    sub edx, [CliffImages]
     cmp edx, 31
     ja done
-    cmp dword [eax*4+0xC9A590], 9600
+    cmp dword [eax*4+ImageSizes], 9600
     jne done
     shl eax, 4
-    cmp dword [eax+0xB98790], 0x00A7001E
+    cmp dword [eax+ImageHeaders], 0x00A7001E
     jne done
     imul ebx, edx, %d
     add ebx, %d
@@ -90,25 +92,25 @@ function M.enable()
     ret
   ]], stride, bank, epoch, uv, epoch))
   for _, site in ipairs(sites) do
-    local first = site[1] == 0x453BDB
-    local wrapper = core.allocateAssembly(string.format([[
+    local first = site[1] == A.CliffSource
+    local wrapper = layout.allocateAssembly(string.format([[
       pushfd
       pushad
-      mov eax, [0xED3174]
+      mov eax, [PrimaryImage]
       call %d
       mov [ebp-%d], eax
-      mov eax, [0xED316C]
+      mov eax, [SecondaryImage]
       call %d
       mov [ebp-%d], eax
       popad
       popfd
     ]], resolve, first and 16 or 20, resolve, first and 8 or 4) ..
       (first and [[
-        mov eax, [0xED316C]
-        mov edx, [eax*4+0xD0BA10]
+        mov eax, [SecondaryImage]
+        mov edx, [eax*4+ImageOffsets]
       ]] or [[
-        mov edx, [0xED316C]
-        mov eax, [edx*4+0xD0BA10]
+        mov edx, [SecondaryImage]
+        mov eax, [edx*4+ImageOffsets]
       ]]) .. string.format("jmp 0x%X", site[1]+site[3]))
     local patch = {core.jmpTo(wrapper)}
     for _ = 6, site[3] do patch[#patch+1] = 0x90 end
