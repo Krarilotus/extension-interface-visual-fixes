@@ -42,8 +42,8 @@ over five paired runs of two million calls. This excludes the original renderer;
 full-game render cost remains pending.
 All options default off.
 
-The native comparisons below exercised the earlier 48-byte wrapper; the new
-harvest guard still needs its native recheck. Full-game comparison uses an isolated synthetic w.sav: eight native-constructor
+The first native comparisons below exercised the earlier 48-byte wrapper; the
+58-byte guard recheck is recorded afterward. Full-game comparison uses an isolated synthetic w.sav: eight native-constructor
 trees at existing grid positions, with surrounding trees in native pending-removal
 state to avoid occlusion. Original native cleanup clears the neighbors. All four
 species retain stage 5 and stored frame 146 while the patch renders standing-dead
@@ -74,7 +74,22 @@ its labor before a chop was established. This is inconclusive, not a chop pass.
 All native sessions were closed normally and the shared desktop released after
 each; the d reload pass used seven of its eight reserved minutes.
 
-Before readiness: native chop and remaining
+The 58-byte wrapper (76d42eb) now also passes a native reload/render recheck for
+all four species. d.sav retains stage5/frame146/harvest-state0 and renders the
+standing-dead art; four living controls retain stage3 and normal animation.
+A separate synthetic j.sav seeds wood3, executes the original eligibility and
+harvest functions, then saves their result: stage5/frame146/harvest-state2/wood2.
+Only offsets0x76/0x78 differ in the four dead records; other sections are unchanged.
+Its SHA256 is
+`5e60fae8b5da029b21427e63cbc6392828977274d2331dbde73319525411de41`.
+The native game loads j and renders all four as fallen logs; they do not stand
+up again. Both fixtures retain flat-view art. See [standing controls](docs/native-trees-guard-standing.png)
+and [harvest results](docs/native-trees-guard-harvest.png). Exact-path/hash-guarded
+read-only samples confirm the stored states. This closes the native guard visual
+recheck, but is not a full woodcutter-routing test. The game was closed normally,
+process absence verified and desktop released at02:45:11.
+
+Before readiness: full native woodcutter route and remaining
 simulation/cost checks. Multiplayer, Extreme and replay remain untested. English and
 German option labels are provided; other existing locales use English fallback.
 Independent review and normal approved merge remain required.
