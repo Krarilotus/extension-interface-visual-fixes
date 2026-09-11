@@ -13,53 +13,52 @@ function M.enable()
     end
   end
   local epoch = require("render-frame").getEpoch()
-  -- Raw GM9 strips contain both halves of a 30-pixel strip. Each visible face
-  -- needs the complete strip, projected onto its 16 screen columns. Undo the
-  -- source skew; the existing native blitter supplies the destination skew.
+  -- Each native half spans a complete strip, in screen order. The centre
+  -- columns join the end of image N to the start of N+1 (32 wraps to 1).
   local columns = {}
   for x = 0, 29 do
-    local sx = math.floor(math.min(x, 29-x) * 29 / 14 + 0.5)
+    local sx = math.floor((x % 15) * 29 / 14 + 0.5)
     columns[#columns+1] = sx*2
     columns[#columns+1] = math.min(math.floor(sx/2), 14-math.floor(sx/2))
   end
   local uv = core.allocate(#columns, false)
   core.writeCode(uv, columns)
-  -- Each visible image owns an original copy and a converted copy. Grow only
-  -- when its metadata requires more space; preserve native resource ownership.
-  -- Compare once per render frame to detect replacement and address reuse.
-  -- Entry: epoch, source bytes, capacity bytes, buffer, valid conversion.
+  -- Entry: source-check epoch, bytes, capacity, private buffer, flags.
+  -- Flags: 1 = source copy valid, 2 = paired projection valid. A source change
+  -- invalidates its own projection and the preceding pair. Each original is
+  -- compared once per frame, even when two pairs use it. Storage remains one
+  -- source copy and one projection per image; no duplicated neighbour copies.
   local bank = core.allocate(32*20, true)
-  local resolve = layout.allocateAssembly(string.format([[
+  local ensureSource = layout.allocateAssembly(string.format([[
     pushfd
     pushad
-    mov esi, [eax*4+ImageOffsets]
-    add esi, [ImageData]
-    mov [esp+28], esi
     mov edx, eax
     sub edx, [CliffImages]
     cmp edx, 31
-    ja done
+    ja unavailable
+    imul ebx, edx, 20
+    add ebx, %d
+    mov esi, [eax*4+ImageOffsets]
+    add esi, [ImageData]
     mov ecx, [eax*4+ImageSizes]
     shl eax, 4
     cmp word [eax+ImageHeaders], 30
-    jne done
+    jne invalid
     movsx ebp, word [eax+ImageHeaders+2]
     sub ebp, 7
-    jle done
+    jle invalid
     imul eax, ebp, 60
     cmp eax, ecx
-    jne done
-    imul ebx, edx, 20
-    add ebx, %d
+    jne invalid
     cmp ecx, [ebx+8]
     ja grow
     cmp ecx, [ebx+4]
     jne resized
-    cmp dword [ebx+16], 0
-    je convert
+    test dword [ebx+16], 1
+    jz changed
     mov edx, [%d]
     cmp [ebx], edx
-    je cached
+    je available
     push esi
     mov edi, [ebx+12]
     shr ecx, 2
@@ -67,7 +66,7 @@ function M.enable()
     repe cmpsd
     pop esi
     je verified
-    jmp convert
+    jmp changed
   grow:
     push ecx
     call dword [ProcessHeap]
@@ -88,31 +87,102 @@ function M.enable()
   allocated:
     pop ecx
     test eax, eax
-    jz done
+    jz invalid
     mov [ebx+12], eax
     mov [ebx+8], ecx
   resized:
     mov [ebx+4], ecx
-  convert:
-    push esi
+  changed:
     mov edi, [ebx+12]
     mov ecx, [ebx+4]
     shr ecx, 2
     cld
     rep movsd
-    pop esi
-    ; Convert each column down its full metadata-defined height. The source
-    ; skew wraps within this image, including strips shorter than the skew.
+    mov dword [ebx+16], 1
+    call invalidate_previous
+  verified:
+    mov edx, [%d]
+    mov [ebx], edx
+  available:
+    mov [esp+28], ebx
+    jmp source_done
+  invalid:
+    test dword [ebx+16], 1
+    jz unavailable
+    mov dword [ebx+16], 0
+    call invalidate_previous
+  unavailable:
+    mov dword [esp+28], 0
+  source_done:
+    popad
+    popfd
+    ret
+  invalidate_previous:
+    lea edi, [ebx-20]
+    cmp ebx, %d
+    jne previous_ready
+    mov edi, %d
+  previous_ready:
+    and dword [edi+16], -3
+    ret
+  ]], bank, epoch, epoch, bank, bank+31*20))
+  local resolve = layout.allocateAssembly(string.format([[
+    pushfd
+    pushad
+    mov esi, [eax*4+ImageOffsets]
+    add esi, [ImageData]
+    mov [esp+28], esi
+    mov ebp, eax
+    call %d
+    test eax, eax
+    jz done
+    mov ebx, eax
+    mov eax, ebp
+    sub eax, [CliffImages]
+    inc eax
+    and eax, 31
+    add eax, [CliffImages]
+    call %d
+    ; Mixed-height or unavailable neighbours cannot share native row stride.
+    ; Use the validated current strip on both halves until compatible again.
+    test eax, eax
+    jz own_neighbour
+    mov edx, [eax+4]
+    cmp edx, [ebx+4]
+    jne own_neighbour
+    mov ebp, [eax+12]
+    jmp neighbour_ready
+  own_neighbour:
+    mov ebp, [ebx+12]
+  neighbour_ready:
+    test dword [ebx+16], 2
+    jnz cached
+    mov esi, [ebx+12]
+    mov edi, esi
+    add edi, [ebx+4]
+    mov eax, [ebx+4]
+    xor edx, edx
+    mov ecx, 60
+    div ecx
+    ; Locals: end, bytes, rows, destination, left source, entry, right source.
+    push ebp
     push ebx
     push esi
     push edi
-    push ebp
-    mov eax, [ebx+4]
     push eax
-    add eax, esi
+    push dword [ebx+4]
+    mov eax, esi
+    add eax, [ebx+4]
     push eax
     xor ebx, ebx
   column:
+    cmp ebx, 15
+    jne column_source
+    mov eax, [esp+24]
+    mov [esp+16], eax
+    add eax, [esp+4]
+    mov [esp], eax
+  column_source:
     movzx eax, byte [ebx*2+%d+1]
     xor edx, edx
     div dword [esp+8]
@@ -145,10 +215,8 @@ function M.enable()
     jb column
     add esp, 20
     pop ebx
-    mov dword [ebx+16], 1
-  verified:
-    mov edx, [%d]
-    mov [ebx], edx
+    add esp, 4
+    or dword [ebx+16], 2
   cached:
     mov eax, [ebx+12]
     add eax, [ebx+4]
@@ -157,7 +225,7 @@ function M.enable()
     popad
     popfd
     ret
-  ]], bank, epoch, uv, uv, epoch))
+  ]], ensureSource, ensureSource, uv, uv))
   for _, site in ipairs(sites) do
     local first = site[1] == A.CliffSource
     local wrapper = layout.allocateAssembly(string.format([[

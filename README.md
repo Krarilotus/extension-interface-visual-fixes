@@ -87,9 +87,14 @@ Cliff textures continue across both faces in all four map orientations. The fix
 uses the current texture pack and the existing drawing passes. Converted strips
 are cached; repeated tile draws do not reprocess their pixels.
 
+Front-facing diagonal steps use consecutive left/right strips: `[1|2] [3|4]`.
+Straight sides advance one strip at a time. Steps receding into the view use
+stable variation where their overlapping faces cannot form a continuous strip.
+
 ![Both cliff faces use the complete texture sequence](docs/store/cliff-textures.png)
 
 See [the current comparison, compatibility checks and measured cost](VALIDATION-CLIFF-UV.md).
+See [diagonal sequencing and its native validation](VALIDATION-DIAGONAL-CLIFFS.md).
 
 ## Validation
 
