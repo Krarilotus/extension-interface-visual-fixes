@@ -77,7 +77,16 @@ correctly to the interior. Right-click cancellation passes. Read-only traces
 confirm zoom=1, scrolling=1 and changing preview/world/camera coordinates.
 Only that rotated orientation was exercised; this is not an all-rotations claim.
 
-Additional supported layouts, drag/release regression and relevant full-game
+An interior native drag/release check on9446b48 placed one woodcutter at(267,258)
+for3 wood (144 to141), retained mapper51, and cleared held/release flags. Moving
+the pointer resumed the existing repeat preview. This covers ordinary release
+behavior, not a simultaneous held-button/edge-scroll sequence.
+Two Right-key attempts and Alt+1 in the Castle Builder fixture did not change
+the sampled camera or set scrolling; keyboard-scroll acceptance is inconclusive.
+Flat-view switching preserved the interior preview initially, but the later
+stationary capture omitted it; no flat scrolling success is inferred.
+
+Additional supported layouts, held-button scrolling and relevant full-game
 frame cost remain pending. Multiplayer, Extreme and replay are not claimed.
 R007/R130 remain independently selectable; all options default off and require
 a game restart to change.
