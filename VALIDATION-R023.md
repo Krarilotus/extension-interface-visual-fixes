@@ -36,13 +36,13 @@ all16/20/24 boundary tiles every40 tower updates. Two hooks at0x41B7FF/0x41B855
 collect the selected connection during that loop; they add no second scan or
 update callback. Warm drawing reads a cached entry, with no wall/row-array reads.
 A cold visible side is scanned once after load or building-slot reuse, at most
-six tiles. Existing map setup0x512100 invalidates entries by epoch. UID and origin
+six tiles. Final map preparation0x512450 invalidates entries by epoch. UID and origin
 checks prevent a reused slot retaining the previous tower's connection. The
 cache is private presentation memory and is not serialized or written into game
 records. Placement/removal refresh on the game's existing40-update cadence.
 
 Eight signatures are validated before allocation/writes. Six startup code blocks
-total794bytes; private zeroed data uses65,540bytes. The patch replaces44 original
+total795bytes; private zeroed data uses65,540bytes. The patch replaces45 original
 instruction bytes. There are no per-frame allocations, new input registrations,
 additional drawings, assets or runtime dependencies; it uses the existing FASM
 support supplied by UCP3.0.7. All options default off and require a restart.
@@ -88,3 +88,11 @@ configuration rendered in a1280x720 window. Multiplayer, Extreme and replay are
 not claimed. The change does not alter pathfinding, collision or simulation
 commands. Localized English/German descriptions state the selection and movement;
 other existing option catalogs retain explicit English fallback for this option.
+
+The first cached native pass exposed an incomplete load invalidation hook:
+setupAllMapSections0x512100 runs for initial setup/MP loading, but the SP load
+branch skips it. The counter stayed1 across SP reload. Final prepareMap0x512450
+is called after both SP/MP section loads and new-map creation; invalidation now
+uses that shared boundary. The emitted-code regression restores an identical
+UID/origin with changed geometry and verifies a fresh selection immediately.
+Native counter recheck is pending.

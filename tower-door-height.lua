@@ -19,7 +19,7 @@ function M.enable()
   local updateSites = {
     {0x41B7FF, "89 9C 0F 94 02 00 00"},
     {0x41B855, "03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9", 6},
-    {0x512100, "53 55 56 8B F1 57 33 FF 89 BE 1C 29 55 00"},
+    {0x512450, "51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C"},
   }
   for _, site in ipairs(updateSites) do
     if core.AOBScan(site[2]) + (site[3] or 0) ~= site[1] then
@@ -134,17 +134,15 @@ function M.enable()
     mov eax, [eax*4+0x1BF8368]
     jmp 0x41B85C
   ]])
-  -- Existing map setup precedes new games and save loads. Invalidate by epoch;
+  -- Final map preparation runs after every new map and SP/MP save load.
   -- ordinary camera movement and painting do not reset the cache.
   local resetMap = core.allocateAssembly(string.format([[
     pushfd
     inc dword [%d]
     popfd
-    push ebx
-    push ebp
-    push esi
-    mov esi, ecx
-    jmp 0x512105
+    push ecx
+    mov eax, [0x21AEC54]
+    jmp 0x512456
   ]], epoch))
 
   -- A cold side is initialized once after load / building-slot reuse. After
@@ -304,7 +302,7 @@ function M.enable()
   end
   core.writeCode(0x41B7FF, {core.jmpTo(beginUpdate), 0x90, 0x90})
   core.writeCode(0x41B855, {core.jmpTo(visitTile), 0x90, 0x90})
-  core.writeCode(0x512100, {core.jmpTo(resetMap)})
+  core.writeCode(0x512450, {core.jmpTo(resetMap), 0x90})
 end
 
 return M
