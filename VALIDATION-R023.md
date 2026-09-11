@@ -1,9 +1,9 @@
 # R023: tower doors follow their connecting walls
 
 Closes [issue9](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/9).
-R019 PR8 is merged. This PR targets main and remains draft until native acceptance
-of the new horizontal positioning and cache implementation is complete. Earlier
-height-only screenshots do not prove this revised behavior.
+R019 PR8 is merged. This PR targets main. Native acceptance of horizontal
+positioning, connection refresh and load invalidation is complete. Earlier
+height-only screenshots are not used as proof of this revised behavior.
 
 ## Behavior
 
@@ -62,24 +62,28 @@ A private native benchmark executes original0x41B7C0 and0x4E2AD0 with the actual
 patch and captured native map data. A1000-record synthetic workload uses all four
 tower kinds and eligible walls along every boundary. Cold and warm original
 renderer coordinates are asserted for both door frames. Five alternating pairs
-of200,000 tower draws/refreshes measure median added20.052ns per tower draw
-(two doors), and156.046ns per connection refresh. That is0.0201ms per1000-tower
-draw pass and0.156ms per1000-tower connection pass, or0.00390ms amortized across
+of200,000 tower draws/refreshes measure median added40.055ns per tower draw
+(two doors), and140.124ns per connection refresh. That is0.0401ms per1000-tower
+draw pass and0.140ms per1000-tower connection pass, or0.00350ms amortized across
 1000 tower updates at the unchanged40-update interval. A first cold1000-tower
-draw pass took0.0743ms total versus0.0296ms warm. This intentionally heavy native
+draw pass took0.1475ms total versus0.0819ms warm. This intentionally heavy native
 component workload tests accelerated execution; it is not a1000-speed game-menu
 setting, full-game FPS, rasterization measurement or universal worst-case claim.
 Original game bytes and private image data are not distributed.
 
-## Native acceptance pending for the revised code
+## Native acceptance of the revised code
 
 Earlier height-only implementation b5df175 passed native low/high joins for all
 four tower types, mixed-height selection, removal, rotations and save reload.
-Those results established the cause and fixtures, but horizontal movement and
-cache lifecycle require new captures of the current source. Use m.sav with low
-wall299,252 on square tower20; add high wall300,252, then a farther high wall,
-remove the selected wall and confirm both the selected connection and doorway
-move. Rotate using the native controls and reload m to check invalidation.
+New native captures of d3f43159 verify the same final drawing and connection-cache
+instructions used by43e61945. In m.sav, square tower20 has a low wall at299,252
+(height68). Native placement adds high walls at300,252 and298,252 (height98).
+The cache selects300,252, the nearer of the two equally high connections. Native
+deletion of that selected wall changes selection to298,252; the doorway moves
+along the face to the remaining high connection, despite the nearer low wall.
+Native rotation0 to2 retains that selection on the appropriate visible face.
+See [the captioned screenshots](docs/r023/README.md). Read-only geometry samples
+record both wall candidates and the cache choice; no live game memory was edited.
 
 Reference executable SHA256:
 `3bb0a8c1e72331b3a30a5aa93ed94beca0081b476b04c1960e26d5b45387ac5a`.
@@ -95,4 +99,10 @@ branch skips it. The counter stayed1 across SP reload. Final prepareMap0x512450
 is called after both SP/MP section loads and new-map creation; invalidation now
 uses that shared boundary. The emitted-code regression restores an identical
 UID/origin with changed geometry and verifies a fresh selection immediately.
-Native counter recheck is pending.
+The final43e61945 code was then installed in the combined six-option package
+(ZIP SHA2565e3146b40a7eff7e8ab26792eba08417097cb998395f6abaf558698809b35678).
+Native SP loads m -> h -> m advanced the cache epoch1 ->2 ->3. Tower20 returned
+to low wall index3,height68; small tower54 independently selected east high
+index0,height98 and south low index1,height68. The final native process was
+closed normally and the desktop released at10:35:54 CEST on11September2026.
+The load-hook change is outside the steady-state render/update paths.

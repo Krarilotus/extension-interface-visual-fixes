@@ -1,8 +1,9 @@
 # R019: distinct dead-tree stages
 
 Related issue: [#7](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/7).
-This draft is stacked on R132 PR #6. Native chop and remaining cost acceptance
-remain pending; the four-species visual comparison, reload and decay now pass.
+R132 PR #6 is merged; this focused PR targets main. Native four-species art,
+reload, natural decay and the felled-tree guard pass. Worker-route limits and
+measured wrapper costs are recorded below.
 
 Original SHC 1.41 UpdateTree1 at 0x4F2380 selects native frame 146 for both stages
 5 and 6 of species 1–4. Inspection of all four original sheets confirms frame
@@ -38,8 +39,8 @@ accepted. No new dependency, asset or draw/input hook is introduced. One 58-byte
 startup allocation and six changed code bytes. The runtime package has 16 files
 and is 8,851 bytes, 1,384 bytes above R132. A native benchmark of the actual
 emitted wrapper adds median 4.028 ns for living trees and 4.571 ns for dead trees
-over five paired runs of two million calls. This excludes the original renderer;
-full-game render cost remains pending.
+over five paired runs of two million calls. This measures all additional work at the existing frame-load site, excluding
+the unchanged renderer; it is not a whole-game FPS measurement.
 All options default off.
 
 The first native comparisons below exercised the earlier 48-byte wrapper; the
