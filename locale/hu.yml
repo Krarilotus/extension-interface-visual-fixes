@@ -1,3 +1,7 @@
 interface_visual_fixes: Felületi és grafikai javítások
 lobby_text: Pályaleírások az előszobában
 lobby_description: Látható marad a kiválasztott pálya leírása az előszobában.
+lobby_load_text: Betöltés megjelenítése a csata előszobájában
+lobby_load_description: Megjeleníti a meglévő Betöltés gombot az egyjátékos csata
+  előszobájában, és lehetővé teszi a betöltést gépi ellenfél nélkül. A módosítások
+  alkalmazásához indítsd újra a játékot.

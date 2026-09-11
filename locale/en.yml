@@ -1,3 +1,6 @@
 interface_visual_fixes: Interface and Visual Fixes
 lobby_text: Show lobby map descriptions
 lobby_description: Keeps the selected map's description visible in the lobby.
+lobby_load_text: Show Load in skirmish lobby
+lobby_load_description: Shows the existing Load button in the single-player skirmish
+  lobby and allows loading without an AI opponent. Restart the game to apply changes.

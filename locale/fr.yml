@@ -1,3 +1,7 @@
 interface_visual_fixes: Corrections de l’interface et de l’affichage
 lobby_text: Descriptions des cartes du salon
 lobby_description: Garde visible la description de la carte sélectionnée dans le salon.
+lobby_load_text: Afficher Charger dans le salon d’escarmouche
+lobby_load_description: Affiche le bouton Charger existant dans le salon d’escarmouche
+  solo et permet de charger une partie sans adversaire IA. Redémarrez le jeu pour
+  appliquer les modifications.

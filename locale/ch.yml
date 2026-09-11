@@ -1,3 +1,5 @@
 interface_visual_fixes: 界面与画面修复
 lobby_text: 显示大厅地图说明
 lobby_description: 让所选地图的说明在大厅中保持可见。
+lobby_load_text: 在遭遇战大厅显示载入按钮
+lobby_load_description: 在单人遭遇战大厅中显示原有的载入按钮，并允许在没有电脑对手时载入游戏。重启游戏以应用更改。

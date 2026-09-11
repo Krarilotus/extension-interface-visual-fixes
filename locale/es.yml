@@ -1,3 +1,7 @@
 interface_visual_fixes: Correcciones de interfaz y gráficos
 lobby_text: Descripciones de mapas en la sala
 lobby_description: Mantiene visible la descripción del mapa seleccionado en la sala.
+lobby_load_text: Mostrar Cargar en la sala de escaramuza
+lobby_load_description: Muestra el botón Cargar existente en la sala de escaramuza
+  de un jugador y permite cargar una partida sin un oponente de IA. Reinicia el juego
+  para aplicar los cambios.

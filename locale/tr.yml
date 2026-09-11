@@ -1,3 +1,7 @@
 interface_visual_fixes: Arayüz ve Görsel Düzeltmeler
 lobby_text: Lobide harita açıklamaları
 lobby_description: Seçilen haritanın açıklamasını lobide görünür tutar.
+lobby_load_text: Çatışma lobisinde Yükle düğmesini göster
+lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmesini gösterir
+  ve yapay zekâ rakibi olmadan oyun yüklemeye izin verir. Değişiklikleri uygulamak
+  için oyunu yeniden başlatın.

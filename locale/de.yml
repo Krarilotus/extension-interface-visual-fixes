@@ -1,3 +1,7 @@
 interface_visual_fixes: Oberflächen- und Grafikkorrekturen
 lobby_text: Kartenbeschreibungen in der Lobby
 lobby_description: Hält die Beschreibung der gewählten Karte in der Lobby sichtbar.
+lobby_load_text: Laden in der Gefechtslobby anzeigen
+lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby
+  an und ermöglicht das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen
+  anzuwenden.
