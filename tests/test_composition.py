@@ -56,14 +56,18 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
 
     def write(address, table):
         result = bytearray()
-        for value in table.values():
-            if isinstance(value, int):
-                result.append(value)
-            elif lua_type(value) == 'table':
-                for number in value.values():
-                    result.extend(struct.pack('<I', number & 0xffffffff))
-            else:
-                result.extend(value(address+len(result)))
+        def flatten(values):
+            for value in values.values():
+                if isinstance(value, int):
+                    if 0 <= value <= 255:
+                        result.append(value)
+                    else:
+                        result.extend(struct.pack('<I', value & 0xffffffff))
+                elif lua_type(value) == 'table':
+                    flatten(value)
+                else:
+                    result.extend(value(address+len(result)))
+        flatten(table)
         code = bytes(result)
         assert all(address+len(code) <= old or old+len(data) <= address
                    for old, data in writes), 'duplicate/overlapping patch write'
@@ -97,6 +101,11 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
     module.enable(module, lua.table_from(config))
     assert len(cache) == 6
     assert sum(size for _, size in allocations) == 615
+    for address, size in allocations:
+        initialized = set()
+        for start, data in writes:
+            initialized.update(range(max(address, start), min(address+size, start+len(data))))
+        assert len(initialized) == size, 'wrapper length does not match emitted native bytes'
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
         0x42afb9, 0x4426e0, 0x42733a,
