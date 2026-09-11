@@ -32,6 +32,18 @@ remain separately owned.
 
 ## Validation completed
 
+- Corrected package native test11 September09:26-09:31: single-player lobby
+  opens; entire Load icon is clear of the master portrait, map list and Start
+  hand. Clicking the old center does nothing; the new target opens native Load
+  in human-only and human+Rat lobbies. Back returns correctly; g.sav loads and
+  quitting that fixture returns to the lobby with the relocated icon intact.
+  Native sample confirms mode99, x560/y540 and no AI in the human-only case.
+  R007 description is visible alongside it. Current game configuration retains
+  the previously verified1920x1080 setting; capture size is1282x746.
+
+![Single-player Load between master and Start](docs/r001/single-player-load.png)
+![Original Load dialog opened from the relocated icon](docs/r001/native-load-dialog.png)
+
 - 66 automated tests: existing20R007 plus46R001, actual Lua-emitted x86 branches,
   mode/team boundaries, register/stack preservation, disabled/idempotent enable,
   signature/layout rejection and option composition. Includes SP/MP navigation
@@ -66,13 +78,29 @@ assigned workspace `Roadmap/Investigations/R001-lobby-load/evidence`.
 
 ## Remaining acceptance
 
-Native new-position rendering/hover/click and SP-to-MP position reset;
-packaged option-off; empty/invalid save list handling; minimum/default
+Native hover/tooltip and SP-to-MP position reset; packaged option-off;
+empty/invalid save list handling; minimum/default
 layout and long translated game tooltip; focused MP host smoke. No native
 Extreme/remote multiplayer/replay certification is claimed. Nine maintained
 launcher locales (en/de/fr/ru/hu/tr/ch/es/fa) contain matching keys; independent
 translation review remains pending. In-game resources follow game language,
 launcher option follows GUI language.
+
+GUI catalog integration now passes for all nine languages against both local
+GUI2a644333 and upstream GUI009ee71fe3a5229e75b2dc7a10d2ef5141217bc8.
+The test reads the actual runtime ZIP, checks the GUI's supported-language list,
+catalog keys/nonempty UTF-8 strings and calls its real changeLocale function.
+Category, title and description resolve in every locale without English fallback;
+option URLs/defaults and source templates stay unchanged. CI repeats the pinned
+upstream check and attaches LOCALIZATION.json with the review ZIP/checksum.
+This does not claim visual GUI inspection or independent language review of all
+nine translations.
+
+The MP host attempt triggered a Windows Firewall permission prompt before lobby
+entry. No security setting was changed. The isolated test process was stopped
+after releasing the slot so it would not block other workers. Native MP remains
+unverified; gate fixtures and mode-position tests are not a substitute for that
+smoke test. Resuming that check requires manually handling the OS prompt.
 
 Runtime package14files6113bytes, +2362bytes over R007's3751byte archive, no new
 dependency.73 allocated code bytes,21 overwritten instruction bytes. Three
@@ -88,7 +116,7 @@ dword. Corrected to four explicit bytes and fixed the test compiler's matching
 mistake. All66 tests pass again; a private fixture now compares emitted bytes
 against the actual hash-checked UCP3.0.7 core.compile/writeCode/jmpTo at four
 allocation bases. Original-code gates also pass again. Revised native retry
-is required; the initial failed run is not acceptance.
+passed for SP as recorded above; the initial failed run is not acceptance.
 
 PR remains draft until material native gates pass. Independent review and normal
 approved merge remain required; no release or completed issue resolution.
