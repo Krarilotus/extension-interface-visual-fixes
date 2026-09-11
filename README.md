@@ -1,30 +1,54 @@
-﻿# Interface and Visual Fixes
+# Interface and Visual Fixes
 
-Fixes descriptions disappearing from the existing lobby map text area (R007).
-Also clears the selected marketplace, barracks, mercenary post or guild tool
-after its successful local placement (R130), preserving retries and ordinary
-repeat placement. Enable **Clear unique-building preview after placement** to
-use this separate option.
+Six optional fixes for Stronghold Crusader 1.41, using the game's existing
+controls, text areas and artwork.
 
-Enable **Show lobby map descriptions** and restart the game. The option defaults
-to off. Install the runtime files and `locale` folder in
-`ucp/modules/interface-visual-fixes-0.1.0`.
+- **Show lobby map descriptions:** keeps custom descriptions visible when
+  switching between custom and shipped maps.
+- **Clear unique-building preview after placement:** deselects the marketplace,
+  barracks, mercenary post and guilds after successful placement. Failed attempts
+  can be retried; ordinary buildings and granary expansions keep repeat placement.
+- **Show building previews while scrolling:** updates the existing preview while
+  the camera moves.
+- **Distinguish dead tree stages:** shows standing-dead art before fallen logs,
+  without changing tree growth or saved state.
+- **Align tower doors with wall height:** adjusts the existing door overlays to
+  the highest connecting wall on each side, without moving the tower.
+- **Show Load in skirmish lobby:** makes the existing single-player Load control
+  visible between the portrait and Start, including lobbies without an AI opponent.
 
-See [validation](VALIDATION-R007.md) for tested behavior and remaining gates.
-SHC 1.41 is the declared target. No release is published.
+Enable the module, choose the fixes you want, apply your settings and restart the
+game. Each option starts disabled. The module targets UCP 3.0.7 and SHC 1.41.
+Extreme support is not declared.
 
-Enable **Show building previews while scrolling** to keep the existing building
-ghost visible during camera movement (R132). Placement uses the same native
-coordinates and command path. See [camera preview validation](VALIDATION-R132.md).
+## Feature screenshots
 
-Enable **Distinguish dead tree stages** to show the existing standing-dead tree
-art before the fallen-log stage (R019). This changes drawing only; tree lifetime
-and save data stay unchanged. See [tree validation](VALIDATION-R019.md).
+### Lobby map descriptions
 
-Enable **Align tower doors with wall height** to align existing stone-tower
-doorways with their connecting walls (R023). See [door validation](VALIDATION-R023.md)
-for the draft's evidence and outstanding native checks.
+![The selected custom map description in the existing lobby text area](docs/native-test-visible-after.png)
 
-Enable **Show Load in skirmish lobby** to expose the existing single-player
-Load control between the portrait and Start control, including human-only
-lobbies (R001). See [Load validation](VALIDATION-R001.md).
+### Unique-building placement
+
+![An engineers guild placed successfully with its preview cleared](docs/native-engineers-cleared.png)
+
+### Camera movement
+
+![The existing building preview visible while the camera scrolls](docs/native-patched-scrolling-visible.png)
+
+### Dead trees
+
+![Standing-dead trees retain their distinct native artwork](docs/native-trees-guard-standing.png)
+
+### Tower doors
+
+![Tower door overlays aligned with low and high connecting walls](docs/native-tower-corrected.png)
+
+## Validation
+
+Native screenshots come from an isolated SHC 1.41 test installation with UCP3.0.7,
+winProcHandler0.2.0 and graphicsApiReplacer1.3.0. Exact revisions, tests and limits:
+[R007](VALIDATION-R007.md), [R130](VALIDATION-R130.md),
+[R132](VALIDATION-R132.md), [R019](VALIDATION-R019.md),
+[R023](VALIDATION-R023.md), [R001](VALIDATION-R001.md).
+Automated and original-code tests are distinguished from native results;
+multiplayer, replay and broader compatibility are not inferred from them.
