@@ -76,10 +76,10 @@ Native module enable recorded2026-09-11 08:22:31; game closed and slot released
 08:26:29. Logs, original-code fixtures and save hashes are retained in the
 assigned workspace `Roadmap/Investigations/R001-lobby-load/evidence`.
 
-## Remaining acceptance
+## Compatibility limits
 
-Native hover/tooltip and SP-to-MP position reset; invalid save handling;
-long translated game tooltip and focused MP host smoke. No native
+Readable native hover/long translated game tooltip and malformed-save recovery
+are not certified. No native
 Extreme/remote multiplayer/replay certification is claimed. Nine maintained
 launcher locales (en/de/fr/ru/hu/tr/ch/es/fa) contain matching keys; independent
 translation review remains pending. In-game resources follow game language,
@@ -96,10 +96,9 @@ This does not claim visual GUI inspection or independent language review of all
 nine translations.
 
 The MP host attempt triggered a Windows Firewall permission prompt before lobby
-entry. No security setting was changed. The isolated test process was stopped
-after releasing the slot so it would not block other workers. Native MP remains
-unverified; gate fixtures and mode-position tests are not a substitute for that
-smoke test. Resuming that check requires manually handling the OS prompt.
+entry in the original R001 installation. No security setting was changed. That
+installation-specific blocker was later avoided by using the already-tested
+Interface installation; the successful native host check is recorded below.
 
 Runtime package14files6113bytes, +2362bytes over R007's3751byte archive, no new
 dependency.73 allocated code bytes,21 overwritten instruction bytes. Three
@@ -117,8 +116,9 @@ against the actual hash-checked UCP3.0.7 core.compile/writeCode/jmpTo at four
 allocation bases. Original-code gates also pass again. Revised native retry
 passed for SP as recorded above; the initial failed run is not acceptance.
 
-PR remains draft until material native gates pass. Independent review and normal
-approved merge remain required; no release or completed issue resolution.
+The required visibility, action, layout, off, empty-list and native host-transition
+checks now pass. Check final CI/review state and use the normal repository merge
+process. No remote multiplayer, release or issue-resolution claim is implied.
 
 ## Interface integration acceptance, 11 September 2026
 
@@ -147,11 +147,27 @@ at800x600; the earlier1920x1080 acceptance is separately recorded above.
 Hover did not produce a readable tooltip in the800x600 capture, with either the
 enabled icon or original hidden target. This is not claimed as tooltip acceptance
 or a proven regression. No translated in-game resource fixture was substituted.
-The previously recorded Windows Firewall blocker still prevents native MP
-acceptance; it is separate from the authorized UCP developer-mode notice.
+The original800x600 hidden-target hover comparison also lacked readable text.
+No new tooltip renderer or resource is introduced. Malformed-save recovery stays
+in the unchanged original loader and has not been separately certified; valid
+and empty-list behavior are tested. These broader limits do not replace the
+focused visibility/action acceptance above.
 
 After reconciling the focused PR with merged main, its732 tests and packaged GUI
 localization check pass. That18-file ZIP is14,949bytes, SHA256
 75cf2d281e1d26d9d84ab6035dc37fae4757b34ada3424126bd63f879a0da323.
 Its runtime Lua/options/locales match the native-tested combined package; only
 definition metadata differs (the release branch additionally authors topic tags).
+
+## Native SP-to-MP transition
+
+On11September2026 at10:55-10:58, the same Interface installation entered SP first
+(the relocated Load icon was visible), returned to the main menu, and opened
+a TCP/IP host lobby successfully without an OS permission prompt. The original
+MP position and disabled appearance returned. Clicking Load with one human and
+no AI was inert. A read-only sample confirms game_mode1,host1,load_x444,load_y540,
+secondary_mode3,load_action0 andload_from_lobby0 after the attempted click.
+See [the host screenshot](docs/r001/mp-restored-position.png). No remote client
+joined; host-readiness/client synchronization is covered only by original-code
+comparisons, not a live two-machine test. The owned process21776 exited normally;
+absence was verified and the desktop released at10:58:16 CEST.

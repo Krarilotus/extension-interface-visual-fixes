@@ -20,6 +20,7 @@ the title/category/description produced by the actual pinned GUI resolver for
 each language without English fallback. This automated check does not establish
 native layout quality or independent translation approval in every language.
 
-Native SP placement/click/back/save,800x600 layout, disabled behavior and empty
-save-list checks have passed. See VALIDATION-R001.md and PR12 for remaining
-acceptance, including native MP, invalid saves and translated tooltip layout.
+Native SP placement/click/back/save,800x600 layout, disabled behavior, empty
+save-list and SP-to-MP host position/gate checks have passed. See VALIDATION-R001.md
+for limits, including remote multiplayer, malformed saves and translated tooltip
+layout. These limits are not a claim of broader compatibility certification.
