@@ -14,7 +14,7 @@ controls, text areas and artwork.
   without changing tree growth or saved state.
 - **Align tower doors with connecting walls:** moves each doorway to the highest
   connected wall on its side, choosing the nearest to the side centre when heights
-  tie. The doorway moves along the face as well as vertically.
+tie. The doorway moves along the face as well as vertically.
 - **Show Load in skirmish lobby:** makes the existing single-player Load control
   visible between the portrait and Start, including lobbies without an AI opponent.
 
@@ -47,6 +47,10 @@ the side centre wins. An exact tie uses the first tile in native boundary order.
 A higher off-centre wall takes priority over a lower centred wall. Updated native
 screenshots below show this selection and horizontal positioning.
 
+Outermost connections place the door half a tile inward from the corner.
+Ground-level stair6 connections work on their own; raised stair1–5 do not count.
+A connection below the tower's base does not create a doorway in the cliff.
+
 ![The nearer of two high wall connections is selected](docs/r023/nearer-high.png)
 
 After removing that connection, the door follows the remaining high wall even
@@ -56,7 +60,7 @@ though a low wall is nearer the centre. The camera moved between these captures.
 
 See [the native gallery](docs/r023/README.md) for the selected wall coordinates.
 Selection uses the game's existing connection refresh; warm drawing reads a
-cache without rescanning walls. The measured added draw cost was0.0401ms for
+cache without rescanning walls. The measured added draw cost was 0.031 ms for
 1000 synthetic tower records; see the validation for method and limits.
 
 ### Single-player lobby Load
