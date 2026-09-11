@@ -1,3 +1,5 @@
 interface_visual_fixes: Correcciones de interfaz y gráficos
 lobby_text: Descripciones de mapas en la sala
 lobby_description: Mantiene visible la descripción del mapa seleccionado en la sala.
+unique_preview_text: Cerrar la vista previa de edificios únicos tras construir
+unique_preview_description: Deselecciona el mercado, los cuarteles, el campamento de mercenarios y los gremios tras construirlos correctamente.

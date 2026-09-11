@@ -9,3 +9,11 @@ options:
     url: interface-visual-fixes.lobby-map-descriptions
     contents:
       value: false
+  - name: clear_unique_building_preview
+    category: ['{{interface_visual_fixes}}']
+    text: '{{unique_preview_text}}'
+    description: '{{unique_preview_description}}'
+    display: Switch
+    url: interface-visual-fixes.clear-unique-building-preview
+    contents:
+      value: false

@@ -1,3 +1,5 @@
 interface_visual_fixes: Felületi és grafikai javítások
 lobby_text: Pályaleírások az előszobában
 lobby_description: Látható marad a kiválasztott pálya leírása az előszobában.
+unique_preview_text: Egyedi épületek előnézetének törlése építés után
+unique_preview_description: Sikeres építés után megszünteti a piac, laktanya, zsoldostábor és céhek kijelölését.

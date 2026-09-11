@@ -6,6 +6,9 @@ return {
     if config["lobby-map-descriptions"] == true then
       require("lobby-description").enable()
     end
+    if config["clear-unique-building-preview"] == true then
+      require("unique-placement").enable()
+    end
     enabled = true
   end,
   disable = function()
