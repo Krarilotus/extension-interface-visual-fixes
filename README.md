@@ -29,3 +29,7 @@ order. The door moves along the tower face as well as vertically. Thus a higher,
 off-centre wall takes priority over a lower, centred wall. Removing the selected
 wall makes the door follow the next qualifying connection on the game's existing
 connection refresh. See [door validation](VALIDATION-R023.md).
+
+Enable **Show Load in skirmish lobby** to expose the original single-player Load
+control between the portrait and Start, including a lobby without AI opponents.
+See [Load validation](VALIDATION-R001.md).

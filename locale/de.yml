@@ -10,3 +10,6 @@ dead_tree_description: Zeigt abgestorbene Bäume zunächst stehend und danach al
 
 tower_door_text: Turmtüren an verbindenden Mauern ausrichten
 tower_door_description: Richtet jede Turmtür an der höchsten verbundenen Mauer auf ihrer Seite aus. Bei gleicher Höhe wird die Verbindung nächst der Seitenmitte gewählt; die Tür verschiebt sich seitlich und in der Höhe.
+lobby_load_text: Laden in der Gefechtslobby anzeigen
+lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby an und ermöglicht
+  das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen anzuwenden.
