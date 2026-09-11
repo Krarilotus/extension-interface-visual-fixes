@@ -1,7 +1,17 @@
 interface_visual_fixes: Arayüz ve Görsel Düzeltmeler
 lobby_text: Lobide harita açıklamaları
 lobby_description: Seçilen haritanın açıklamasını lobide görünür tutar.
+unique_preview_text: Yerleştirmeden sonra benzersiz bina önizlemesini kapat
+unique_preview_description: Başarılı yerleştirmeden sonra pazar, kışla, paralı asker kampı ve lonca seçimini kaldırır.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.
+
+dead_tree_text: Distinguish dead tree stages
+dead_tree_description: Shows standing dead trees before they become fallen logs.
+
+tower_door_text: Align tower doors with connecting walls
+tower_door_description: Aligns each tower door with the highest connected wall on its side. Among equally high walls, the connection nearest the side centre wins. The door moves along the tower face and to the wall height.
 lobby_load_text: Çatışma lobisinde Yükle düğmesini göster
-lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmesini gösterir
-  ve yapay zekâ rakibi olmadan oyun yüklemeye izin verir. Değişiklikleri uygulamak
-  için oyunu yeniden başlatın.
+lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmesini gösterir ve yapay zekâ rakibi olmadan
+  oyun yüklemeye izin verir. Değişiklikleri uygulamak için oyunu yeniden başlatın.

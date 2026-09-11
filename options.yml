@@ -9,6 +9,38 @@ options:
     url: interface-visual-fixes.lobby-map-descriptions
     contents:
       value: false
+  - name: clear_unique_building_preview
+    category: ['{{interface_visual_fixes}}']
+    text: '{{unique_preview_text}}'
+    description: '{{unique_preview_description}}'
+    display: Switch
+    url: interface-visual-fixes.clear-unique-building-preview
+    contents:
+      value: false
+  - name: building_preview_during_camera_movement
+    category: ['{{interface_visual_fixes}}']
+    text: '{{camera_preview_text}}'
+    description: '{{camera_preview_description}}'
+    display: Switch
+    url: interface-visual-fixes.building-preview-during-camera-movement
+    contents:
+      value: false
+  - name: distinct_dead_tree_sprites
+    category: ['{{interface_visual_fixes}}']
+    text: '{{dead_tree_text}}'
+    description: '{{dead_tree_description}}'
+    display: Switch
+    url: interface-visual-fixes.distinct-dead-tree-sprites
+    contents:
+      value: false
+  - name: tower_door_height
+    category: ['{{interface_visual_fixes}}']
+    text: '{{tower_door_text}}'
+    description: '{{tower_door_description}}'
+    display: Switch
+    url: interface-visual-fixes.tower-door-height
+    contents:
+      value: false
   - name: lobby_load
     category: ['{{interface_visual_fixes}}']
     text: '{{lobby_load_text}}'

@@ -1,7 +1,15 @@
 interface_visual_fixes: Oberflächen- und Grafikkorrekturen
 lobby_text: Kartenbeschreibungen in der Lobby
 lobby_description: Hält die Beschreibung der gewählten Karte in der Lobby sichtbar.
+unique_preview_text: Bauvorschau einzigartiger Gebäude nach dem Bau beenden
+unique_preview_description: Hebt die Auswahl von Markt, Kaserne, Söldnerlager und Gilden nach erfolgreichem Bau auf.
+camera_preview_text: Bauvorschau beim Scrollen anzeigen
+camera_preview_description: Hält die Vorschau des gewählten Gebäudes während der Kamerabewegung sichtbar.
+dead_tree_text: Abgestorbene Baumstadien unterscheiden
+dead_tree_description: Zeigt abgestorbene Bäume zunächst stehend und danach als umgestürzte Stämme.
+
+tower_door_text: Turmtüren an verbindenden Mauern ausrichten
+tower_door_description: Richtet jede Turmtür an der höchsten verbundenen Mauer auf ihrer Seite aus. Bei gleicher Höhe wird die Verbindung nächst der Seitenmitte gewählt; die Tür verschiebt sich seitlich und in der Höhe.
 lobby_load_text: Laden in der Gefechtslobby anzeigen
-lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby
-  an und ermöglicht das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen
-  anzuwenden.
+lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby an und ermöglicht
+  das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen anzuwenden.

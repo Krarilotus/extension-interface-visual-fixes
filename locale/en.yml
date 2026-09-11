@@ -1,6 +1,15 @@
 interface_visual_fixes: Interface and Visual Fixes
 lobby_text: Show lobby map descriptions
 lobby_description: Keeps the selected map's description visible in the lobby.
+unique_preview_text: Clear unique-building preview after placement
+unique_preview_description: Deselects the marketplace, barracks, mercenary post and guilds after successful placement.
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.
+dead_tree_text: Distinguish dead tree stages
+dead_tree_description: Shows standing dead trees before they become fallen logs.
+
+tower_door_text: Align tower doors with connecting walls
+tower_door_description: Aligns each tower door with the highest connected wall on its side. Among equally high walls, the connection nearest the side centre wins. The door moves along the tower face and to the wall height.
 lobby_load_text: Show Load in skirmish lobby
-lobby_load_description: Shows the existing Load button in the single-player skirmish
-  lobby and allows loading without an AI opponent. Restart the game to apply changes.
+lobby_load_description: Shows the existing Load button in the single-player skirmish lobby and allows loading without
+  an AI opponent. Restart the game to apply changes.

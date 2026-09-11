@@ -4,6 +4,10 @@
     <file src="options.yml" />
     <file src="init.lua" />
     <file src="lobby-description.lua" />
+    <file src="unique-placement.lua" />
+    <file src="camera-preview.lua" />
+    <file src="dead-tree-sprites.lua" />
+    <file src="tower-door-height.lua" />
     <file src="lobby-load.lua" />
     <file src="locale" />
   </files>

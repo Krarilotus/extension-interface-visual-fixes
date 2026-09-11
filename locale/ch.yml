@@ -1,5 +1,16 @@
 interface_visual_fixes: 界面与画面修复
 lobby_text: 显示大厅地图说明
 lobby_description: 让所选地图的说明在大厅中保持可见。
+unique_preview_text: 成功建造后关闭唯一建筑预览
+unique_preview_description: 成功建造后取消选择市场、兵营、雇佣兵营和行会。
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.
+
+dead_tree_text: Distinguish dead tree stages
+dead_tree_description: Shows standing dead trees before they become fallen logs.
+
+tower_door_text: Align tower doors with connecting walls
+tower_door_description: Aligns each tower door with the highest connected wall on its side. Among equally high walls, the connection nearest the side centre wins. The door moves along the tower face and to the wall height.
 lobby_load_text: 在遭遇战大厅显示载入按钮
 lobby_load_description: 在单人遭遇战大厅中显示原有的载入按钮，并允许在没有电脑对手时载入游戏。重启游戏以应用更改。

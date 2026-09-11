@@ -1,7 +1,17 @@
 interface_visual_fixes: اصلاحات رابط کاربری و گرافیک
 lobby_text: نمایش توضیحات نقشه در لابی
 lobby_description: توضیحات نقشهٔ انتخاب‌شده را در لابی قابل مشاهده نگه می‌دارد.
+unique_preview_text: بستن پیش‌نمایش ساختمان‌های یکتا پس از ساخت
+unique_preview_description: پس از ساخت موفق، انتخاب بازار، سربازخانه، اردوگاه مزدوران و انجمن‌ها را لغو می‌کند.
+
+camera_preview_text: Show building previews while scrolling
+camera_preview_description: Keeps the selected building preview visible while moving the camera.
+
+dead_tree_text: Distinguish dead tree stages
+dead_tree_description: Shows standing dead trees before they become fallen logs.
+
+tower_door_text: Align tower doors with connecting walls
+tower_door_description: Aligns each tower door with the highest connected wall on its side. Among equally high walls, the connection nearest the side centre wins. The door moves along the tower face and to the wall height.
 lobby_load_text: نمایش بارگذاری در لابی نبرد
-lobby_load_description: دکمهٔ بارگذاری موجود را در لابی نبرد تک‌نفره نمایش می‌دهد
-  و بارگذاری بازی بدون حریف هوش مصنوعی را ممکن می‌کند. برای اعمال تغییرات، بازی را
-  دوباره اجرا کنید.
+lobby_load_description: دکمهٔ بارگذاری موجود را در لابی نبرد تک‌نفره نمایش می‌دهد و بارگذاری بازی بدون حریف هوش
+  مصنوعی را ممکن می‌کند. برای اعمال تغییرات، بازی را دوباره اجرا کنید.
