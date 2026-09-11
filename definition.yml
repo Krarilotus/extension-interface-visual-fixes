@@ -4,5 +4,6 @@ version: 0.1.0
 author: Krarilotus
 type: module
 game: [SHC==1.41]
+tags: [bugfixes, interface]
 meta:
   version: 1.0.0
