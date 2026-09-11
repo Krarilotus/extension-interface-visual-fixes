@@ -1,7 +1,7 @@
 # R023: tower door height beside connecting walls
 
 Related issue: [#9](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/9).
-Stacked on R019 PR #8. Draft pending corrected native views and the acceptance
+Stacked on R019 PR #8. Draft pending the remaining native acceptance
 checks below. Existing native reproduction is confirmed.
 
 SHC 1.41 renderGmOverlayBuilding2 at 0x4E2AD0 draws existing GM54 doorway frames
@@ -72,6 +72,18 @@ Tower/wall coordinates, heights and entrance flags remain unchanged. This is a
 visual/coordinate result; the full screenshot regions are not pixel-identical.
 The game was closed normally and desktop released at02:06:39.
 
-Before readiness: the other three native tower types; mixed heights, elevation, removal/rebuild and save/reload;
+Native b5df175 also placed defense, square and round towers through the existing
+Castle Builder controls, consuming 15, 35 and 40 stone. At orientation 0 each
+shows frame81 meeting a low wall (height68, terrain8) on side282; the opposite
+frame remains absent. The sampled widths are5,6,6 and entrance flags are
+[0,0,1,0]. See [the three native joins](docs/native-tower-three-types.png).
+The normal Save control produced m.sav; the original decoder validates its CRC
+and all three tower records/entrances. SHA256:
+`b75d72691b945bb312b4501fdfec2e5c4c4d7919545ae21c521f158fc83de6a1`.
+This confirms native creation and low-wall rendering for all four types across
+the two fixtures. Reload of m.sav and its other rotations are still pending.
+The game was closed and its process absence verified before release at02:35:13.
+
+Before readiness: mixed heights, elevation, removal/rebuild and new-fixture reload;
 clipping/layout, preserved collision/pathfinding/simulation and relevant costs.
 Independent review and normal approved merge remain required.
