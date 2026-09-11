@@ -15,3 +15,6 @@ tower_door_description: Aligns each tower door with the highest eligible connect
 lobby_load_text: Показывать загрузку в лобби схватки
 lobby_load_description: Показывает существующую кнопку загрузки в лобби одиночной схватки и позволяет загружать
   игру без противника под управлением ИИ. Для применения изменений перезапустите игру.
+
+tags.bugfixes: Исправления
+tags.interface: Интерфейс

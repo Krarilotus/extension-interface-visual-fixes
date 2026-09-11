@@ -15,3 +15,6 @@ tower_door_description: Aligns each tower door with the highest eligible connect
 lobby_load_text: نمایش بارگذاری در لابی نبرد
 lobby_load_description: دکمهٔ بارگذاری موجود را در لابی نبرد تک‌نفره نمایش می‌دهد و بارگذاری بازی بدون حریف هوش
   مصنوعی را ممکن می‌کند. برای اعمال تغییرات، بازی را دوباره اجرا کنید.
+
+tags.bugfixes: رفع اشکال
+tags.interface: رابط کاربری

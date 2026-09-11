@@ -13,3 +13,6 @@ tower_door_description: Richtet jede Turmt?r an der h?chsten geeigneten Verbindu
 lobby_load_text: Laden in der Gefechtslobby anzeigen
 lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby an und ermöglicht
   das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen anzuwenden.
+
+tags.bugfixes: Fehlerkorrekturen
+tags.interface: Oberfläche

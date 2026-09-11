@@ -13,3 +13,6 @@ tower_door_description: Aligns each tower door with the highest eligible connect
 lobby_load_text: Show Load in skirmish lobby
 lobby_load_description: Shows the existing Load button in the single-player skirmish lobby and allows loading without
   an AI opponent. Restart the game to apply changes.
+
+tags.bugfixes: Bug fixes
+tags.interface: Interface

@@ -15,3 +15,6 @@ tower_door_description: Aligns each tower door with the highest eligible connect
 lobby_load_text: Çatışma lobisinde Yükle düğmesini göster
 lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmesini gösterir ve yapay zekâ rakibi olmadan
   oyun yüklemeye izin verir. Değişiklikleri uygulamak için oyunu yeniden başlatın.
+
+tags.bugfixes: Hata düzeltmeleri
+tags.interface: Arayüz
