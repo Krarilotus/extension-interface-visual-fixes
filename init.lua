@@ -18,6 +18,9 @@ return {
     if config["tower-door-height"] == true then
       require("tower-door-height").enable()
     end
+    if config["lobby-load"] == true then
+      require("lobby-load").enable()
+    end
     enabled = true
   end,
   disable = function()

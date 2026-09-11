@@ -41,3 +41,11 @@ options:
     url: interface-visual-fixes.tower-door-height
     contents:
       value: false
+  - name: lobby_load
+    category: ['{{interface_visual_fixes}}']
+    text: '{{lobby_load_text}}'
+    description: '{{lobby_load_description}}'
+    display: Switch
+    url: interface-visual-fixes.lobby-load
+    contents:
+      value: false

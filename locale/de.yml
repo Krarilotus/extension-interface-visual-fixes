@@ -10,3 +10,6 @@ dead_tree_description: Zeigt abgestorbene Bäume zunächst stehend und danach al
 
 tower_door_text: Turmt?ren an die Mauerh?he anpassen
 tower_door_description: Richtet vorhandene Turmt?ren an der h?chsten angrenzenden Mauer aus.
+lobby_load_text: Laden in der Gefechtslobby anzeigen
+lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby an und ermöglicht
+  das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen anzuwenden.

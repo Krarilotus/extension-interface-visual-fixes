@@ -24,3 +24,7 @@ and save data stay unchanged. See [tree validation](VALIDATION-R019.md).
 Enable **Align tower doors with wall height** to align existing stone-tower
 doorways with their connecting walls (R023). See [door validation](VALIDATION-R023.md)
 for the draft's evidence and outstanding native checks.
+
+Enable **Show Load in skirmish lobby** to expose the existing single-player
+Load control between the portrait and Start control, including human-only
+lobbies (R001). See [Load validation](VALIDATION-R001.md).
