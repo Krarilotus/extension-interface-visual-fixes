@@ -86,6 +86,16 @@ launcher locales (en/de/fr/ru/hu/tr/ch/es/fa) contain matching keys; independent
 translation review remains pending. In-game resources follow game language,
 launcher option follows GUI language.
 
+GUI catalog integration now passes for all nine languages against both local
+GUI2a644333 and upstream GUI009ee71fe3a5229e75b2dc7a10d2ef5141217bc8.
+The test reads the actual runtime ZIP, checks the GUI's supported-language list,
+catalog keys/nonempty UTF-8 strings and calls its real changeLocale function.
+Category, title and description resolve in every locale without English fallback;
+option URLs/defaults and source templates stay unchanged. CI repeats the pinned
+upstream check and attaches LOCALIZATION.json with the review ZIP/checksum.
+This does not claim visual GUI inspection or independent language review of all
+nine translations.
+
 The MP host attempt triggered a Windows Firewall permission prompt before lobby
 entry. No security setting was changed. The isolated test process was stopped
 after releasing the slot so it would not block other workers. Native MP remains

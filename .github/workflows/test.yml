@@ -1,5 +1,7 @@
 name: Test
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   patch-regression:
     runs-on: ubuntu-latest
@@ -11,3 +13,28 @@ jobs:
       - run: pip install -r requirements-test.txt
       - run: python -m pytest -q
       - run: python tools/build.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fetch pinned GUI localization contract
+        uses: actions/checkout@v4
+        with:
+          repository: UnofficialCrusaderPatch/UCP3-GUI
+          ref: 009ee71fe3a5229e75b2dc7a10d2ef5141217bc8
+          path: .gui-localization-fixture
+          sparse-checkout: |
+            resources/lang/languages.yaml
+            src/function/extensions/locale/locale.ts
+          sparse-checkout-cone-mode: false
+      - run: python tools/check_gui_localization.py --gui .gui-localization-fixture
+      - name: Upload review test build and localization results
+        uses: actions/upload-artifact@v4
+        with:
+          name: interface-visual-fixes-test-${{ github.run_id }}
+          path: |
+            dist/interface-visual-fixes-0.1.0.zip
+            dist/SHA256SUMS.txt
+            dist/LOCALIZATION.json
+            TESTING-R001.md
+          if-no-files-found: error
+          retention-days: 90
