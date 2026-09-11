@@ -10,6 +10,8 @@
     <file src="tower-door-height.lua" />
     <file src="lobby-load.lua" />
     <file src="cliff-texture-direction.lua" />
+    <file src="render-frame.lua" />
+    <file src="cliff-texture-source.lua" />
     <file src="locale" />
   </files>
 </module>
