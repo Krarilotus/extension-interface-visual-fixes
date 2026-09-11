@@ -15,3 +15,6 @@ tower_door_description: Aligns each tower door with the highest connected wall o
 lobby_load_text: Betöltés megjelenítése a csata előszobájában
 lobby_load_description: Megjeleníti a meglévő Betöltés gombot az egyjátékos csata előszobájában, és lehetővé teszi
   a betöltést gépi ellenfél nélkül. A módosítások alkalmazásához indítsd újra a játékot.
+
+tags.bugfixes: Hibajavítások
+tags.interface: Kezelőfelület

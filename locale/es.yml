@@ -15,3 +15,6 @@ tower_door_description: Aligns each tower door with the highest connected wall o
 lobby_load_text: Mostrar Cargar en la sala de escaramuza
 lobby_load_description: Muestra el botón Cargar existente en la sala de escaramuza de un jugador y permite cargar
   una partida sin un oponente de IA. Reinicia el juego para aplicar los cambios.
+
+tags.bugfixes: Correcciones
+tags.interface: Interfaz
