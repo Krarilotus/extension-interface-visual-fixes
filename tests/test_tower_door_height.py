@@ -16,6 +16,10 @@ from unicorn.x86_const import *
 ROOT = Path(__file__).resolve().parents[1]
 CAVE, STACK, DRAW, STOP = 0x60000000, 0x60003000, 0x455300, 0x60004000
 BUILDING = 0xF98534 + 812
+NATIVE_ANCHORS = {75:{81:(-36,-120),90:(32,-113)},
+                  76:{81:(-36,-119),90:(46,-119)},
+                  77:{81:(-52,-130),90:(48,-125)},
+                  78:{81:(-51,-130),90:(49,-124)}}
 LOGIC, HEIGHT, TERRAIN, ROWS = 0x1BF8368, 0x1D32C38, 0x1D46648, 0x2337300
 SITES = {
     0x4E3681: 'DC 52 50 6A 36 B9 90 A0 FE 01 E8 7A 1C F7 FF',
@@ -150,6 +154,10 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
         uc.mem_write(LOGIC+position*4, struct.pack('<I', logic))
         uc.mem_write(HEIGHT+position, bytes([ground+rise]))
     uc.mem_write(STACK, struct.pack('<5I', STOP, gm, frame, 500, 500))
+    old_x,old_y=NATIVE_ANCHORS.get(kind,NATIVE_ANCHORS[75]).get(frame,(0,0))
+    # Four native draw arguments and five saved registers separate the caller
+    # frame from its sprite call. Keep the original parent X/Y arguments intact.
+    uc.mem_write(STACK+48,struct.pack('<2i',500-old_x,500-old_y))
     registers = [UC_X86_REG_EAX, UC_X86_REG_EBX, UC_X86_REG_ECX, UC_X86_REG_EDX,
                  UC_X86_REG_ESI, UC_X86_REG_EDI, UC_X86_REG_EBP, UC_X86_REG_ESP,
                  UC_X86_REG_EFLAGS]
@@ -191,8 +199,12 @@ def expected(kind=75,frame=81,index=0,rise=60):
     width={75:4,76:5,77:6,78:6}[kind]
     # Isometric displacement from the midpoint, including even-width half tiles.
     displacement=min(max(index,0.5),width-1.5)-(width-1)/2
-    return (int(500-16*displacement),
-            int(500+90-rise+(-8 if frame==81 else 8)*displacement))
+    old_x,old_y=NATIVE_ANCHORS[kind][frame]
+    # Independent footprint geometry: face midpoint, then the sprite threshold.
+    centre_x=(16-8*width) if frame==81 else (14+8*width)
+    threshold_y=(33-4*width) if frame==81 else (32-4*width)
+    return (int(500-old_x+centre_x-10-16*displacement),
+            int(500-old_y+threshold_y-42-rise+(-8 if frame==81 else 8)*displacement))
 
 
 @pytest.mark.parametrize('kind,orientation,frame,ground,rise', list(itertools.product(
@@ -217,7 +229,7 @@ def test_absent_or_ineligible_connection_suppresses_door(walls):
 @pytest.mark.parametrize('rise,expected_y', [(44,546),(74,516),(120,470)])
 def test_wall_height_is_relative_to_tower_terrain(rise,expected_y):
     # Steps and walls on neighboring elevated ground use actual absolute height.
-    assert execute(walls=((0,rise,0x100),),ground=40) == (516,expected_y+8)
+    assert execute(walls=((0,rise,0x100),),ground=40) == (526,expected_y+13)
 
 
 @pytest.mark.parametrize('kwargs', [dict(kind=74),dict(kind=79),dict(gm=55),dict(frame=80),
@@ -297,6 +309,21 @@ def test_repeated_draws_do_not_read_wall_or_row_arrays():
     ctx['uc'].hook_add(UC_HOOK_MEM_READ,observe)
     for _ in range(100): assert draw_again(ctx)==expected()
     assert reads==[]
+
+
+@pytest.mark.parametrize('frame,index,rise,threshold',[
+    (81,1,-36,(542,337)),
+    (90,0,-6,(612,294)),
+])
+def test_recorded_cliff_corner_wall_contacts_use_parent_native_draw_anchor(frame,index,rise,threshold):
+    # Native reference: drawing tile206,88 at(550,384), tower base104.
+    # The south wall contacts(542,337); the extreme east wall contacts(620,290),
+    # inset by(-8,+4). These coordinates come from the native foundation blits.
+    c=execute(frame=frame,ground=104,walls=((index,rise,0x100),),
+              foundation=True,context=True)
+    c['uc'].mem_write(STACK+48,struct.pack('<2i',550,280))
+    x,y=draw_again(c)
+    assert (x+10,y+42)==threshold
 
 
 def test_existing_connection_refresh_updates_cached_height_and_removal():

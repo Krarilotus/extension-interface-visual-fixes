@@ -112,7 +112,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
     assert len(cache) == 7
-    assert sum(size for _, size in allocations) == 149422
+    assert sum(size for _, size in allocations) == 149494
     for address, size in allocations:
         initialized = set()
         for start, data in writes:

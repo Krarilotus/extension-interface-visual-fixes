@@ -23,12 +23,12 @@ doors cannot leak across frames, camera movements or loads.
 New guarded patch sites are map-render entry `0x4E8CF0` and the existing foundation
 column call `0x4EBA52`. All signatures are validated before any write. No new
 connection scan, simulation hook, asset or separate render pass is added.
-The seven-option allocation is 149,422 bytes, an increase of 82,406 bytes,
+The seven-option allocation is 149,494 bytes, an increase of 82,478 bytes,
 including an 81,924-byte presentation cache. It is never serialized.
 
 ## Completed checks
 
-943 combined tests pass. The emitted x86 regressions cover both door faces,
+945 combined tests pass. The emitted x86 regressions cover both door faces,
 waiting for the correct tower column, exactly one draw, already-painted backing,
 frame expiration, unchanged registers/flags and restoration of native drawing
 state. Existing connection ranking, placement, camera and composition tests pass.
@@ -57,12 +57,31 @@ empty draw terminals to isolate bookkeeping; the flush case includes the sprite
 call but does not render pixels. These are component costs, not full-game FPS or
 a tested 1000-speed simulation setting.
 
-This candidate still needs native zoom/clipping, AI stair6 and wider tower-kind
-acceptance. The new edge-position feedback is also open: the current formula
-clamps to one-based positions 1.5 through N-0.5 relative to a presumed centred
-native sprite anchor. Actual wall contact and doorway alignment must be verified
-independently before calling that inset visually correct. Highest connection
-first, centre breaking ties remains the agreed selection rule.
+The final anchor correction derives each face centre from the parent renderer's
+actual draw coordinates and footprint width. The previous fixed sprite anchors
+were not centred consistently between tower kinds. The door now moves by half a
+tile at the extreme connection, to one-based positions 1.5 and N-0.5, for widths
+4, 5 and 6. Highest connection first, centre breaking ties remains unchanged.
+
+The original four-argument tower renderer was probed for all four kinds. Its
+reference tile is origin+(N-2,N-2), independently of kind. Executing that original
+function with the final patch passes 32 cold/warm draw checks across four kinds
+and four rotations. A separate native benchmark measures median added warm draw
+cost 23.808 ns per tower (0.023808 ms per 1,000 records), and connection refresh
+194.237 ns per record. The latter uses the existing refresh, not every frame.
+These are component measurements with empty draw terminals, not FPS claims.
+
+Native sessions PID5160 and PID13596 checked the final door code: the cliff-edge
+small tower, camera-only copies of an existing save containing width5, width6
+square and width6 round towers, full scale and Z zoom, all four rotations,
+viewport-clipped towers and save reloads. The AI fixture built stair6 (mapper186,
+logic0x8100, height8) beside tower51 and raised stair1 (mapper181, logic0x900,
+height88) beside tower28. Only stair6 produces the ground-level doorway; masonry
+backs it. The raised stair produces no doorway. Both native sessions are closed.
+
+![Five-wide tower: doorway at the half-tile inset](docs/r023/anchor-five.png)
+
+![Round tower: doorway aligned with the wall contact](docs/r023/anchor-round.png)
 
 Cliff seams remain separately open in issue 16. Do not publish the final Store
-patch or reuse old screenshots as acceptance until these remaining gates pass.
+patch or reuse old cliff screenshots as acceptance until that correction passes.

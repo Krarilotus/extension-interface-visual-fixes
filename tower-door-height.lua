@@ -476,8 +476,34 @@ function M.enable()
     mov eax, [edi+ecx*4+8]
     test eax, eax
     jz no_door
-    ; Position along the existing face, relative to its side-centre anchor.
-    ; One boundary tile projects to -16 X and -8/+8 Y for frame 81/90.
+    ; Use the native building draw position, not its per-kind door offsets.
+    ; The draw tile is one tile behind the front footprint corner. A face tile
+    ; projects to 16x8 pixels; the existing 20x47 door threshold is at (10,42).
+    ; Parent renderGmOverlayBuilding2 arguments remain at +116 (X), +120 (Y).
+    mov ebx, [esp+16]
+    lea edx, [ebx*8]
+    mov ecx, [esp+116]
+    cmp dword [esp+76], 81
+    jne right_anchor
+    sub ecx, edx
+    add ecx, 6
+    mov [esp+80], ecx
+    shr edx, 1
+    mov ecx, [esp+120]
+    sub ecx, edx
+    sub ecx, 99
+    jmp anchor_ready
+  right_anchor:
+    add ecx, edx
+    add ecx, 4
+    mov [esp+80], ecx
+    shr edx, 1
+    mov ecx, [esp+120]
+    sub ecx, edx
+    sub ecx, 100
+  anchor_ready:
+    mov [esp+84], ecx
+    ; Position along the face from its true midpoint.
     movzx ebx, al
     mov ecx, 8
     sub ecx, ebx
