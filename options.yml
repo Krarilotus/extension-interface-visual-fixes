@@ -1,0 +1,11 @@
+meta:
+  version: 1.0.0
+options:
+  - name: lobby_map_descriptions
+    category: ['{{interface_visual_fixes}}']
+    text: '{{lobby_text}}'
+    description: '{{lobby_description}}'
+    display: Switch
+    url: interface-visual-fixes.lobby-map-descriptions
+    contents:
+      value: false
