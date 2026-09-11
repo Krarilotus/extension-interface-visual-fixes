@@ -39,7 +39,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         seed(address-10, bytes.fromhex(pattern))
 
     for address, pattern in doors.UPDATES.items():
-        seed(address-(6 if address==0x41B855 else 0),bytes.fromhex(pattern))
+        seed(address-(6 if address==0x41B855 else 10 if address==0x50EDAF else 0),bytes.fromhex(pattern))
 
     lua = LuaRuntime(unpack_returned_tuples=True)
     writes, allocations, cache = [], [], {}

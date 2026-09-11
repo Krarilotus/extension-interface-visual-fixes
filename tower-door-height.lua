@@ -20,7 +20,7 @@ function M.enable()
     {0x41B7FF, "89 9C 0F 94 02 00 00"},
     {0x41B855, "03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9", 6},
     {0x512450, "51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C"},
-    {0x50EDAF, "8B 95 1C FF FF FF 8B 82 08 49 55 00 8B 0D B4 CE D7 00 8D 54 01 FF"},
+    {0x50EDAF, "66 89 84 51 E0 80 0C 00 EB 6A 8B 95 1C FF FF FF 8B 82 08 49 55 00 8B 0D B4 CE D7 00 8D 54 01 FF", 10},
   }
   for _, site in ipairs(updateSites) do
     if core.AOBScan(site[2]) + (site[3] or 0) ~= site[1] then
