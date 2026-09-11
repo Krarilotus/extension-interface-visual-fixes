@@ -23,7 +23,8 @@ See the [short description](locale/description-en.md).
 - **Show Load in skirmish lobby:** makes the existing single-player Load control
   visible between the portrait and Start, including lobbies without an AI opponent.
 - **Continue cliff textures after rotation:** makes cliff textures advance along
-  both visible faces when the map is rotated, using the current texture pack.
+  both visible faces when the map is rotated, using the current texture pack,
+  including taller cliff strips.
 
 Enable the module, choose the fixes you want, apply your settings and restart the
 game. Each option starts disabled. The module targets UCP 3.0.7 with SHC or SHCE 1.41.

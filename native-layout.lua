@@ -3,6 +3,9 @@
 local extreme = data.version.isExtreme()
 local function address(shc, shce) return extreme and shce or shc end
 local A = {
+  ProcessHeap = address(0x59E108, 0x59E10C),
+  AllocateHeap = address(0x59E170, 0x59E174),
+  ReallocateHeap = address(0x59E0CC, 0x59E0D0),
   PlacementEntry = address(0x5162D0, 0x516650),
   PlacementNotifyCall = address(0x516A0F, 0x516D8F),
   MinimapNotify = address(0x4B5300, 0x4B5470),

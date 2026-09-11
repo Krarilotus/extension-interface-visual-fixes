@@ -3,7 +3,7 @@ from pathlib import Path
 import struct
 from lua_support import LuaRuntime, with_symbols, flatten_code
 import pytest
-from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_READ
+from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_READ, UC_HOOK_CODE
 from unicorn.x86_const import *
 from test_tower_door_height import assemble
 
@@ -16,10 +16,16 @@ PATTERNS = {
 }
 
 
-def emit(module='cliff-texture-source', moved=None, missing=None):
+def emit(module='cliff-texture-source', moved=None, missing=None, extreme=False):
     from test_cliff_texture_direction import PATTERN, SITE
     patterns = {**PATTERNS, SITE:PATTERN}
-    lua = LuaRuntime(); writes=[]; allocations=[]; modules={}; next_address=CAVE
+    if extreme:
+        patterns={
+            0x453e0b:bytes.fromhex('A1 F4 35 ED 00 8B 14 85 B0 BB D0 00 01 55 F0 A1 EC 35 ED 00 8B 14 85 B0 BB D0 00 01 55 F8'),
+            0x4543ab:bytes.fromhex('8B 15 F4 35 ED 00 8B 04 95 B0 BB D0 00 01 45 EC 8B 15 EC 35 ED 00 8B 04 95 B0 BB D0 00 01 45 FC'),
+            0x4e9080:bytes.fromhex('83 EC 64 A1 14 88 F9 00 53 55 56 8B D9 57 33 FF 33 F6'),
+        }
+    lua = LuaRuntime(extreme=extreme); writes=[]; allocations=[]; modules={}; next_address=CAVE
     def scan(pattern):
         matches=[at for at,data in patterns.items() if data==bytes.fromhex(pattern) and at!=missing]
         if not matches: raise ValueError('Original signature absent')
@@ -52,19 +58,47 @@ def emit(module='cliff-texture-source', moved=None, missing=None):
     return writes,allocations
 
 
-def fixture(index=100):
-    writes,allocations=emit()
+def fixture(index=100,extreme=False):
+    writes,allocations=emit(extreme=extreme)
     uc=Uc(UC_ARCH_X86,UC_MODE_32)
-    for at,size in [(0x400000,0x2500000),(CAVE,0x200000),(0x61000000,0x2000),(RAW,0x60000)]:uc.mem_map(at,size)
-    for at,data in writes:uc.mem_write(at,data)
-    uc.mem_write(0x1fea108,struct.pack('<I',RAW))
-    uc.mem_write(0xd7ceb4,struct.pack('<I',100))
+    for at,size in [(0x32000000,0x800000),(0x400000,0x2c00000),(CAVE,0x200000),(0x61000000,0x2000),(RAW,0x60000)]:uc.mem_map(at,size)
+    translations={0x1fea108:0x2a7d608,0xd7ceb4:0xd7d054,
+                  0x59e108:0x59e10c,0x59e170:0x59e174,0x59e0cc:0x59e0d0}
+    def address(at):
+        if not extreme:return at
+        for start,end,delta in [(0xd0ba10,0xd0ba10+4*1000,0x1a0),
+                                (0xc9a590,0xc9a590+4*1000,0x1a0),
+                                (0xb98790,0xb98790+16*1000,0x1a0)]:
+            if start<=at<end:return at+delta
+        return translations.get(at,at)
+    uc.iv_address=address
+    def write(at,data):uc.mem_write(address(at),data)
+    heap = {'next':0x32000000, 'calls':[], 'fail':False}
+    def api(u, address, _size, _data):
+        esp=u.reg_read(UC_X86_REG_ESP)
+        if address==STOP+0x100: result=1
+        else:
+            size=struct.unpack('<I',u.mem_read(esp+(16 if address==STOP+0x120 else 12),4))[0]
+            heap['calls'].append((address,size))
+            result=0 if heap['fail'] else heap['next']
+            if result:heap['next']+=(size+4095)&~4095
+        u.reg_write(UC_X86_REG_EAX,result)
+        u.reg_write(UC_X86_REG_ECX,0xbad)
+        u.reg_write(UC_X86_REG_EDX,0xbad)
+    for iat,entry,args in [(0x59e108,STOP+0x100,0),(0x59e170,STOP+0x110,12),(0x59e0cc,STOP+0x120,16)]:
+        write(iat,struct.pack('<I',entry))
+        write(entry,b'\xc2'+struct.pack('<H',args))
+        uc.hook_add(UC_HOOK_CODE,api,begin=entry,end=entry)
+    uc.iv_heap=heap
+    for at,data in writes:write(at,data)
+    write(0x1fea108,struct.pack('<I',RAW))
+    write(0xd7ceb4,struct.pack('<I',100))
     for i in range(100,134):
-        uc.mem_write(0xd0ba10+4*i,struct.pack('<I',(i-100)*9600))
-        uc.mem_write(0xc9a590+4*i,struct.pack('<I',9600))
-        uc.mem_write(0xb98790+16*i,struct.pack('<HH',30,167))
-        uc.mem_write(RAW+(i-100)*9600,struct.pack('<4800H',*(n^(i*31) for n in range(4800))))
-    resolve=next(at for at,data in writes if data.startswith(bytes.fromhex('9c608b348510bad000')))
+        write(0xd0ba10+4*i,struct.pack('<I',(i-100)*9600))
+        write(0xc9a590+4*i,struct.pack('<I',9600))
+        write(0xb98790+16*i,struct.pack('<HH',30,167))
+        write(RAW+(i-100)*9600,struct.pack('<4800H',*(n^(i*31) for n in range(4800))))
+    resolve=next(at for at,data in writes if data.startswith(bytes.fromhex('9c608b3485b0bbd000' if extreme else '9c608b348510bad000')))
     return uc,resolve,allocations[0][0]
 
 
@@ -74,7 +108,7 @@ def resolve(uc,entry,index):
                UC_X86_REG_EBP:876,UC_X86_REG_ESP:STACK,UC_X86_REG_EFLAGS:0x646}
     uc.mem_write(STACK,struct.pack('<I',STOP))
     for reg,value in registers.items():uc.reg_write(reg,value)
-    uc.emu_start(entry,STOP,count=100000)
+    uc.emu_start(entry,STOP,count=3000000)
     assert uc.reg_read(UC_X86_REG_EIP)==STOP
     for reg,value in registers.items():
         if reg not in (UC_X86_REG_EAX,UC_X86_REG_ESP):assert uc.reg_read(reg)==value
@@ -139,3 +173,55 @@ def test_incompatible_dimensions_or_size_pass_through(at,value):
 def test_guarded_source_and_shared_frame_sites(site):
     with pytest.raises(Exception,match='unsupported'):emit(moved=site)
     with pytest.raises(ValueError):emit(missing=site)
+
+
+def set_strip(uc,rows,width=30):
+    size=rows*width*2
+    uc.mem_write(uc.iv_address(0xc9a590+400),struct.pack('<I',size))
+    uc.mem_write(uc.iv_address(0xb98790+1600),struct.pack('<HH',width,rows+7))
+    data=struct.pack('<'+str(rows*width)+'H',*(i%65536 for i in range(rows*width)))
+    uc.mem_write(RAW,data)
+    return data
+
+
+@pytest.mark.parametrize('extreme',(False,True))
+@pytest.mark.parametrize('rows',(1,3,7,8,159,160,161,240,320,511,1024))
+def test_metadata_height_full_pixels_and_bounds(rows,extreme):
+    uc,entry,epoch=fixture(extreme=extreme);original=set_strip(uc,rows)
+    uc.mem_write(epoch,struct.pack('<I',1))
+    reads=[]
+    uc.hook_add(UC_HOOK_MEM_READ,lambda _u,_a,at,size,_v,_d:reads.append((at,size)),begin=RAW,end=RAW+0x5ffff)
+    pointer=resolve(uc,entry,100)
+    assert pointer!=RAW
+    expected=[]
+    for y in range(rows):
+        for x in range(30):
+            sx=int(min(x,29-x)*29/14+0.5)
+            skew=min(sx//2,14-sx//2)
+            expected.append((((y-skew)%rows)*30+sx)%65536)
+    assert bytes(uc.mem_read(pointer,rows*60))==struct.pack('<'+str(len(expected))+'H',*expected)
+    assert bytes(uc.mem_read(RAW,len(original)))==original
+    assert all(RAW<=at and at+size<=RAW+len(original) for at,size in reads)
+    assert len(uc.iv_heap['calls'])==1
+    reads.clear();resolve(uc,entry,100)
+    assert reads==[] and len(uc.iv_heap['calls'])==1
+
+
+def test_height_replacement_grows_then_reuses_capacity_and_allocation_failure_is_safe():
+    uc,entry,epoch=fixture()
+    stock=resolve(uc,entry,100)
+    set_strip(uc,320);uc.mem_write(epoch,struct.pack('<I',2))
+    tall=resolve(uc,entry,100)
+    assert tall!=stock and len(uc.iv_heap['calls'])==2
+    set_strip(uc,240);uc.mem_write(epoch,struct.pack('<I',3))
+    assert resolve(uc,entry,100)!=RAW and len(uc.iv_heap['calls'])==2
+    uc.iv_heap['fail']=True
+    set_strip(uc,1024);uc.mem_write(epoch,struct.pack('<I',4))
+    assert resolve(uc,entry,100)==RAW
+    uc.iv_heap['fail']=False
+    assert resolve(uc,entry,100)!=RAW
+
+
+def test_initial_allocation_failure_passes_original_source():
+    uc,entry,_=fixture();uc.iv_heap['fail']=True
+    assert resolve(uc,entry,100)==RAW
