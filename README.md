@@ -45,7 +45,23 @@ Extreme support is not declared.
 Highest wall wins on each side; among equally high walls, the connection nearest
 the side centre wins. An exact tie uses the first tile in native boundary order.
 A higher off-centre wall takes priority over a lower centred wall. Updated native
-screenshots are pending for the new horizontal positioning and cache behavior.
+screenshots below show this selection and horizontal positioning.
+
+![The nearer of two high wall connections is selected](docs/r023/nearer-high.png)
+
+After removing that connection, the door follows the remaining high wall even
+though a low wall is nearer the centre. The camera moved between these captures.
+
+![The door follows the remaining off-centre high wall](docs/r023/farther-high.png)
+
+See [the native gallery](docs/r023/README.md) for the selected wall coordinates.
+Selection uses the game's existing connection refresh; warm drawing reads a
+cache without rescanning walls. The measured added draw cost was0.0401ms for
+1000 synthetic tower records; see the validation for method and limits.
+
+### Single-player lobby Load
+
+![The original Load control fits between portrait and Start at800x600](docs/r001/lobby-800.png)
 
 ## Validation
 

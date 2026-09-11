@@ -78,9 +78,8 @@ assigned workspace `Roadmap/Investigations/R001-lobby-load/evidence`.
 
 ## Remaining acceptance
 
-Native hover/tooltip and SP-to-MP position reset; packaged option-off;
-empty/invalid save list handling; minimum/default
-layout and long translated game tooltip; focused MP host smoke. No native
+Native hover/tooltip and SP-to-MP position reset; invalid save handling;
+long translated game tooltip and focused MP host smoke. No native
 Extreme/remote multiplayer/replay certification is claimed. Nine maintained
 launcher locales (en/de/fr/ru/hu/tr/ch/es/fa) contain matching keys; independent
 translation review remains pending. In-game resources follow game language,
@@ -120,3 +119,39 @@ passed for SP as recorded above; the initial failed run is not acceptance.
 
 PR remains draft until material native gates pass. Independent review and normal
 approved merge remain required; no release or completed issue resolution.
+
+## Interface integration acceptance, 11 September 2026
+
+The combined package retains R001 runtime2cf64e5 and all five merged sibling
+fixes. ZIP SHA2565e3146b40a7eff7e8ab26792eba08417097cb998395f6abaf558698809b35678;
+18runtime files,14,964bytes. All733 combined tests and the actual nine-language
+GUI resolver check pass. Shared init/options/locales/files are composed once;
+no duplicated native patch or input registration. The original owner's branch
+and private installation were not modified during these additional tests.
+
+Native SHC1.41 acceptance in the Interface installation additionally passes:
+
+- Apply800x600 in Video Options and reopen to verify the actual resolution.
+  The full Load icon fits between the portrait and Start, clear of the map list;
+  its visible hit area opens the existing dialog with the human alone.
+- A separate profile with an empty Saves directory opens an empty native list.
+  Load is disabled and an attempted click is inert; Back returns to the lobby.
+- Restart with only lobby-load disabled: the original hidden-icon behavior
+  returns, and clicking the relocated position is inert. R007 stays active.
+
+Screenshots are in docs/r001. The existing saves were untouched; original
+configpath and enabled configuration were restored after closing the test game.
+The native desktop slot was released at10:48:53 CEST. The test profile remains
+at800x600; the earlier1920x1080 acceptance is separately recorded above.
+
+Hover did not produce a readable tooltip in the800x600 capture, with either the
+enabled icon or original hidden target. This is not claimed as tooltip acceptance
+or a proven regression. No translated in-game resource fixture was substituted.
+The previously recorded Windows Firewall blocker still prevents native MP
+acceptance; it is separate from the authorized UCP developer-mode notice.
+
+After reconciling the focused PR with merged main, its732 tests and packaged GUI
+localization check pass. That18-file ZIP is14,949bytes, SHA256
+75cf2d281e1d26d9d84ab6035dc37fae4757b34ada3424126bd63f879a0da323.
+Its runtime Lua/options/locales match the native-tested combined package; only
+definition metadata differs (the release branch additionally authors topic tags).
