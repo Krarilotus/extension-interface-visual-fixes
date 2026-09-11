@@ -26,7 +26,11 @@ SITES = {
 }
 
 DATA = 0x60010000
-UPDATES = {0x41B7FF:'89 9C 0F 94 02 00 00',
+DEPTH = 0x60030000
+DEPTH_EPOCH = DEPTH+2048*40
+UPDATES = {0x4E8CF0:'83 EC 64 A1 94 83 F9 00 53 55 56 8B D9 57 33 FF 33 F6',
+           0x4EBA52:'E8 A9 80 F6 FF 83 7C 24 54 00 74 34',
+           0x41B7FF:'89 9C 0F 94 02 00 00',
            0x41B855:'03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9',
            0x512450:'51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C',
            0x50EDAF:'66 89 84 51 E0 80 0C 00 EB 6A 8B 95 1C FF FF FF 8B 82 08 49 55 00 8B 0D B4 CE D7 00 8D 54 01 FF'}
@@ -66,9 +70,10 @@ def emit(moved=None, missing=None):
         return origin
 
     def data(size, zero):
-        assert size == 65540 and zero is True
-        writes.append((DATA, bytes(size)))
-        return DATA
+        assert size in (65540,81924) and zero is True
+        address=DATA if size==65540 else DEPTH
+        writes.append((address, bytes(size)))
+        return address
 
     def write(address, code):
         result = bytearray()
@@ -87,7 +92,7 @@ def emit(moved=None, missing=None):
     except Exception:
         if moved or missing: assert not allocations and not writes
         raise
-    assert len(allocations) == 7
+    assert len(allocations) == 11
     assert {address for address, _ in writes if address < CAVE} == set(patterns)
     assert all(len(code) == 5 for address, code in writes if address in SITES)
     return writes
@@ -99,12 +104,19 @@ def render_address():
 
 
 def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
-            gm=54, override_width=None, context=False, foundation=False):
+            gm=54, override_width=None, context=False, foundation=False, painted=True):
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
     uc.mem_map(0x400000, 0x2500000)
-    uc.mem_map(CAVE, 0x30000)
+    uc.mem_map(CAVE, 0x50000)
     for address, code in emit():
         uc.mem_write(address, code)
+    uc.mem_write(DEPTH_EPOCH,struct.pack('<I',1))
+    entry=DEPTH+((812//4)&2047)*40
+    if painted:uc.mem_write(entry,struct.pack('<IiiI',1,0x7fffffff,-0x80000000,0))
+    uc.mem_write(0xD7CF68,struct.pack('<I',100))
+    uc.mem_write(0xB98790+180*16,struct.pack('<H',20))
+    uc.mem_write(0x21AEC4C,struct.pack('<I',0xDF33A0))
+    uc.mem_write(0xDF33A0,struct.pack('<H',0xf81f))
     width = override_width if override_width is not None else {75:4,76:5,77:6,78:6}.get(kind, 4)
     x, y = 204, 86
     # Same native diagonal-row serialization as the fixture at these coordinates.
@@ -152,7 +164,7 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
         if address == DRAW:
             assert [uc.reg_read(reg) for reg in registers] == before
             draws.append(struct.unpack('<2I', uc.mem_read(STACK+12,8)))
-    uc.hook_add(UC_HOOK_CODE, observe_draw, begin=DRAW, end=DRAW)
+    draw_hook=uc.hook_add(UC_HOOK_CODE, observe_draw, begin=DRAW, end=DRAW)
     uc.mem_write(DRAW, b'\xc2\x10\x00')
     uc.emu_start(render_address(), STOP, count=3000)
     assert uc.reg_read(UC_X86_REG_EIP) == STOP
@@ -163,13 +175,14 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
     assert result[:3] == (STOP, gm, frame)
     assert all(STACK-128 <= address and address+size <= STACK or
                address in (STACK+12,STACK+16) and size == 4 or
-               DATA <= address and address+size <= DATA+65540 for address, size in writes)
+               DATA <= address and address+size <= DATA+65540 or
+               DEPTH <= address and address+size <= DEPTH+81924 for address, size in writes)
     assert bytes(uc.mem_read(BUILDING,812)) == bytes(record)
     # Both the original renderer and a suppressed door clean up four arguments.
     assert uc.reg_read(UC_X86_REG_ESP) == STACK+20
     if context:
         return dict(uc=uc,points=points,tile=tile,registers=registers,before=before,
-                    side=side,width=width,record=bytes(record),draws=draws,
+                    side=side,width=width,record=bytes(record),draws=draws,draw_hook=draw_hook,
                     first_xy=draws[-1] if draws else None,frame=frame)
     return draws[-1] if draws else None
 

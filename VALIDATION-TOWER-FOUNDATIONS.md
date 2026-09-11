@@ -1,5 +1,11 @@
 # Tower masonry and lower connecting doors
 
+**Acceptance reopened:** the user's later screenshots show foundation columns
+covering a lower door. The edge inset also needs independent alignment checks.
+See [the draw-order follow-up](VALIDATION-DOOR-DRAW-ORDER.md) for the confirmed
+cause, candidate checks and remaining gates. The earlier results below are
+historical and do not establish complete visual acceptance.
+
 Issue [19](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/19).
 The existing tower-door option now extends wall masonry beneath exposed tower
 footprints. A lower connection can supply a door where the adjacent inner tile

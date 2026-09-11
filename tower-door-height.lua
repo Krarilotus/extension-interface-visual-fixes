@@ -17,6 +17,8 @@ function M.enable()
   end
 
   local updateSites = {
+    {0x4E8CF0, "83 EC 64 A1 94 83 F9 00 53 55 56 8B D9 57 33 FF 33 F6"},
+    {0x4EBA52, "E8 A9 80 F6 FF 83 7C 24 54 00 74 34"},
     {0x41B7FF, "89 9C 0F 94 02 00 00"},
     {0x41B855, "03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9", 6},
     {0x512450, "51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C"},
@@ -27,6 +29,156 @@ function M.enable()
       error("Interface and Visual Fixes: unsupported tower connection update layout")
     end
   end
+
+  -- Lower doors cross the row where vanilla draws the building overlay.
+  -- Foundation columns in later rows would erase them. Keep each affected draw
+  -- until its own face has been painted through the sprite's horizontal extent.
+  -- This is per-frame drawing state, independent of connection discovery.
+  local depth = core.allocate(2048 * 40 + 4, true)
+  local frameEpoch = depth + 2048 * 40
+  local depthAddress = string.format([[
+    mov edi, esi
+    shr edi, 2
+    and edi, 2047
+    lea edi, [edi+edi*4]
+    lea edi, [edi*8+%d]
+  ]], depth)
+  local initializeDepth = core.allocateAssembly(string.format([[
+    mov eax, [%d]
+    cmp [edi], eax
+    je ready
+    mov [edi], eax
+    mov dword [edi+4], 0x80000000
+    mov dword [edi+8], 0x7FFFFFFF
+    mov dword [edi+12], 0
+  ready:
+    ret
+  ]], frameEpoch))
+  local beginFrame = core.allocateAssembly(string.format([[
+    pushfd
+    inc dword [%d]
+    popfd
+    sub esp, 0x64
+    mov eax, [0xF98394]
+    jmp 0x4E8CF8
+  ]], frameEpoch))
+  local deferredDraw = core.allocateAssembly([[
+    pushfd
+    pushad
+  ]] .. depthAddress .. string.format([[
+    call %d
+    mov ecx, [esp+48]
+    mov edx, [esp+52]
+    cmp dword [esp+44], 81
+    jne right_face
+    mov eax, [0xD7CF68]
+    add eax, 80
+    shl eax, 4
+    movzx eax, word [eax+0xB98790]
+    add eax, ecx
+    cmp [edi+4], eax
+    jge immediate
+    mov [edi+16], ecx
+    mov [edi+20], edx
+    mov [edi+24], eax
+    or dword [edi+12], 1
+    jmp queued
+  right_face:
+    cmp [edi+8], ecx
+    jle immediate
+    mov [edi+28], ecx
+    mov [edi+32], edx
+    or dword [edi+12], 2
+  queued:
+    mov eax, [0x21AEC4C]
+    movzx eax, word [eax]
+    mov [edi+36], eax
+    popad
+    popfd
+    ret 16
+  immediate:
+    popad
+    popfd
+    jmp 0x455300
+  ]], initializeDepth))
+  local foundationDraw = core.allocateAssembly([[
+    call 0x453B00
+    pushfd
+    pushad
+    movzx esi, word [ebp*2+0x1C95BB8]
+    test esi, esi
+    jz done
+    cmp esi, 2000
+    jae done
+    imul esi, esi, 812
+    movzx eax, word [esi+0xF98606]
+    sub eax, 75
+    cmp eax, 3
+    ja done
+  ]] .. depthAddress .. string.format([[
+    call %d
+    mov eax, [0xED3178]
+    mov edx, [0xED317C]
+    cmp edx, 1
+    je right_extent
+    lea ecx, [eax+16]
+    cmp [edi+4], ecx
+    jge right_extent
+    mov [edi+4], ecx
+  right_extent:
+    cmp edx, 2
+    je paint_ready
+    add eax, 14
+    cmp [edi+8], eax
+    jle paint_ready
+    mov [edi+8], eax
+  paint_ready:
+    cmp dword [edi+12], 0
+    je done
+    push dword [0xED3158]
+    push dword [0xED3180]
+    mov ebp, [0x21AEC4C]
+    movzx eax, word [ebp]
+    push eax
+    mov ax, [edi+36]
+    mov [ebp], ax
+    mov dword [0xED3158], 0
+    mov dword [0xED3180], 54
+    test dword [edi+12], 1
+    jz paint_right
+    mov eax, [edi+24]
+    cmp [edi+4], eax
+    jl paint_right
+    and dword [edi+12], -2
+    push dword [edi+20]
+    push dword [edi+16]
+    push 81
+    push 54
+    mov ecx, 0x1FEA090
+    call 0x455300
+  paint_right:
+    test dword [edi+12], 2
+    jz restore_draw_state
+    mov eax, [edi+28]
+    cmp [edi+8], eax
+    jg restore_draw_state
+    and dword [edi+12], -3
+    push dword [edi+32]
+    push dword [edi+28]
+    push 90
+    push 54
+    mov ecx, 0x1FEA090
+    call 0x455300
+  restore_draw_state:
+    pop eax
+    mov [ebp], ax
+    pop dword [0xED3180]
+    pop dword [0xED3158]
+  done:
+    popad
+    popfd
+    ret
+  ]], initializeDepth))
 
   -- Private presentation state; never serialized or stored in building records.
   -- (building byte offset / 4) modulo 2048 is a collision-free permutation
@@ -357,6 +509,12 @@ function M.enable()
     mov edx, [esp]
     sub edx, eax
     add [esp+84], edx
+    sub edx, 90
+    jle finish
+    add esp, 32
+    popad
+    popfd
+    jmp %d
   finish:
     add esp, 32
     popad
@@ -367,7 +525,7 @@ function M.enable()
     popad
     popfd
     ret 16
-  ]], epoch, initialize, rank))
+  ]], epoch, initialize, rank, deferredDraw))
 
   -- The existing building graphics refresh already classified the cliff face.
   -- Use native tile_walls columns beneath tower footprint tiles. Keep the
@@ -441,6 +599,8 @@ function M.enable()
     mov edx, [ebp-0xE4]
     jmp 0x50EDB5
   ]])
+  core.writeCode(0x4E8CF0, {core.jmpTo(beginFrame), 0x90, 0x90, 0x90})
+  core.writeCode(0x4EBA52, {core.callTo(foundationDraw)})
   for _, site in ipairs(sites) do
     core.writeCode(site[1], {core.callTo(wrapper)})
   end

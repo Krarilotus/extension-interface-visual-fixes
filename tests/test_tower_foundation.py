@@ -10,7 +10,7 @@ MAP,TILE,SITE,CONTINUE,FALLBACK=0x1a93208,3210,0x50edaf,0x50ee19,0x50edb5
 
 def execute(kind=75,orientation=0,face=1,x=13,y=21):
     uc=Uc(UC_ARCH_X86,UC_MODE_32)
-    uc.mem_map(0x400000,0x2000000);uc.mem_map(0x60000000,0x21000)
+    uc.mem_map(0x400000,0x2000000);uc.mem_map(0x60000000,0x50000)
     for at,data in emit():uc.mem_write(at,data)
     frame=STACK+0x400
     for offset,value in ((-0x30,1),(-0xe4,MAP),(-0x1c,face),(-0x3c,x)):
