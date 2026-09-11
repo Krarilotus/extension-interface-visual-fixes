@@ -10,8 +10,8 @@ camera_preview_description: Keeps the selected building preview visible while mo
 dead_tree_text: Distinguish dead tree stages
 dead_tree_description: Shows standing dead trees before they become fallen logs.
 
-tower_door_text: Align tower doors with wall height
-tower_door_description: Aligns existing tower doors with the highest connecting wall.
+tower_door_text: Align tower doors with connecting walls
+tower_door_description: Aligns each tower door with the highest connected wall on its side. Among equally high walls, the connection nearest the side centre wins. The door moves along the tower face and to the wall height.
 lobby_load_text: Mostrar Cargar en la sala de escaramuza
 lobby_load_description: Muestra el botón Cargar existente en la sala de escaramuza de un jugador y permite cargar
   una partida sin un oponente de IA. Reinicia el juego para aplicar los cambios.

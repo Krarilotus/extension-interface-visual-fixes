@@ -12,8 +12,9 @@ controls, text areas and artwork.
   the camera moves.
 - **Distinguish dead tree stages:** shows standing-dead art before fallen logs,
   without changing tree growth or saved state.
-- **Align tower doors with wall height:** adjusts the existing door overlays to
-  the highest connecting wall on each side, without moving the tower.
+- **Align tower doors with connecting walls:** moves each doorway to the highest
+  connected wall on its side, choosing the nearest to the side centre when heights
+  tie. The doorway moves along the face as well as vertically.
 - **Show Load in skirmish lobby:** makes the existing single-player Load control
   visible between the portrait and Start, including lobbies without an AI opponent.
 
@@ -41,7 +42,10 @@ Extreme support is not declared.
 
 ### Tower doors
 
-![Tower door overlays aligned with low and high connecting walls](docs/native-tower-corrected.png)
+Highest wall wins on each side; among equally high walls, the connection nearest
+the side centre wins. An exact tie uses the first tile in native boundary order.
+A higher off-centre wall takes priority over a lower centred wall. Updated native
+screenshots are pending for the new horizontal positioning and cache behavior.
 
 ## Validation
 

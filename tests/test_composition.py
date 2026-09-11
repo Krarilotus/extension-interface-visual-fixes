@@ -36,6 +36,9 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
     for address, pattern in doors.SITES.items():
         seed(address-10, bytes.fromhex(pattern))
 
+    for address, pattern in doors.UPDATES.items():
+        seed(address-(6 if address==0x41B855 else 0),bytes.fromhex(pattern))
+
     lua = LuaRuntime(unpack_returned_tuples=True)
     writes, allocations, cache = [], [], {}
     next_address = CAVE
@@ -53,6 +56,12 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
         allocations.append((result, size))
         next_address += size
         return result
+
+    def data(size, zero):
+        assert zero is True
+        address=allocate(size)
+        writes.append((address,bytes(size)))
+        return address
 
     def write(address, table):
         result = bytearray()
@@ -89,7 +98,7 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
     relative = lambda opcode, target: lambda at: bytes([opcode])+struct.pack('<i', target-at-5)
     lua.globals().core = lua.table_from({
         'AOBScan': scan, 'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
-        'allocateCode': allocate, 'allocateAssembly': assembly, 'writeCode': write,
+        'allocateCode': allocate, 'allocateAssembly': assembly, 'allocate': data, 'writeCode': write,
         'jmpTo': lambda to: relative(0xe9, to), 'callTo': lambda to: relative(0xe8, to),
     })
     lua.globals().require = require
@@ -100,7 +109,7 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
     assert len(cache) == 6
-    assert sum(size for _, size in allocations) == 615
+    assert sum(size for _, size in allocations) == 66606
     for address, size in allocations:
         initialized = set()
         for start, data in writes:
@@ -108,7 +117,7 @@ def test_six_options_compose_without_duplicate_or_overlapping_patches():
         assert len(initialized) == size, 'wrapper length does not match emitted native bytes'
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
-        0x42afb9, 0x4426e0, 0x42733a,
+        0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES,
     }
     before = list(writes)
     module.enable(module, lua.table_from(config))

@@ -1,105 +1,90 @@
-# R023: tower door height beside connecting walls
+# R023: tower doors follow their connecting walls
 
-Related issue: [#9](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/9).
-Stacked on R019 PR #8. Draft pending the remaining native acceptance
-checks below. Existing native reproduction is confirmed.
+Closes [issue9](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/9).
+R019 PR8 is merged. This PR targets main and remains draft until native acceptance
+of the new horizontal positioning and cache implementation is complete. Earlier
+height-only screenshots do not prove this revised behavior.
 
-SHC 1.41 renderGmOverlayBuilding2 at 0x4E2AD0 draws existing GM54 doorway frames
-81/90 with fixed offsets for stone towers 75–78. The entrance writer 0x41B7C0
-records connection presence without consulting height. Its original boundary
-helper 0x40BA10 scans all 4/5/6 tiles of a side. Wooden tower74 uses another path.
+## Behavior
 
-In the isolated game, native placement beside tower 54/type 75 at(204,86) produced
-a Stone Wall at(208,86), height 98, and a Low Wall at(206,90), height 68. Both have
-terrain 8; their rises are 90 and 60. The existing doorway stays above the low wall
-at the high-wall position. All four camera rotations were captured. This also
-confirms mapper 46 means Low Wall in this UI, despite the old WOODWALL enum name.
-Native h.sav and the original decoder/CRC confirm both entrance flags persist.
-Fixture SHA256: `8c91afe7e8ba418af0ae387da6ae75a6ce5dfdf150904de26cced4d400cbe07e`.
+For each stone-tower side independently, choose the highest eligible connecting
+wall. Among equally high walls, choose the connection nearest the side centre.
+An exact centre-distance tie uses the first tile in the fixed native boundary
+order. A higher off-centre wall therefore wins over a lower centred wall. Move
+the existing doorway along the tower face and vertically to the chosen wall.
+The original game still decides whether the doorway is drawn. No qualifying
+connection leaves the original draw arguments unchanged.
 
-The wrapper changes only the existing renderGM y argument. It scans the oriented
-boundary with the original eligibility rule: logic 0x100 set, 0x2/0x200 clear.
-The adjustment is tower terrain plus 90 minus the highest eligible wall height.
-This lowers a same-terrain low-wall doorway by 30 native pixels, preserves high
-walls, and retains the higher connection when a side has mixed heights. That
-mixed/elevated policy still needs its full-game visual acceptance. A side with
-no eligible connection retains the original draw position.
+The native boundaries, relative to tower origin(x,y) and width w, are north
+(x+n,y-1), east(x+w,y+n), south(x+w-1-n,y+w), west(x-1,y+w-1-n), with n0..w-1.
+The original selector probes establish frame81/frame90 sides: south/east at
+orientation0, west/south at2, north/west at4 and east/north at6. Position changes
+follow the same isometric face: each boundary step is -16X and -8Y for frame81,
+or -16X and +8Y for frame90. Even-width side centres include half-tile offsets.
+The vertical height correction is tower terrain+90 minus absolute wall height.
+Eligibility retains the original logic0x100 set,0x2/0x200 clear rule.
 
-The five existing call sites are 0x4E3681,0x4E36D1,0x4E3724,0x4E3777 and0x4E3807.
-All are verified before any write. The last call is shared with other buildings;
-the wrapper guards tower type, GM and frame. Registers, flags, original draw
-count/order, ECX and RET 16 cleanup are preserved. There are no simulation writes,
-new assets, input hooks or additional draw calls.
+## Ownership and cost
 
-Validation:
+Original renderGmOverlayBuilding2 uses fixed GM54 frame81/90 offsets for tower
+kinds75-78. The five existing drawing calls are0x4E3681,0x4E36D1,0x4E3724,
+0x4E3777 and0x4E3807. The wrapper preserves their order/count, registers, flags,
+ECX and RET16 cleanup and only adjusts X/Y arguments.
 
-- A first native patched check caught swapped doorway sides in the draft.
-  Thirty-two original selector calls now independently establish the frame/side
-  mapping: at orientation0, frame81 reads side282 and frame90 reads side281.
-  The other rotations advance these sides modulo4. The regression failed before
-  the correction; the native component harness now includes asymmetric sides.
+The original computeBuildingEntranceFlagsForOrientations0x41B7C0 already visits
+all16/20/24 boundary tiles every40 tower updates. Two hooks at0x41B7FF/0x41B855
+collect the selected connection during that loop; they add no second scan or
+update callback. Warm drawing reads a cached entry, with no wall/row-array reads.
+A cold visible side is scanned once after load or building-slot reuse, at most
+six tiles. Existing map setup0x512100 invalidates entries by epoch. UID and origin
+checks prevent a reused slot retaining the previous tower's connection. The
+cache is private presentation memory and is not serialized or written into game
+records. Placement/removal refresh on the game's existing40-update cadence.
 
-- 246 focused tests run actual Lua-emitted code assembled with FASM, covering all
-  four types, both door sides, four rotations, several terrain heights, low/high
-  walls, last boundary tiles, mixed heights, ineligible/absent connections,
-  unsupported contexts, signature checks, state/register preservation and ABI.
-- The reused native original-renderer harness captures 320 matching draw
-  coordinates through the actual 343-byte wrapper, including original per-tower
-  offsets. Only terminal drawing is instrumented; this is component evidence,
-  not full-game corrected pixels or pathfinding acceptance.
-- The installed UCP 3.0.7 code.zip already contains core.allocateAssembly and
-  vendor/fasm/fasm.dll. This reuses existing framework support. CI installs the
-  FASM CLI solely to execute the same assembly during tests.
+Eight signatures are validated before allocation/writes. Six startup code blocks
+total794bytes; private zeroed data uses65,540bytes. The patch replaces44 original
+instruction bytes. There are no per-frame allocations, new input registrations,
+additional drawings, assets or runtime dependencies; it uses the existing FASM
+support supplied by UCP3.0.7. All options default off and require a restart.
 
-One 343-byte startup allocation, 25 replaced code bytes, no per-frame allocation;
-each doorway scans at most six tiles. Runtime package: 17 files, 10,654 bytes, 1,803 bytes
-above R019. A paired native benchmark of the original overlay function adds median32.190 ns
-per six-tile tower with both doorways, five runs of200,000 calls. Terminal
-rasterization is excluded; this measures the added boundary scan, not game FPS.
-Isolated startup timing remains unmeasured.
+## Automated and native component evidence
+
+258 focused tests execute the actual Lua/FASM instructions. They cover all four
+tower types, both door frames, all four rotations, terrain heights, low/high and
+mixed walls, endpoint connections, absent/ineligible walls, ABI and complete
+building-record preservation. New cases prove height-before-centre selection,
+deterministic centre ties, removal refresh, epoch/UID invalidation, collision-free
+cache indexing for all2000 native slots and zero wall/row reads over100 warm draws.
+The original connection loop's overwritten load and flag-reset instructions
+retain their exact register/flag and game-memory effects.
+
+A private native benchmark executes original0x41B7C0 and0x4E2AD0 with the actual
+patch and captured native map data. A1000-record synthetic workload uses all four
+tower kinds and eligible walls along every boundary. Cold and warm original
+renderer coordinates are asserted for both door frames. Five alternating pairs
+of200,000 tower draws/refreshes measure median added20.052ns per tower draw
+(two doors), and156.046ns per connection refresh. That is0.0201ms per1000-tower
+draw pass and0.156ms per1000-tower connection pass, or0.00390ms amortized across
+1000 tower updates at the unchanged40-update interval. A first cold1000-tower
+draw pass took0.0743ms total versus0.0296ms warm. This intentionally heavy native
+component workload tests accelerated execution; it is not a1000-speed game-menu
+setting, full-game FPS, rasterization measurement or universal worst-case claim.
+Original game bytes and private image data are not distributed.
+
+## Native acceptance pending for the revised code
+
+Earlier height-only implementation b5df175 passed native low/high joins for all
+four tower types, mixed-height selection, removal, rotations and save reload.
+Those results established the cause and fixtures, but horizontal movement and
+cache lifecycle require new captures of the current source. Use m.sav with low
+wall299,252 on square tower20; add high wall300,252, then a farther high wall,
+remove the selected wall and confirm both the selected connection and doorway
+move. Rotate using the native controls and reload m to check invalidation.
 
 Reference executable SHA256:
 `3bb0a8c1e72331b3a30a5aa93ed94beca0081b476b04c1960e26d5b45387ac5a`.
-Only this SHC 1.41 layout is accepted. Default off; English and German labels,
-English fallback for other current locales. No Extreme/MP/replay claim.
-
-Native b5df175 now starts and reloads h.sav successfully. Tower54/type75 shows the
-lowered door beside its low wall on both visible sides; the high-wall door keeps
-its anchor and the unconnected sides get no extra door. All four native camera
-orientations and frame selections were sampled. [Original](docs/native-tower-original.png)
-and [corrected](docs/native-tower-corrected.png) views show the same fixture.
-Tower/wall coordinates, heights and entrance flags remain unchanged. This is a
-visual/coordinate result; the full screenshot regions are not pixel-identical.
-The game was closed normally and desktop released at02:06:39.
-
-Native b5df175 also placed defense, square and round towers through the existing
-Castle Builder controls, consuming 15, 35 and 40 stone. At orientation 0 each
-shows frame81 meeting a low wall (height68, terrain8) on side282; the opposite
-frame remains absent. The sampled widths are5,6,6 and entrance flags are
-[0,0,1,0]. See [the three native joins](docs/native-tower-three-types.png).
-The normal Save control produced m.sav; the original decoder validates its CRC
-and all three tower records/entrances. SHA256:
-`b75d72691b945bb312b4501fdfec2e5c4c4d7919545ae21c521f158fc83de6a1`.
-This confirms native creation and low-wall rendering for all four types across
-the two fixtures. A fresh native process also reloaded m.sav and verified all
-three types at orientations0/6/4/2. Each retains entrances[0,0,1,0] with frames
-[81,0]/[0,0]/[0,0]/[0,90], respectively. Both visible connected sides meet the
-low wall; unconnected faces gain no doors. Stored geometry remains unchanged.
-The game was closed and its process absence verified before release at02:35:13.
-
-The final six-option composition also passes a native low-to-mixed-to-low check:
-at tower20/type77, adding high wall300,252 (height98) beside low wall299,252
-(height68) raises its existing frame81 doorway. Native demolition of only the
-high wall lowers it to the remaining low connection. Entrances stay[0,0,1,0]
-and tower geometry is preserved. See [mixed connection](docs/native-tower-mixed.png)
-and [high wall removed](docs/native-tower-high-removed.png). Both captures use
-the unchanged343-byte wrapper. The game closed normally at09:20:46.
-
-Native all-type/rotation rendering, save/reload, mixed walls and dynamic removal
-now pass. Elevated-terrain combinations are verified by the320 original-renderer
-native component draws (terminal rasterization captured) and emitted-x86 tests;
-a full-game elevated-terrain matrix is not claimed. Complete-record/write-bound
-tests establish that the wrapper changes only the draw argument, preserving
-collision/pathfinding and simulation fields. Added cost is measured above;
-whole-game FPS and isolated startup timing remain unmeasured. Check current-head
-CI and use the normal repository merge process after the R019 prerequisite.
+UCP3.0.7, winProcHandler0.2.0 and graphicsApiReplacer1.3.0; isolated1920x1080
+configuration rendered in a1280x720 window. Multiplayer, Extreme and replay are
+not claimed. The change does not alter pathfinding, collision or simulation
+commands. Localized English/German descriptions state the selection and movement;
+other existing option catalogs retain explicit English fallback for this option.
