@@ -14,8 +14,8 @@
 
 塔楼下方的石墙纹理，以及与连接墙体等高的门。
 
-![塔楼下方的石墙纹理，以及与连接墙体等高的门。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![塔楼下方的石墙纹理，以及与连接墙体等高的门。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 旋转镜头后连续的悬崖纹理。
 
-![旋转镜头后连续的悬崖纹理。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![旋转镜头后连续的悬崖纹理。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

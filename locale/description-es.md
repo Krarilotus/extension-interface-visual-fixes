@@ -14,8 +14,8 @@ La puerta elige la conexión válida más alta; en caso de empate, la más centr
 
 Mampostería bajo la torre y puertas a la altura de los muros conectados.
 
-![Mampostería bajo la torre y puertas a la altura de los muros conectados.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Mampostería bajo la torre y puertas a la altura de los muros conectados.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Texturas de acantilado conectadas tras girar la cámara.
 
-![Texturas de acantilado conectadas tras girar la cámara.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Texturas de acantilado conectadas tras girar la cámara.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

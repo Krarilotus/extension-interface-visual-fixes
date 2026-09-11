@@ -14,8 +14,8 @@ Tower doors choose the highest eligible connection; nearest centre breaks ties. 
 
 Tower masonry with doors at the connecting wall heights.
 
-![Tower masonry with doors at the connecting wall heights.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Tower masonry with doors at the connecting wall heights.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Connected cliff textures after rotation.
 
-![Connected cliff textures after rotation.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Connected cliff textures after rotation.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

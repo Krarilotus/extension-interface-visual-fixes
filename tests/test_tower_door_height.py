@@ -74,8 +74,8 @@ def emit(moved=None, missing=None):
         return origin
 
     def data(size, zero):
-        assert size in (65540,81924) and zero is True
-        address=DATA if size==65540 else DEPTH
+        assert size in (65540,81920,4) and zero is True
+        address=DATA if size==65540 else DEPTH_EPOCH if size==4 else DEPTH
         writes.append((address, bytes(size)))
         return address
 
@@ -91,6 +91,12 @@ def emit(moved=None, missing=None):
         'callTo': lambda target: lambda address: b'\xe8'+struct.pack('<i', target-address-5),
         'jmpTo': lambda target: lambda address: b'\xe9'+struct.pack('<i', target-address-5),
     })
+    modules = {}
+    def require(name):
+        if name not in modules:
+            modules[name] = lua.execute((ROOT/f'{name}.lua').read_text())
+        return modules[name]
+    lua.globals().require = require
     try:
         lua.execute((ROOT/'tower-door-height.lua').read_text()).enable()
     except Exception:

@@ -1,6 +1,6 @@
 name: interface-visual-fixes
 display-name: Interface and Visual Fixes
-version: 0.1.1
+version: 0.1.2
 author: Krarilotus
 type: module
 game: [SHC==1.41]

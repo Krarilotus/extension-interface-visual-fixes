@@ -14,8 +14,8 @@ Kapı en yüksek uygun bağlantıyı seçer; eşit yükseklikte merkeze en yakı
 
 Kule altındaki duvar dokusu ve bağlı surların yüksekliğindeki kapılar.
 
-![Kule altındaki duvar dokusu ve bağlı surların yüksekliğindeki kapılar.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Kule altındaki duvar dokusu ve bağlı surların yüksekliğindeki kapılar.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Kamera döndürüldükten sonra birleşen uçurum dokuları.
 
-![Kamera döndürüldükten sonra birleşen uçurum dokuları.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Kamera döndürüldükten sonra birleşen uçurum dokuları.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)

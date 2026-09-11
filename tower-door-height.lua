@@ -34,8 +34,8 @@ function M.enable()
   -- Foundation columns in later rows would erase them. Keep each affected draw
   -- until its own face has been painted through the sprite's horizontal extent.
   -- This is per-frame drawing state, independent of connection discovery.
-  local depth = core.allocate(2048 * 40 + 4, true)
-  local frameEpoch = depth + 2048 * 40
+  local depth = core.allocate(2048 * 40, true)
+  local frameEpoch = require("render-frame").getEpoch()
   local depthAddress = string.format([[
     mov edi, esi
     shr edi, 2
@@ -53,14 +53,6 @@ function M.enable()
     mov dword [edi+12], 0
   ready:
     ret
-  ]], frameEpoch))
-  local beginFrame = core.allocateAssembly(string.format([[
-    pushfd
-    inc dword [%d]
-    popfd
-    sub esp, 0x64
-    mov eax, [0xF98394]
-    jmp 0x4E8CF8
   ]], frameEpoch))
   local deferredDraw = core.allocateAssembly([[
     pushfd
@@ -625,7 +617,6 @@ function M.enable()
     mov edx, [ebp-0xE4]
     jmp 0x50EDB5
   ]])
-  core.writeCode(0x4E8CF0, {core.jmpTo(beginFrame), 0x90, 0x90, 0x90})
   core.writeCode(0x4EBA52, {core.callTo(foundationDraw)})
   for _, site in ipairs(sites) do
     core.writeCode(site[1], {core.callTo(wrapper)})

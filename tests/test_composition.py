@@ -14,6 +14,7 @@ import test_lobby_load as load
 import test_tower_door_height as doors
 import test_unique_placement as placement
 import test_cliff_texture_direction as cliffs
+import test_cliff_texture_source as cliff_source
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE, CAVE = 0x400000, 0x60000000
@@ -35,6 +36,8 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     seed(camera.SITE-6, camera.PATTERN)
     seed(trees.SITE-15, trees.PATTERN)
     seed(cliffs.SITE,cliffs.PATTERN)
+    for address,pattern in cliff_source.PATTERNS.items():
+        seed(address,pattern)
     for address, pattern in doors.SITES.items():
         seed(address-10, bytes.fromhex(pattern))
 
@@ -60,9 +63,8 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         return result
 
     def data(size, zero):
-        assert zero is True
         address=allocate(size)
-        writes.append((address,bytes(size)))
+        if zero:writes.append((address,bytes(size)))
         return address
 
     def write(address, table):
@@ -111,8 +113,8 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     config = {option['url'].split('.', 1)[1]: True for option in options}
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
-    assert len(cache) == 7
-    assert sum(size for _, size in allocations) == 149494
+    assert len(cache) == 9
+    assert sum(size for _, size in allocations) == 774030
     for address, size in allocations:
         initialized = set()
         for start, data in writes:
@@ -120,7 +122,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         assert len(initialized) == size, 'wrapper length does not match emitted native bytes'
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
-        0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE,
+        0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE, *cliff_source.PATTERNS,
     }
     before = list(writes)
     module.enable(module, lua.table_from(config))

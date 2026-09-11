@@ -14,8 +14,8 @@ La porte suit le raccordement admissible le plus haut ; à hauteur égale, le pl
 
 Maçonnerie sous la tour et portes à la hauteur des remparts raccordés.
 
-![Maçonnerie sous la tour et portes à la hauteur des remparts raccordés.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/tower-foundation.png)
+![Maçonnerie sous la tour et portes à la hauteur des remparts raccordés.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
 
 Textures de falaise raccordées après rotation.
 
-![Textures de falaise raccordées après rotation.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/36994df386fb997bee244ff9493756012d7dd334/docs/store/cliff-textures.png)
+![Textures de falaise raccordées après rotation.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)
