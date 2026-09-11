@@ -4,7 +4,8 @@ import re
 import struct
 import xml.etree.ElementTree as ET
 
-from lupa import LuaRuntime, lua_type
+from lupa import lua_type
+from lua_support import LuaRuntime, with_symbols, flatten_code
 import yaml
 
 import test_camera_preview as camera
@@ -88,7 +89,8 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         if address < CAVE:
             seed(address, code)
 
-    def assembly(source):
+    def assembly(source, mapping=None):
+        source=with_symbols(source,mapping)
         size = len(doors.assemble(source, 0))
         address = allocate(size)
         writes.append((address, doors.assemble(source, address)))
@@ -104,7 +106,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         'AOBScan': scan, 'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'allocateCode': allocate, 'allocateAssembly': assembly, 'allocate': data, 'writeCode': write,
         'jmpTo': lambda to: relative(0xe9, to), 'callTo': lambda to: relative(0xe8, to),
-        'assemble':lambda script,_mapping,origin:lua.table_from(list(doors.assemble(script,origin))),
+        'assemble':lambda script,_mapping,origin:lua.table_from(list(doors.assemble(with_symbols(script,_mapping),origin))),
     })
     lua.globals().require = require
     options = yaml.safe_load((ROOT/'options.yml').read_text())['options']
@@ -113,7 +115,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     config = {option['url'].split('.', 1)[1]: True for option in options}
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
-    assert len(cache) == 9
+    assert len(cache) == 10
     assert sum(size for _, size in allocations) == 774030
     for address, size in allocations:
         initialized = set()

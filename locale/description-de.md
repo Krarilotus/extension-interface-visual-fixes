@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Sieben optionale Korrekturen für SHC 1.41 und UCP 3.0.7. Gewünschte Optionen aktivieren und das Spiel neu starten.
+Sieben optionale Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7. Gewünschte Optionen aktivieren und das Spiel neu starten.
 
 - Eigene Kartenbeschreibungen bleiben in der Lobby sichtbar.
 - Nach erfolgreichem Bau eines einzigartigen Gebäudes verschwindet die Bauvorschau.

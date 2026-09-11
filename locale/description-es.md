@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Siete correcciones opcionales para SHC 1.41 y UCP 3.0.7. Activa las que quieras y reinicia el juego.
+Siete correcciones opcionales para SHC/SHCE 1.41 y UCP 3.0.7. Activa las que quieras y reinicia el juego.
 
 - Mantiene visibles las descripciones de mapas personalizados en la sala.
 - Retira la vista previa tras construir correctamente un edificio único.

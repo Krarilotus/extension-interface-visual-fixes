@@ -3,6 +3,7 @@
     <file src="definition.yml" />
     <file src="options.yml" />
     <file src="init.lua" />
+    <file src="native-layout.lua" />
     <file src="lobby-description.lua" />
     <file src="unique-placement.lua" />
     <file src="camera-preview.lua" />

@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Seven optional fixes for Stronghold Crusader 1.41, using the game's existing
+Seven optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
 controls, text areas and artwork.
 
 Version 0.1.2 corrects tower-door alignment and draw order, and completes cliff
@@ -26,8 +26,7 @@ See the [short description](locale/description-en.md).
   both visible faces when the map is rotated, using the current texture pack.
 
 Enable the module, choose the fixes you want, apply your settings and restart the
-game. Each option starts disabled. The module targets UCP 3.0.7 and SHC 1.41.
-Extreme support is not declared.
+game. Each option starts disabled. The module targets UCP 3.0.7 with SHC or SHCE 1.41.
 
 ## Feature screenshots
 
