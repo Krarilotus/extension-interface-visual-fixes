@@ -58,7 +58,10 @@ function M.enable()
 
   -- Rank one tile the native connection loop already visits. Highest height
   -- wins, then closest to the side centre, then first in native boundary order.
-  -- EAX=tile, EBX=boundary index, ECX=width -> EAX=rank, EDX=side.
+  -- Raised stairs cannot enter a tower. Native stair6 has no raised-stair flag
+  -- and retains terrain height. A connection below the tower base is unusable.
+  -- EAX=tile, EBX=boundary index, ECX=width, ESI=building offset
+  -- -> EAX=rank, EDX=side.
   local rank = core.allocateAssembly([[
     push ebx
     push ecx
@@ -68,10 +71,16 @@ function M.enable()
     cmp eax, 80400
     jae absent
     mov edx, [eax*4+0x1BF8368]
-    and edx, 0x302
+    and edx, 0xB02
     cmp edx, 0x100
     jne absent
     movzx edi, byte [eax+0x1D32C38]
+    mov esi, [esi+0xF98628]
+    cmp esi, 80400
+    jae absent
+    movzx esi, byte [esi+0x1D46648]
+    cmp edi, esi
+    jb absent
     inc edi
     shl edi, 16
     mov eax, ebx
@@ -122,6 +131,7 @@ function M.enable()
     pushfd
     pushad
     mov ecx, [edi+0xF9862C]
+    mov esi, edi
     call %d
     mov esi, edi
   ]], rank) .. address .. [[
@@ -269,7 +279,7 @@ function M.enable()
   cached:
     mov eax, [edi+ecx*4+8]
     test eax, eax
-    jz finish
+    jz no_door
     ; Position along the existing face, relative to its side-centre anchor.
     ; One boundary tile projects to -16 X and -8/+8 Y for frame 81/90.
     movzx ebx, al
@@ -277,6 +287,18 @@ function M.enable()
     sub ecx, ebx
     lea ecx, [ecx*2+1]
     sub ecx, [esp+16]
+    ; Inset only the extreme connections by half a tile, symmetrically.
+    mov edx, [esp+16]
+    sub edx, 2
+    cmp ecx, edx
+    jle upper_inset
+    mov ecx, edx
+  upper_inset:
+    neg edx
+    cmp ecx, edx
+    jge lower_inset
+    mov ecx, edx
+  lower_inset:
     mov edx, ecx
     shl edx, 3
     sub [esp+80], edx
@@ -296,6 +318,11 @@ function M.enable()
     popad
     popfd
     jmp 0x455300
+  no_door:
+    add esp, 32
+    popad
+    popfd
+    ret 16
   ]], epoch, initialize, rank))
   for _, site in ipairs(sites) do
     core.writeCode(site[1], {core.callTo(wrapper)})

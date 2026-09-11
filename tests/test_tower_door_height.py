@@ -10,7 +10,7 @@ import tempfile
 
 from lupa import LuaRuntime
 import pytest
-from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_WRITE, UC_HOOK_MEM_READ
+from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_WRITE, UC_HOOK_MEM_READ, UC_HOOK_CODE
 from unicorn.x86_const import *
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -142,29 +142,37 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
     writes = []
     uc.hook_add(UC_HOOK_MEM_WRITE, lambda _uc, _access, address, size, value, _data:
                 writes.append((address, size)))
-    uc.emu_start(render_address(), DRAW, count=3000)
-    assert uc.reg_read(UC_X86_REG_EIP) == DRAW
-    assert [uc.reg_read(reg) for reg in registers] == before
+    draws = []
+    def observe_draw(_uc, address, _size, _data):
+        if address == DRAW:
+            assert [uc.reg_read(reg) for reg in registers] == before
+            draws.append(struct.unpack('<2I', uc.mem_read(STACK+12,8)))
+    uc.hook_add(UC_HOOK_CODE, observe_draw, begin=DRAW, end=DRAW)
+    uc.mem_write(DRAW, b'\xc2\x10\x00')
+    uc.emu_start(render_address(), STOP, count=3000)
+    assert uc.reg_read(UC_X86_REG_EIP) == STOP
+    after = before.copy()
+    after[7] = STACK+20
+    assert [uc.reg_read(reg) for reg in registers] == after
     result = struct.unpack('<5I', uc.mem_read(STACK,20))
     assert result[:3] == (STOP, gm, frame)
     assert all(STACK-128 <= address and address+size <= STACK or
                address in (STACK+12,STACK+16) and size == 4 or
                DATA <= address and address+size <= DATA+65540 for address, size in writes)
     assert bytes(uc.mem_read(BUILDING,812)) == bytes(record)
-    # Terminal stand-in checks the original renderer's callee cleanup, not pixels.
-    uc.mem_write(DRAW, b'\xc2\x10\x00')
-    uc.emu_start(DRAW, STOP, count=2)
+    # Both the original renderer and a suppressed door clean up four arguments.
     assert uc.reg_read(UC_X86_REG_ESP) == STACK+20
     if context:
         return dict(uc=uc,points=points,tile=tile,registers=registers,before=before,
-                    side=side,width=width,record=bytes(record),first_xy=result[3:])
-    return result[3:]
+                    side=side,width=width,record=bytes(record),draws=draws,
+                    first_xy=draws[-1] if draws else None)
+    return draws[-1] if draws else None
 
 
 def expected(kind=75,frame=81,index=0,rise=60):
     width={75:4,76:5,77:6,78:6}[kind]
     # Isometric displacement from the midpoint, including even-width half tiles.
-    displacement=index-(width-1)/2
+    displacement=min(max(index,0.5),width-1.5)-(width-1)/2
     return (int(500-16*displacement),
             int(500+90-rise+(-8 if frame==81 else 8)*displacement))
 
@@ -184,14 +192,14 @@ def test_last_boundary_tile_and_mixed_heights(kind,orientation,frame):
 
 
 @pytest.mark.parametrize('walls', [(), ((0,60,0),), ((0,60,0x102),), ((0,60,0x300),)])
-def test_absent_or_ineligible_connection_keeps_original_y(walls):
-    assert execute(walls=walls) == (500,500)
+def test_absent_or_ineligible_connection_suppresses_door(walls):
+    assert execute(walls=walls) is None
 
 
 @pytest.mark.parametrize('rise,expected_y', [(44,546),(74,516),(120,470)])
 def test_wall_height_is_relative_to_tower_terrain(rise,expected_y):
     # Steps and walls on neighboring elevated ground use actual absolute height.
-    assert execute(walls=((0,rise,0x100),),ground=40) == (524,expected_y+12)
+    assert execute(walls=((0,rise,0x100),),ground=40) == (516,expected_y+8)
 
 
 @pytest.mark.parametrize('kwargs', [dict(kind=74),dict(kind=79),dict(gm=55),dict(frame=80),
@@ -225,8 +233,11 @@ def draw_again(ctx):
     uc=ctx['uc']
     uc.mem_write(STACK,struct.pack('<5I',STOP,54,81,500,500))
     for reg,value in zip(ctx['registers'],ctx['before']): uc.reg_write(reg,value)
+    ctx['draws'].clear()
     uc.emu_start(render_address(),STOP,count=3000)
-    return struct.unpack('<2I',uc.mem_read(STACK+12,8))
+    assert uc.reg_read(UC_X86_REG_EIP)==STOP
+    assert uc.reg_read(UC_X86_REG_ESP)==STACK+20
+    return ctx['draws'][-1] if ctx['draws'] else None
 
 
 def refresh_connections(ctx):
@@ -280,7 +291,7 @@ def test_existing_connection_refresh_updates_cached_height_and_removal():
     uc.mem_write(LOGIC+tile*4,bytes(4))
     refresh_connections(ctx)
     assert selected_index(ctx) is None
-    assert draw_again(ctx)==(500,500)
+    assert draw_again(ctx) is None
 
 
 @pytest.mark.parametrize('width,kind',[(4,75),(5,76),(6,77),(6,78)])
@@ -325,6 +336,50 @@ def test_building_uid_reuse_invalidates_entry():
 
 def test_cache_indices_have_no_collision_for_native_building_capacity():
     assert len({((i*812)//4)&2047 for i in range(2000)})==2000
+
+
+@pytest.mark.parametrize('kind,orientation,frame',list(itertools.product(
+    range(75,79),(0,2,4,6),(81,90))))
+def test_ground_level_stair6_alone_and_raised_stairs(kind,orientation,frame):
+    # Native 0x5034A0: stair6 gets 0x100 and zero rise; stair1-5 get 0x900.
+    ctx=execute(kind,orientation,frame,((1,0,0x100),),context=True)
+    assert ctx['first_xy']==expected(kind,frame,1,0)
+    refresh_connections(ctx)
+    assert selected_index(ctx)==1
+    for rise in (16,32,48,64,80):
+        assert execute(kind,orientation,frame,((1,rise,0x900),)) is None
+
+
+@pytest.mark.parametrize('kind,frame',list(itertools.product(range(75,79),(81,90))))
+def test_below_base_connection_is_rejected_before_height_ranking(kind,frame):
+    ctx=execute(kind=kind,frame=frame,ground=100,walls=((0,-2,0x100),),context=True)
+    assert ctx['first_xy'] is None
+    refresh_connections(ctx)
+    assert selected_index(ctx) is None
+    # A valid ground-level connection is retained even beside a lower cliff wall.
+    ctx=execute(kind=kind,frame=frame,ground=100,
+                walls=((0,-32,0x100),(1,0,0x100)),context=True)
+    assert ctx['first_xy']==expected(kind,frame,1,0)
+    refresh_connections(ctx)
+    assert selected_index(ctx)==1
+
+
+def test_raised_stair_does_not_outrank_ground_level_stair6_on_refresh():
+    ctx=execute(walls=((0,80,0x900),(1,0,0x100)),context=True)
+    assert selected_index(ctx)==1
+    refresh_connections(ctx)
+    assert selected_index(ctx)==1
+    assert draw_again(ctx)==expected(index=1,rise=0)
+
+
+def test_wall_dropping_below_tower_base_disappears_at_existing_refresh():
+    ctx=execute(ground=80,context=True)
+    tile=ctx['tile'](*ctx['points'][2][0])
+    ctx['uc'].mem_write(HEIGHT+tile,bytes([68]))
+    assert draw_again(ctx)==expected()
+    refresh_connections(ctx)
+    assert selected_index(ctx) is None
+    assert draw_again(ctx) is None
 
 
 @pytest.mark.parametrize('site',list(UPDATES))
