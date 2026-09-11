@@ -16,6 +16,10 @@ from unicorn.x86_const import *
 ROOT = Path(__file__).resolve().parents[1]
 CAVE, STACK, DRAW, STOP = 0x60000000, 0x60003000, 0x455300, 0x60004000
 BUILDING = 0xF98534 + 812
+NATIVE_ANCHORS = {75:{81:(-36,-120),90:(32,-113)},
+                  76:{81:(-36,-119),90:(46,-119)},
+                  77:{81:(-52,-130),90:(48,-125)},
+                  78:{81:(-51,-130),90:(49,-124)}}
 LOGIC, HEIGHT, TERRAIN, ROWS = 0x1BF8368, 0x1D32C38, 0x1D46648, 0x2337300
 SITES = {
     0x4E3681: 'DC 52 50 6A 36 B9 90 A0 FE 01 E8 7A 1C F7 FF',
@@ -26,7 +30,11 @@ SITES = {
 }
 
 DATA = 0x60010000
-UPDATES = {0x41B7FF:'89 9C 0F 94 02 00 00',
+DEPTH = 0x60030000
+DEPTH_EPOCH = DEPTH+2048*40
+UPDATES = {0x4E8CF0:'83 EC 64 A1 94 83 F9 00 53 55 56 8B D9 57 33 FF 33 F6',
+           0x4EBA52:'E8 A9 80 F6 FF 83 7C 24 54 00 74 34',
+           0x41B7FF:'89 9C 0F 94 02 00 00',
            0x41B855:'03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9',
            0x512450:'51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C',
            0x50EDAF:'66 89 84 51 E0 80 0C 00 EB 6A 8B 95 1C FF FF FF 8B 82 08 49 55 00 8B 0D B4 CE D7 00 8D 54 01 FF'}
@@ -66,9 +74,10 @@ def emit(moved=None, missing=None):
         return origin
 
     def data(size, zero):
-        assert size == 65540 and zero is True
-        writes.append((DATA, bytes(size)))
-        return DATA
+        assert size in (65540,81924) and zero is True
+        address=DATA if size==65540 else DEPTH
+        writes.append((address, bytes(size)))
+        return address
 
     def write(address, code):
         result = bytearray()
@@ -87,7 +96,7 @@ def emit(moved=None, missing=None):
     except Exception:
         if moved or missing: assert not allocations and not writes
         raise
-    assert len(allocations) == 7
+    assert len(allocations) == 11
     assert {address for address, _ in writes if address < CAVE} == set(patterns)
     assert all(len(code) == 5 for address, code in writes if address in SITES)
     return writes
@@ -99,12 +108,19 @@ def render_address():
 
 
 def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
-            gm=54, override_width=None, context=False, foundation=False):
+            gm=54, override_width=None, context=False, foundation=False, painted=True):
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
     uc.mem_map(0x400000, 0x2500000)
-    uc.mem_map(CAVE, 0x30000)
+    uc.mem_map(CAVE, 0x50000)
     for address, code in emit():
         uc.mem_write(address, code)
+    uc.mem_write(DEPTH_EPOCH,struct.pack('<I',1))
+    entry=DEPTH+((812//4)&2047)*40
+    if painted:uc.mem_write(entry,struct.pack('<IiiI',1,0x7fffffff,-0x80000000,0))
+    uc.mem_write(0xD7CF68,struct.pack('<I',100))
+    uc.mem_write(0xB98790+180*16,struct.pack('<H',20))
+    uc.mem_write(0x21AEC4C,struct.pack('<I',0xDF33A0))
+    uc.mem_write(0xDF33A0,struct.pack('<H',0xf81f))
     width = override_width if override_width is not None else {75:4,76:5,77:6,78:6}.get(kind, 4)
     x, y = 204, 86
     # Same native diagonal-row serialization as the fixture at these coordinates.
@@ -138,6 +154,10 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
         uc.mem_write(LOGIC+position*4, struct.pack('<I', logic))
         uc.mem_write(HEIGHT+position, bytes([ground+rise]))
     uc.mem_write(STACK, struct.pack('<5I', STOP, gm, frame, 500, 500))
+    old_x,old_y=NATIVE_ANCHORS.get(kind,NATIVE_ANCHORS[75]).get(frame,(0,0))
+    # Four native draw arguments and five saved registers separate the caller
+    # frame from its sprite call. Keep the original parent X/Y arguments intact.
+    uc.mem_write(STACK+48,struct.pack('<2i',500-old_x,500-old_y))
     registers = [UC_X86_REG_EAX, UC_X86_REG_EBX, UC_X86_REG_ECX, UC_X86_REG_EDX,
                  UC_X86_REG_ESI, UC_X86_REG_EDI, UC_X86_REG_EBP, UC_X86_REG_ESP,
                  UC_X86_REG_EFLAGS]
@@ -152,7 +172,7 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
         if address == DRAW:
             assert [uc.reg_read(reg) for reg in registers] == before
             draws.append(struct.unpack('<2I', uc.mem_read(STACK+12,8)))
-    uc.hook_add(UC_HOOK_CODE, observe_draw, begin=DRAW, end=DRAW)
+    draw_hook=uc.hook_add(UC_HOOK_CODE, observe_draw, begin=DRAW, end=DRAW)
     uc.mem_write(DRAW, b'\xc2\x10\x00')
     uc.emu_start(render_address(), STOP, count=3000)
     assert uc.reg_read(UC_X86_REG_EIP) == STOP
@@ -163,13 +183,14 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
     assert result[:3] == (STOP, gm, frame)
     assert all(STACK-128 <= address and address+size <= STACK or
                address in (STACK+12,STACK+16) and size == 4 or
-               DATA <= address and address+size <= DATA+65540 for address, size in writes)
+               DATA <= address and address+size <= DATA+65540 or
+               DEPTH <= address and address+size <= DEPTH+81924 for address, size in writes)
     assert bytes(uc.mem_read(BUILDING,812)) == bytes(record)
     # Both the original renderer and a suppressed door clean up four arguments.
     assert uc.reg_read(UC_X86_REG_ESP) == STACK+20
     if context:
         return dict(uc=uc,points=points,tile=tile,registers=registers,before=before,
-                    side=side,width=width,record=bytes(record),draws=draws,
+                    side=side,width=width,record=bytes(record),draws=draws,draw_hook=draw_hook,
                     first_xy=draws[-1] if draws else None,frame=frame)
     return draws[-1] if draws else None
 
@@ -178,8 +199,12 @@ def expected(kind=75,frame=81,index=0,rise=60):
     width={75:4,76:5,77:6,78:6}[kind]
     # Isometric displacement from the midpoint, including even-width half tiles.
     displacement=min(max(index,0.5),width-1.5)-(width-1)/2
-    return (int(500-16*displacement),
-            int(500+90-rise+(-8 if frame==81 else 8)*displacement))
+    old_x,old_y=NATIVE_ANCHORS[kind][frame]
+    # Independent footprint geometry: face midpoint, then the sprite threshold.
+    centre_x=(16-8*width) if frame==81 else (14+8*width)
+    threshold_y=(33-4*width) if frame==81 else (32-4*width)
+    return (int(500-old_x+centre_x-10-16*displacement),
+            int(500-old_y+threshold_y-42-rise+(-8 if frame==81 else 8)*displacement))
 
 
 @pytest.mark.parametrize('kind,orientation,frame,ground,rise', list(itertools.product(
@@ -204,7 +229,7 @@ def test_absent_or_ineligible_connection_suppresses_door(walls):
 @pytest.mark.parametrize('rise,expected_y', [(44,546),(74,516),(120,470)])
 def test_wall_height_is_relative_to_tower_terrain(rise,expected_y):
     # Steps and walls on neighboring elevated ground use actual absolute height.
-    assert execute(walls=((0,rise,0x100),),ground=40) == (516,expected_y+8)
+    assert execute(walls=((0,rise,0x100),),ground=40) == (526,expected_y+13)
 
 
 @pytest.mark.parametrize('kwargs', [dict(kind=74),dict(kind=79),dict(gm=55),dict(frame=80),
@@ -284,6 +309,21 @@ def test_repeated_draws_do_not_read_wall_or_row_arrays():
     ctx['uc'].hook_add(UC_HOOK_MEM_READ,observe)
     for _ in range(100): assert draw_again(ctx)==expected()
     assert reads==[]
+
+
+@pytest.mark.parametrize('frame,index,rise,threshold',[
+    (81,1,-36,(542,337)),
+    (90,0,-6,(612,294)),
+])
+def test_recorded_cliff_corner_wall_contacts_use_parent_native_draw_anchor(frame,index,rise,threshold):
+    # Native reference: drawing tile206,88 at(550,384), tower base104.
+    # The south wall contacts(542,337); the extreme east wall contacts(620,290),
+    # inset by(-8,+4). These coordinates come from the native foundation blits.
+    c=execute(frame=frame,ground=104,walls=((index,rise,0x100),),
+              foundation=True,context=True)
+    c['uc'].mem_write(STACK+48,struct.pack('<2i',550,280))
+    x,y=draw_again(c)
+    assert (x+10,y+42)==threshold
 
 
 def test_existing_connection_refresh_updates_cached_height_and_removal():
