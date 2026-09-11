@@ -149,3 +149,9 @@ enabled icon or original hidden target. This is not claimed as tooltip acceptanc
 or a proven regression. No translated in-game resource fixture was substituted.
 The previously recorded Windows Firewall blocker still prevents native MP
 acceptance; it is separate from the authorized UCP developer-mode notice.
+
+After reconciling the focused PR with merged main, its732 tests and packaged GUI
+localization check pass. That18-file ZIP is14,949bytes, SHA256
+75cf2d281e1d26d9d84ab6035dc37fae4757b34ada3424126bd63f879a0da323.
+Its runtime Lua/options/locales match the native-tested combined package; only
+definition metadata differs (the release branch additionally authors topic tags).

@@ -1,13 +1,13 @@
 # R001 review build
 
 This is an unsigned review build for SHC1.41 and UCP3.0.7, containing R001 plus
-its R007 integration base. It is not a release or the owner's combined build.
+the five merged Interface/Visual fixes. It is not a release.
 Use an isolated test installation; keep other feature builds separate.
 
 1. Verify interface-visual-fixes-0.1.0.zip against SHA256SUMS.txt.
 2. Extract its contents into ucp/modules/interface-visual-fixes-0.1.0 in the
    isolated installation using the project's developer/test loader workflow.
-3. Open that installation in UCP GUI and enable the module. Both options default
+3. Open that installation in UCP GUI and enable the module. All options default
    off. Enable **Show Load in skirmish lobby**, apply the configuration and restart.
 4. In Crusader, choose a custom skirmish. With only the human present, inspect
    the Load icon right of the master portrait and before the Start hand. Click
@@ -20,6 +20,6 @@ the title/category/description produced by the actual pinned GUI resolver for
 each language without English fallback. This automated check does not establish
 native layout quality or independent translation approval in every language.
 
-Native SP placement/click/back/save checks have passed. See VALIDATION-R001.md
-and PR12 for remaining acceptance, including native MP, other resolutions,
-disabled behavior, empty/invalid saves and translated tooltip layout.
+Native SP placement/click/back/save,800x600 layout, disabled behavior and empty
+save-list checks have passed. See VALIDATION-R001.md and PR12 for remaining
+acceptance, including native MP, invalid saves and translated tooltip layout.
