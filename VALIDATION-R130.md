@@ -76,14 +76,18 @@ Actual module: [engineers cleared](docs/native-engineers-cleared.png),
 [ordinary preview retained](docs/native-ordinary-retained.png).
 [Expanded granary](docs/native-granary-expanded.png) uses the original controls.
 
-## Remaining acceptance
+## Acceptance scope and limits
 
-Insufficient resources after selection; native delayed
-and remote commands. Multiplayer/replay/Extreme compatibility
+The requested success/failure/cancel/repeat behavior passes native acceptance.
+The original-command execution comparisons cover delayed execution, changed
+selection and remote actors without introducing a second input hook. Together
+with the emitted-code ABI tests, this is the evidence for acknowledgement gating;
+it is not a live multiplayer result. Native resource loss after selection and
+live delayed/remote commands remain untested. Multiplayer/replay/Extreme compatibility
 is not established. Same-type reselect while a command is delayed is treated as
 matching the still-selected tool; no selection generation or extra input hook exists.
 
 Package currently14runtime files/6,065compressed bytes, +2,314bytes over R007;
 no runtime dependency. One startup allocation87bytes and5changed call-site bytes;
-no per-frame work. CI is now activated in .github/workflows/test.yml; its results,
-independent review and normal approved merge remain required.
+no per-frame work. CI is activated in .github/workflows/test.yml. Check the current
+head's results and use the normal repository merge process.
