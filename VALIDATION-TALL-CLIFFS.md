@@ -1,0 +1,11 @@
+# Taller cliff strips
+
+The previous conversion recognized only vanilla 30 by 167 headers and 9,600-byte payloads. Custom strips with greater heights fell back to the unconverted source. The resolver now derives pixel rows from the native header height minus seven, verifies the 30-pixel stride and exact byte count, and wraps the source projection within that height. Invalid or non-rock images retain the native source.
+
+Each visible rock image has a private source and converted buffer, grown through the process heap only when required. Original resource pointers and pixels remain untouched. The existing once-per-frame content comparison handles image replacement, resets and allocator address reuse; repeated tile draws do not rescan or allocate. The same two blitter sites and shared frame owner remain in use. Startup allocations drop from 774,030 to 150,639 bytes; visible image storage adds twice the actual payload, retaining peak capacity to avoid resize churn.
+
+Validation: 1,363 regression tests pass, including both executable layouts, every converted pixel at 11 synthetic heights from 1 to 1,024 rows, source-read bounds, growth/shrink, unchanged-source fast paths and allocation failure. Native original blitters in both SHC and SHCE passed 320 exact destination-surface comparisons: five heights (160, 240, 320, 511, 1,024), both blitters, four face masks, both zooms and top clipping. Windows heap calls execute in that native harness; this is distinct from GUI acceptance.
+
+Seven alternating native timing runs each execute 1,000 frames with 1,000 resolutions per frame and all 32 sources visible. Median added cost is approximately 0.067/0.068 ms per frame (SHC/SHCE) at vanilla height and 0.133/0.130 ms at double height. At 1,024 rows it is 0.397/0.401 ms. These are component measurements on the test desktop, not whole-game FPS or a claim of zero cost. Cold conversion occurs only for first use or changed source bytes.
+
+Monsterfish's unpublished taller pack was not supplied. Synthetic metadata/pixels validate its described height change; the author will check that exact asset later. Native in-game acceptance and final CI remain pending. Private reproducible harnesses and results: Roadmap/Investigations/Interface-Visual/extreme/run_tall{,_extreme}_benchmark.py and tall{,-extreme}-benchmark/.

@@ -116,7 +116,9 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
     assert len(cache) == 10
-    assert sum(size for _, size in allocations) == 774030
+    # Fixed code/cache allocation stays below 160 KiB; cliff pixel storage is
+    # allocated lazily for visible image sizes, instead of 32 vanilla strips.
+    assert sum(size for _, size in allocations) < 160*1024
     for address, size in allocations:
         initialized = set()
         for start, data in writes:

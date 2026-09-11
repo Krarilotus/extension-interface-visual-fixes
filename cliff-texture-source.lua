@@ -16,24 +16,19 @@ function M.enable()
   -- Raw GM9 strips contain both halves of a 30-pixel strip. Each visible face
   -- needs the complete strip, projected onto its 16 screen columns. Undo the
   -- source skew; the existing native blitter supplies the destination skew.
-  local offsets = {}
-  for y = 0, 159 do
-    for x = 0, 29 do
-      local sx = math.floor(math.min(x, 29-x) * 29 / 14 + 0.5)
-      local skew = math.min(math.floor(sx/2), 14-math.floor(sx/2))
-      local at = 2 * (((y-skew) % 160) * 30 + sx)
-      offsets[#offsets+1], offsets[#offsets+2] = at % 256, math.floor(at/256)
-    end
+  local columns = {}
+  for x = 0, 29 do
+    local sx = math.floor(math.min(x, 29-x) * 29 / 14 + 0.5)
+    columns[#columns+1] = sx*2
+    columns[#columns+1] = math.min(math.floor(sx/2), 14-math.floor(sx/2))
   end
-  local uv = core.allocate(#offsets, false)
-  core.writeCode(uv, offsets)
-  -- Keep originals private, without replacing GM pointers or modifying pixels.
-  -- A visible strip is compared once per map-render frame, not once per tile.
-  -- This also handles reset, individual-image swaps and allocator address reuse.
-  -- Conversion runs only when the actual source bytes change. At most 32 strips
-  -- (307,200 bytes) are compared in a frame; invisible strips do no work.
-  local stride = 8 + 9600*2
-  local bank = core.allocate(32*stride, true)
+  local uv = core.allocate(#columns, false)
+  core.writeCode(uv, columns)
+  -- Each visible image owns an original copy and a converted copy. Grow only
+  -- when its metadata requires more space; preserve native resource ownership.
+  -- Compare once per render frame to detect replacement and address reuse.
+  -- Entry: epoch, source bytes, capacity bytes, buffer, valid conversion.
+  local bank = core.allocate(32*20, true)
   local resolve = layout.allocateAssembly(string.format([[
     pushfd
     pushad
@@ -44,53 +39,125 @@ function M.enable()
     sub edx, [CliffImages]
     cmp edx, 31
     ja done
-    cmp dword [eax*4+ImageSizes], 9600
-    jne done
+    mov ecx, [eax*4+ImageSizes]
     shl eax, 4
-    cmp dword [eax+ImageHeaders], 0x00A7001E
+    cmp word [eax+ImageHeaders], 30
     jne done
-    imul ebx, edx, %d
+    movsx ebp, word [eax+ImageHeaders+2]
+    sub ebp, 7
+    jle done
+    imul eax, ebp, 60
+    cmp eax, ecx
+    jne done
+    imul ebx, edx, 20
     add ebx, %d
-    cmp dword [ebx+4], 0
+    cmp ecx, [ebx+8]
+    ja grow
+    cmp ecx, [ebx+4]
+    jne resized
+    cmp dword [ebx+16], 0
     je convert
     mov edx, [%d]
     cmp [ebx], edx
     je cached
     push esi
-    lea edi, [ebx+8]
-    mov ecx, 2400
+    mov edi, [ebx+12]
+    shr ecx, 2
     cld
     repe cmpsd
     pop esi
     je verified
+    jmp convert
+  grow:
+    push ecx
+    call dword [ProcessHeap]
+    mov ecx, [esp]
+    add ecx, ecx
+    push ecx
+    cmp dword [ebx+12], 0
+    je allocate
+    push dword [ebx+12]
+    push 0
+    push eax
+    call dword [ReallocateHeap]
+    jmp allocated
+  allocate:
+    push 0
+    push eax
+    call dword [AllocateHeap]
+  allocated:
+    pop ecx
+    test eax, eax
+    jz done
+    mov [ebx+12], eax
+    mov [ebx+8], ecx
+  resized:
+    mov [ebx+4], ecx
   convert:
     push esi
-    lea edi, [ebx+8]
-    mov ecx, 2400
+    mov edi, [ebx+12]
+    mov ecx, [ebx+4]
+    shr ecx, 2
     cld
     rep movsd
     pop esi
-    lea edi, [ebx+9608]
-    xor ecx, ecx
+    ; Convert each column down its full metadata-defined height. The source
+    ; skew wraps within this image, including strips shorter than the skew.
+    push ebx
+    push esi
+    push edi
+    push ebp
+    mov eax, [ebx+4]
+    push eax
+    add eax, esi
+    push eax
+    xor ebx, ebx
+  column:
+    movzx eax, byte [ebx*2+%d+1]
+    xor edx, edx
+    div dword [esp+8]
+    mov eax, [esp+8]
+    sub eax, edx
+    cmp eax, [esp+8]
+    jne source_row
+    xor eax, eax
+  source_row:
+    imul eax, 60
+    add eax, [esp+16]
+    movzx edx, byte [ebx*2+%d]
+    add eax, edx
+    mov edi, [esp+12]
+    lea edi, [edi+ebx*2]
+    mov ecx, [esp+8]
   pixel:
-    movzx edx, word [ecx*2+%d]
-    mov ax, [esi+edx]
-    mov [edi+ecx*2], ax
-    inc ecx
-    cmp ecx, 4800
-    jb pixel
-    mov dword [ebx+4], 1
+    mov dx, [eax]
+    mov [edi], dx
+    add edi, 60
+    add eax, 60
+    cmp eax, [esp]
+    jb next_row
+    sub eax, [esp+4]
+  next_row:
+    dec ecx
+    jnz pixel
+    inc ebx
+    cmp ebx, 30
+    jb column
+    add esp, 20
+    pop ebx
+    mov dword [ebx+16], 1
   verified:
     mov edx, [%d]
     mov [ebx], edx
   cached:
-    lea eax, [ebx+9608]
+    mov eax, [ebx+12]
+    add eax, [ebx+4]
     mov [esp+28], eax
   done:
     popad
     popfd
     ret
-  ]], stride, bank, epoch, uv, epoch))
+  ]], bank, epoch, uv, uv, epoch))
   for _, site in ipairs(sites) do
     local first = site[1] == A.CliffSource
     local wrapper = layout.allocateAssembly(string.format([[
