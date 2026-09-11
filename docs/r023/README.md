@@ -18,7 +18,25 @@ between captures; compare the doorway with the connecting wall on the tower.
 The smaller tower demonstrates independent sides: its high and low connections
 retain different doorway heights after loading another save.
 
-![Small tower with different wall heights on its two visible sides](small-tower.png)
+The high connection at the outermost east tile places its doorway half a tile
+inward. The low connection on the south side keeps its own height.
+
+![Outermost high connection inset from the tower corner](review-edge.png)
+
+A single stair6 connection supplies a doorway at ground level. Raised stair1–5
+are excluded, even when no other wall is present.
+
+![Ground-level doorway supplied by stair6 alone](review-stair6.png)
+
+![Raised stair connection without a false doorway](review-stairs.png)
+
+A low wall below the tower's terrain base does not create a doorway in the cliff.
+The cliff appearance itself is unchanged by the door option.
+
+![No doorway in the cliff beneath the tower](review-cliff.png)
 
 Captured in the native SHC1.41 game with the extension enabled. These are existing
-game sprites; no explanatory overlays or new game panels are added.
+game sprites; no explanatory overlays or new game panels are added. The last
+four images use isolated, controlled saves: the edge case retains naturally
+placed geometry, while the stair/cliff cases set the documented native tile
+values offline. They verify rendering, not placement or navigation changes.
