@@ -116,16 +116,17 @@ def resolve(uc,entry,index):
     return uc.reg_read(UC_X86_REG_EAX)
 
 
-def test_face_uses_whole_strip_and_mirrors_the_corner_without_changing_source():
+def test_faces_use_successive_whole_strips_without_changing_sources():
     uc,entry,epoch=fixture();uc.mem_write(epoch,struct.pack('<I',1))
     original=bytes(uc.mem_read(RAW,9600));pointer=resolve(uc,entry,100)
     pixels=struct.unpack('<4800H',uc.mem_read(pointer,9600))
     source=struct.unpack('<4800H',original)
+    neighbour=struct.unpack('<4800H',uc.mem_read(RAW+9600,9600))
     for y in (0,7,50,159):
-        # Shared corner columns agree. Both extreme columns use the start of the
-        # strip; both centre columns use its end, with native skew left intact.
-        assert pixels[y*30]==pixels[y*30+29]==source[y*30]
-        assert pixels[y*30+14]==pixels[y*30+15]==source[y*30+29]
+        assert pixels[y*30]==source[y*30]
+        assert pixels[y*30+14]==source[y*30+29]
+        assert pixels[y*30+15]==neighbour[y*30]
+        assert pixels[y*30+29]==neighbour[y*30+29]
     assert bytes(uc.mem_read(RAW,9600))==original
 
 
@@ -155,7 +156,7 @@ def test_individual_image_swap_reset_and_reused_address():
     assert bytes(uc.mem_read(pointer,9600))==stock
     uc.mem_write(RAW,b'\x76\x98'*4800)
     uc.mem_write(epoch,struct.pack('<I',4));resolve(uc,entry,100)
-    assert bytes(uc.mem_read(pointer,9600))==b'\x76\x98'*4800
+    assert all(bytes(uc.mem_read(pointer+y*60,30))==b'\x76\x98'*15 for y in range(160))
 
 
 @pytest.mark.parametrize('index',(132,133))
@@ -175,12 +176,13 @@ def test_guarded_source_and_shared_frame_sites(site):
     with pytest.raises(ValueError):emit(missing=site)
 
 
-def set_strip(uc,rows,width=30):
+def set_strip(uc,rows,width=30,index=100,offset=0,salt=0):
     size=rows*width*2
-    uc.mem_write(uc.iv_address(0xc9a590+400),struct.pack('<I',size))
-    uc.mem_write(uc.iv_address(0xb98790+1600),struct.pack('<HH',width,rows+7))
-    data=struct.pack('<'+str(rows*width)+'H',*(i%65536 for i in range(rows*width)))
-    uc.mem_write(RAW,data)
+    uc.mem_write(uc.iv_address(0xc9a590+index*4),struct.pack('<I',size))
+    uc.mem_write(uc.iv_address(0xb98790+index*16),struct.pack('<HH',width,rows+7))
+    uc.mem_write(uc.iv_address(0xd0ba10+index*4),struct.pack('<I',offset))
+    data=struct.pack('<'+str(rows*width)+'H',*((i+salt)%65536 for i in range(rows*width)))
+    uc.mem_write(RAW+offset,data)
     return data
 
 
@@ -188,6 +190,7 @@ def set_strip(uc,rows,width=30):
 @pytest.mark.parametrize('rows',(1,3,7,8,159,160,161,240,320,511,1024))
 def test_metadata_height_full_pixels_and_bounds(rows,extreme):
     uc,entry,epoch=fixture(extreme=extreme);original=set_strip(uc,rows)
+    neighbour=set_strip(uc,rows,index=101,offset=0x20000,salt=12345)
     uc.mem_write(epoch,struct.pack('<I',1))
     reads=[]
     uc.hook_add(UC_HOOK_MEM_READ,lambda _u,_a,at,size,_v,_d:reads.append((at,size)),begin=RAW,end=RAW+0x5ffff)
@@ -196,15 +199,16 @@ def test_metadata_height_full_pixels_and_bounds(rows,extreme):
     expected=[]
     for y in range(rows):
         for x in range(30):
-            sx=int(min(x,29-x)*29/14+0.5)
+            sx=int((x%15)*29/14+0.5)
             skew=min(sx//2,14-sx//2)
-            expected.append((((y-skew)%rows)*30+sx)%65536)
+            expected.append((((y-skew)%rows)*30+sx+(12345 if x>=15 else 0))%65536)
     assert bytes(uc.mem_read(pointer,rows*60))==struct.pack('<'+str(len(expected))+'H',*expected)
     assert bytes(uc.mem_read(RAW,len(original)))==original
-    assert all(RAW<=at and at+size<=RAW+len(original) for at,size in reads)
-    assert len(uc.iv_heap['calls'])==1
+    assert bytes(uc.mem_read(RAW+0x20000,len(neighbour)))==neighbour
+    assert all(any(start<=at and at+size<=start+len(original) for start in (RAW,RAW+0x20000)) for at,size in reads)
+    assert len(uc.iv_heap['calls'])==2
     reads.clear();resolve(uc,entry,100)
-    assert reads==[] and len(uc.iv_heap['calls'])==1
+    assert reads==[] and len(uc.iv_heap['calls'])==2
 
 
 def test_height_replacement_grows_then_reuses_capacity_and_allocation_failure_is_safe():
@@ -212,9 +216,9 @@ def test_height_replacement_grows_then_reuses_capacity_and_allocation_failure_is
     stock=resolve(uc,entry,100)
     set_strip(uc,320);uc.mem_write(epoch,struct.pack('<I',2))
     tall=resolve(uc,entry,100)
-    assert tall!=stock and len(uc.iv_heap['calls'])==2
+    assert tall!=stock and len(uc.iv_heap['calls'])==3
     set_strip(uc,240);uc.mem_write(epoch,struct.pack('<I',3))
-    assert resolve(uc,entry,100)!=RAW and len(uc.iv_heap['calls'])==2
+    assert resolve(uc,entry,100)!=RAW and len(uc.iv_heap['calls'])==3
     uc.iv_heap['fail']=True
     set_strip(uc,1024);uc.mem_write(epoch,struct.pack('<I',4))
     assert resolve(uc,entry,100)==RAW
@@ -225,3 +229,47 @@ def test_height_replacement_grows_then_reuses_capacity_and_allocation_failure_is
 def test_initial_allocation_failure_passes_original_source():
     uc,entry,_=fixture();uc.iv_heap['fail']=True
     assert resolve(uc,entry,100)==RAW
+
+
+@pytest.mark.parametrize('index',(100,131))
+def test_neighbour_change_invalidates_preceding_pair_including_bank_wrap(index):
+    uc,entry,epoch=fixture();uc.mem_write(epoch,struct.pack('<I',1))
+    neighbour=100+(index-99)%32
+    pointer=resolve(uc,entry,index)
+    before=bytes(uc.mem_read(pointer,9600))
+    uc.mem_write(RAW+(neighbour-100)*9600,b'\x45\x23'*4800)
+    uc.mem_write(epoch,struct.pack('<I',2))
+    resolve(uc,entry,neighbour)  # Neighbour rendered first must invalidate us.
+    assert resolve(uc,entry,index)==pointer
+    for y in range(160):
+        assert bytes(uc.mem_read(pointer+y*60,30))==before[y*60:y*60+30]
+        assert bytes(uc.mem_read(pointer+y*60+30,30))==b'\x45\x23'*15
+
+
+def test_shared_neighbour_is_checked_once_per_frame_and_no_warm_allocations():
+    uc,entry,epoch=fixture();uc.mem_write(epoch,struct.pack('<I',1))
+    for i in range(100,132):resolve(uc,entry,i)
+    assert len(uc.iv_heap['calls'])==32
+    reads=[]
+    uc.hook_add(UC_HOOK_MEM_READ,lambda _u,_a,at,size,_v,_d:reads.append((at,size)),begin=RAW,end=RAW+32*9600-1)
+    uc.mem_write(epoch,struct.pack('<I',2))
+    for i in range(100,132):resolve(uc,entry,i)
+    assert sum(size for _,size in reads)==32*9600
+    reads.clear()
+    for i in range(100,132):resolve(uc,entry,i)
+    assert reads==[] and len(uc.iv_heap['calls'])==32
+
+
+def test_unavailable_neighbour_is_stable_and_recovers_without_stale_pair():
+    uc,entry,epoch=fixture();uc.mem_write(epoch,struct.pack('<I',1))
+    uc.mem_write(0xb98790+101*16,struct.pack('<H',32))
+    pointer=resolve(uc,entry,100)
+    before=bytes(uc.mem_read(pointer,9600))
+    # Repeated invalid metadata must not reconvert an unchanged fallback pair.
+    writes=[]
+    from unicorn import UC_HOOK_MEM_WRITE
+    uc.hook_add(UC_HOOK_MEM_WRITE,lambda _u,_a,at,size,_v,_d:writes.append(at),begin=pointer,end=pointer+9599)
+    resolve(uc,entry,100);assert writes==[]
+    uc.mem_write(0xb98790+101*16,struct.pack('<H',30))
+    resolve(uc,entry,100)
+    assert writes and bytes(uc.mem_read(pointer,9600))!=before
