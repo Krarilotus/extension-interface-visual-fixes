@@ -49,7 +49,8 @@ def assemble(script, origin):
     with tempfile.TemporaryDirectory() as temp:
         source, output = Path(temp)/'test.asm', Path(temp)/'test.bin'
         source.write_text(f'use32\norg {origin}\n{script}')
-        subprocess.run([fasm, str(source), str(output)], check=True, capture_output=True)
+        # UCP 3.0.7 embeds FASM with a 64 KB workspace.
+        subprocess.run([fasm, '-m', '64', str(source), str(output)], check=True, capture_output=True)
         return output.read_bytes()
 
 

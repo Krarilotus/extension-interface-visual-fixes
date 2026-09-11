@@ -15,3 +15,5 @@ Regression tests additionally execute the Extreme placement acknowledgement, cam
 Private reproduction and exact instruction witnesses: Roadmap/Investigations/Interface-Visual/extreme/{match_layouts.py,match_data.py,audit_emission.py,layout-candidates.json,data-candidates.json,pattern-proofs.json,regular-emission.json,extreme-emission.json}.
 
 Remaining: native Extreme all-seven startup and targeted feature acceptance, tower/blitter original-call checks, final CI/review. Taller custom strips and defaults-on0.1.3 are separate follow-ups; neither is claimed by this compatibility change.
+
+Native startup caught FASM OUT_OF_MEMORY (-2): passing all 83 constants into every assembly exhausted UCP 3.0.7's 64,000-byte assembler workspace. The layout helper now expands referenced named operands before calling the existing assembler. This preserves the exact emitted bytes and removes the constant declarations. Tests constrain CLI FASM to 64 KiB; all 116 assemblies across both editions and the taller-strip candidate pass. Native retry remains required because CLI and embedded FASM are distinct paths.
