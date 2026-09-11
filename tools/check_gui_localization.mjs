@@ -20,7 +20,7 @@ for (const [language, catalog] of Object.entries(locales)) {
     assert.deepEqual(output.category,[normalized.interface_visual_fixes]);
     assert.equal(output.url,input.url);
     assert.deepEqual(output.contents,input.contents);
-    assert.equal(output.contents.value,false);
+    assert.equal(output.contents.value,true);
   }
   const load=translated.find(option=>option.name==='lobby_load');
   results.push({language,category:load.category[0],text:load.text,description:load.description});

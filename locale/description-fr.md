@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Sept corrections facultatives pour SHC/SHCE 1.41 et UCP 3.0.7. Activez celles souhaitées, puis redémarrez le jeu.
+Sept corrections pour SHC/SHCE 1.41 et UCP 3.0.7, activées par défaut. Chacune peut être désactivée séparément. Appliquez les réglages et redémarrez le jeu.
 
 - Garde les descriptions des cartes personnalisées visibles dans le salon.
 - Efface l’aperçu après la construction réussie d’un bâtiment unique.
