@@ -75,6 +75,8 @@ Cliff textures follow the direction of each face in all four map orientations.
 The fix uses the existing textures and terrain graphics refresh. It adds no
 render hook, drawing pass, allocation or per-frame check.
 
+![Both cliff faces use the existing texture sequence after rotation](docs/cliffs/after-6.png)
+
 See [the comparison and validation](VALIDATION-CLIFF-TEXTURES.md).
 
 ## Validation
