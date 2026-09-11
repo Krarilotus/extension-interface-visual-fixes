@@ -3,8 +3,8 @@
 Seven optional fixes for Stronghold Crusader 1.41, using the game's existing
 controls, text areas and artwork.
 
-Version 0.1.1 adds concise descriptions and cropped screenshots to the Store and
-installed-extension viewers in all nine languages. Game patches are unchanged.
+The next patch corrects tower-door alignment and draw order, and completes cliff
+texture mapping across both faces. Updated native screenshots show the changes.
 See the [short description](locale/description-en.md).
 
 - **Show lobby map descriptions:** keeps custom descriptions visible when
@@ -60,20 +60,17 @@ Exposed cliffs beneath tower footprints use the current wall textures. Lower
 connections create doors at their own height where that masonry backs the door.
 Bare terrain and raised stairs do not supply doors.
 
-![Masonry under a cliff-edge tower with doors at the lower wall heights](docs/r023/foundations/rotation-0.png)
+![Masonry under a cliff-edge tower with doors at the lower wall heights](docs/store/tower-foundation.png)
 
-![AI-built stair6 alone creates a ground door in the left tower foundation](docs/r023/foundations/ai-stair6.png)
+![AI-built stair6 alone creates a ground door in the left tower foundation](docs/r023/foundations/ai-stair6-current.png)
 
-![The nearer of two high wall connections is selected](docs/r023/nearer-high.png)
+If the selected high connection is removed, the door follows another high
+connection before considering a lower one. The nearest-to-centre rule breaks
+ties only between connections at the same height.
 
-After removing that connection, the door follows the remaining high wall even
-though a low wall is nearer the centre. The camera moved between these captures.
-
-![The door follows the remaining off-centre high wall](docs/r023/farther-high.png)
-
-See [the native gallery](docs/r023/README.md) for the selected wall coordinates.
+See [the native gallery](docs/r023/README.md) for the half-tile inset on wider towers.
 Selection uses the game's existing connection refresh; warm drawing reads a
-cache without rescanning walls. The measured added draw cost was about 0.026 ms for
+cache without rescanning walls. The measured added draw cost was about 0.024 ms for
 1000 synthetic tower records. Foundation textures reuse the existing graphics
 refresh and drawing pass. See [foundation validation](VALIDATION-TOWER-FOUNDATIONS.md)
 for method and limits.
@@ -84,13 +81,13 @@ for method and limits.
 
 ### Cliff textures
 
-Cliff textures follow the direction of each face in all four map orientations.
-The fix uses the existing textures and terrain graphics refresh. It adds no
-render hook, drawing pass, allocation or per-frame check.
+Cliff textures continue across both faces in all four map orientations. The fix
+uses the current texture pack and the existing drawing passes. Converted strips
+are cached; repeated tile draws do not reprocess their pixels.
 
-![Both cliff faces use the existing texture sequence after rotation](docs/cliffs/after-6.png)
+![Both cliff faces use the complete texture sequence](docs/store/cliff-textures.png)
 
-See [the comparison and validation](VALIDATION-CLIFF-TEXTURES.md).
+See [the current comparison, compatibility checks and measured cost](VALIDATION-CLIFF-UV.md).
 
 ## Validation
 

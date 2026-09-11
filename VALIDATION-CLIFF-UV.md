@@ -1,7 +1,7 @@
 # Cliff texture source correction
 
-Native visual acceptance is pending. This document describes the tested code
-candidate, not a published update. Issue16 remains open.
+Stock native visual acceptance passes. An alternative-pack check is pending;
+this candidate is not a published update. Issue16 remains open.
 
 ## Cause
 
@@ -60,5 +60,19 @@ full-game FPS or a1000-speed simulation. Conversion occurs only on changed data.
 Private reproduction: R023/run_cliff_uv_benchmark.py and cliff-uv-benchmark/.
 Original executable SHA256:3bb0a8c1e72331b3a30a5aa93ed94beca0081b476b04c1960e26d5b45387ac5a.
 
-Remaining: final stock and alternative-pack native screenshots, four rotations,
-zoom, tower masonry composition; CI/review; focused merge;0.1.2 Store/wiki update.
+The isolated native PID23340 loaded the exactb3c276f candidate with all seven
+options, SHC1.41/UCP3.0.7, winProcHandler0.2.0 andgraphicsApiReplacer1.3.0. The
+stock cliff-corner fixture passes in all four rotations and Z zoom. Both faces
+continue the rock pattern through the corner; tower masonry and lower doors
+remain intact. Original stock GM9 stayed byte-identical on disk. Native captures
+are native-cliff-uv-stock-{0,6,4,2,zoom}.png; geometry/viewport sampling records
+zoom1/orientation2. The game closed normally and its process exited before the
+desktop was released at17:00:49.
+
+![Connected stock cliff faces](docs/store/cliff-textures.png)
+
+![Another camera orientation](docs/cliffs/connected-6.png)
+
+Remaining: alternative-pack native check; final CI/review and focused merge;
+0.1.2 Store/wiki update. Resource-swap/reset cases above are emitted-x86 tests;
+they are not a claim of a native textureSwapper UI session.

@@ -1,5 +1,9 @@
 # Cliff texture direction
 
+Historical rotation-only investigation. Its visual completion claims were
+withdrawn after further native screenshots exposed skipped source pixels. See
+[the current correction and acceptance](VALIDATION-CLIFF-UV.md).
+
 Issue 16: at map orientations 2 and6, the original texture selector uses the Y
 coordinate for both cliff faces. A face running along X repeats a single strip
 instead of advancing through the texture. Orientations0 and4 already distinguish
