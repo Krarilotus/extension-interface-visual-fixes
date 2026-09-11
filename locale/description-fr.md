@@ -8,7 +8,9 @@ Sept corrections pour SHC/SHCE 1.41 et UCP 3.0.7, activées par défaut. Chacune
 - Distingue les arbres morts encore debout des troncs abattus.
 - Aligne les portes des tours sur les raccordements et prolonge la maçonnerie sous les tours au bord des falaises.
 - Affiche le bouton Charger existant dans le salon solo.
-- Raccorde les textures des falaises après rotation de la caméra.
+- Améliore les raccords des falaises après rotation et sur les marches diagonales.
+
+Les marches de face utilisent des textures successives ; celles qui fuient vers le fond gardent une variation stable lorsque le chevauchement empêche la continuité.
 
 La porte suit le raccordement admissible le plus haut ; à hauteur égale, le plus central. Aux extrémités, elle rentre d’une demi-case. Stair6 construit par l’IA suffit pour une porte au sol ; les escaliers surélevés sont exclus.
 
