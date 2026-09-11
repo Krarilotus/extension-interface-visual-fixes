@@ -20,6 +20,7 @@ function M.enable()
     {0x41B7FF, "89 9C 0F 94 02 00 00"},
     {0x41B855, "03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9", 6},
     {0x512450, "51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C"},
+    {0x50EDAF, "8B 95 1C FF FF FF 8B 82 08 49 55 00 8B 0D B4 CE D7 00 8D 54 01 FF"},
   }
   for _, site in ipairs(updateSites) do
     if core.AOBScan(site[2]) + (site[3] or 0) ~= site[1] then
@@ -59,7 +60,8 @@ function M.enable()
   -- Rank one tile the native connection loop already visits. Highest height
   -- wins, then closest to the side centre, then first in native boundary order.
   -- Raised stairs cannot enter a tower. Native stair6 has no raised-stair flag
-  -- and retains terrain height. A connection below the tower base is unusable.
+  -- and retains terrain height. Below-base joins require the adjacent inner tile
+  -- to belong to this tower, so the refreshed masonry supplies the backing.
   -- EAX=tile, EBX=boundary index, ECX=width, ESI=building offset
   -- -> EAX=rank, EDX=side.
   local rank = core.allocateAssembly([[
@@ -75,12 +77,54 @@ function M.enable()
     cmp edx, 0x100
     jne absent
     movzx edi, byte [eax+0x1D32C38]
-    mov esi, [esi+0xF98628]
-    cmp esi, 80400
+    mov ebp, [esi+0xF98628]
+    cmp ebp, 80400
     jae absent
-    movzx esi, byte [esi+0x1D46648]
-    cmp edi, esi
-    jb absent
+    movzx ebp, byte [ebp+0x1D46648]
+    cmp edi, ebp
+    jae eligible
+    mov eax, ebx
+    xor edx, edx
+    div ecx
+    movzx ebx, word [esi+0xF98622]
+    movzx ebp, word [esi+0xF98624]
+    test eax, eax
+    jz north_backing
+    cmp eax, 1
+    je east_backing
+    cmp eax, 2
+    je south_backing
+    add ebp, ecx
+    sub ebp, edx
+    dec ebp
+    jmp backing_tile
+  north_backing:
+    add ebx, edx
+    jmp backing_tile
+  east_backing:
+    lea ebx, [ebx+ecx-1]
+    add ebp, edx
+    jmp backing_tile
+  south_backing:
+    lea ebx, [ebx+ecx-1]
+    sub ebx, edx
+    lea ebp, [ebp+ecx-1]
+  backing_tile:
+    cmp ebx, 400
+    jae absent
+    cmp ebp, 400
+    jae absent
+    lea eax, [ebp+ebp*2]
+    mov eax, [eax*4+0x2337300]
+    add eax, ebx
+    cmp eax, 80400
+    jae absent
+    movzx eax, word [eax*2+0x1C95BB8]
+    imul eax, eax, 812
+    cmp eax, esi
+    jne absent
+    mov ebx, [esp+16]
+  eligible:
     inc edi
     shl edi, 16
     mov eax, ebx
@@ -324,12 +368,86 @@ function M.enable()
     popfd
     ret 16
   ]], epoch, initialize, rank))
+
+  -- The existing building graphics refresh already classified the cliff face.
+  -- Use native tile_walls columns beneath tower footprint tiles. Keep the
+  -- renderer, clipping, terrain and logical map untouched; no new tile scan.
+  local foundation = core.allocateAssembly([[
+    pushfd
+    pushad
+    mov eax, [ebp-0x30]
+    cmp eax, 2000
+    jae original
+    imul eax, eax, 812
+    movzx eax, word [eax+0xF98606]
+    sub eax, 75
+    cmp eax, 3
+    ja original
+    mov ecx, [ebp-0xE4]
+    mov edx, [ecx+0x55489C]
+    cmp edx, 6
+    ja original
+    test edx, 1
+    jnz original
+    mov ebx, [ebp-0x1C]
+    mov esi, [ecx+0x554A38]
+    test edx, 2
+    jz even_axes
+    cmp ebx, 1
+    je coordinate
+    jmp x_axis
+  even_axes:
+    cmp ebx, 1
+    jne coordinate
+  x_axis:
+    mov esi, [ebp-0x3C]
+  coordinate:
+    and esi, 15
+    cmp ebx, 1
+    jne other_face
+    test edx, 4
+    jnz first_increasing
+    mov eax, 17
+    sub eax, esi
+    jmp write_masonry
+  first_increasing:
+    lea eax, [esi+2]
+    jmp write_masonry
+  other_face:
+    add edx, 2
+    test edx, 4
+    jnz second_increasing
+    mov eax, 32
+    sub eax, esi
+    jmp second_wrap
+  second_increasing:
+    lea eax, [esi+17]
+  second_wrap:
+    cmp eax, 17
+    jne write_masonry
+    mov eax, 1
+  write_masonry:
+    add eax, [0xD7CEB8]
+    dec eax
+    mov edx, [ecx+0x554A3C]
+    mov [ecx+edx*2+0xC80E0], ax
+    and word [ecx+edx*2+0x301C80], 0xF7FF
+    popad
+    popfd
+    jmp 0x50EE19
+  original:
+    popad
+    popfd
+    mov edx, [ebp-0xE4]
+    jmp 0x50EDB5
+  ]])
   for _, site in ipairs(sites) do
     core.writeCode(site[1], {core.callTo(wrapper)})
   end
   core.writeCode(0x41B7FF, {core.jmpTo(beginUpdate), 0x90, 0x90})
   core.writeCode(0x41B855, {core.jmpTo(visitTile), 0x90, 0x90})
   core.writeCode(0x512450, {core.jmpTo(resetMap), 0x90})
+  core.writeCode(0x50EDAF, {core.jmpTo(foundation), 0x90})
 end
 
 return M

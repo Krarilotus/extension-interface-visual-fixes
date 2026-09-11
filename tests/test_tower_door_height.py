@@ -28,7 +28,8 @@ SITES = {
 DATA = 0x60010000
 UPDATES = {0x41B7FF:'89 9C 0F 94 02 00 00',
            0x41B855:'03 81 28 E0 18 00 8B 04 85 68 83 BF 01 A9 00 01 00 00 74 1C A8 02 75 18 A9',
-           0x512450:'51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C'}
+           0x512450:'51 A1 54 EC 1A 02 53 55 8B 2D 50 EC 1A 02 56 89 44 24 0C',
+           0x50EDAF:'8B 95 1C FF FF FF 8B 82 08 49 55 00 8B 0D B4 CE D7 00 8D 54 01 FF'}
 
 
 @lru_cache
@@ -86,7 +87,7 @@ def emit(moved=None, missing=None):
     except Exception:
         if moved or missing: assert not allocations and not writes
         raise
-    assert len(allocations) == 6
+    assert len(allocations) == 7
     assert {address for address, _ in writes if address < CAVE} == set(patterns)
     assert all(len(code) == 5 for address, code in writes if address in SITES)
     return writes
@@ -98,7 +99,7 @@ def render_address():
 
 
 def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
-            gm=54, override_width=None, context=False):
+            gm=54, override_width=None, context=False, foundation=False):
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
     uc.mem_map(0x400000, 0x2500000)
     uc.mem_map(CAVE, 0x30000)
@@ -119,6 +120,10 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
     struct.pack_into('<i', record, 0xF8, width)
     uc.mem_write(BUILDING, bytes(record))
     uc.mem_write(TERRAIN+origin, bytes([ground]))
+    if foundation:
+        for tx in range(x,x+width):
+            for ty in range(y,y+width):
+                uc.mem_write(0x1c95bb8+tile(tx,ty)*2,struct.pack('<H',1))
     uc.mem_write(0x1FE7AA4, struct.pack('<i', orientation))
     # Original 0x40B7B0 selects frame81; 0x40B720 selects frame90.
     # Independent one-hot entrance probes give these sides (not implementation math).
@@ -165,7 +170,7 @@ def execute(kind=75, orientation=0, frame=81, walls=((0, 60, 0x100),), ground=8,
     if context:
         return dict(uc=uc,points=points,tile=tile,registers=registers,before=before,
                     side=side,width=width,record=bytes(record),draws=draws,
-                    first_xy=draws[-1] if draws else None)
+                    first_xy=draws[-1] if draws else None,frame=frame)
     return draws[-1] if draws else None
 
 
@@ -231,7 +236,7 @@ def test_disabled_and_repeated_enable():
 
 def draw_again(ctx):
     uc=ctx['uc']
-    uc.mem_write(STACK,struct.pack('<5I',STOP,54,81,500,500))
+    uc.mem_write(STACK,struct.pack('<5I',STOP,54,ctx['frame'],500,500))
     for reg,value in zip(ctx['registers'],ctx['before']): uc.reg_write(reg,value)
     ctx['draws'].clear()
     uc.emu_start(render_address(),STOP,count=3000)
@@ -351,7 +356,7 @@ def test_ground_level_stair6_alone_and_raised_stairs(kind,orientation,frame):
 
 
 @pytest.mark.parametrize('kind,frame',list(itertools.product(range(75,79),(81,90))))
-def test_below_base_connection_is_rejected_before_height_ranking(kind,frame):
+def test_below_base_connection_without_tower_backing_is_rejected(kind,frame):
     ctx=execute(kind=kind,frame=frame,ground=100,walls=((0,-2,0x100),),context=True)
     assert ctx['first_xy'] is None
     refresh_connections(ctx)
@@ -372,11 +377,49 @@ def test_raised_stair_does_not_outrank_ground_level_stair6_on_refresh():
     assert draw_again(ctx)==expected(index=1,rise=0)
 
 
-def test_wall_dropping_below_tower_base_disappears_at_existing_refresh():
+def test_wall_dropping_below_unbacked_tower_base_disappears_at_existing_refresh():
     ctx=execute(ground=80,context=True)
     tile=ctx['tile'](*ctx['points'][2][0])
     ctx['uc'].mem_write(HEIGHT+tile,bytes([68]))
     assert draw_again(ctx)==expected()
+    refresh_connections(ctx)
+    assert selected_index(ctx) is None
+    assert draw_again(ctx) is None
+
+
+@pytest.mark.parametrize('kind,orientation,frame',list(itertools.product(
+    range(75,79),(0,2,4,6),(81,90))))
+def test_lower_walls_and_stair6_draw_on_this_towers_foundation(kind,orientation,frame):
+    for rise in (-6,-36,-96):
+        ctx=execute(kind,orientation,frame,((1,rise,0x100),),ground=104,
+                    foundation=True,context=True)
+        assert ctx['first_xy']==expected(kind,frame,1,rise)
+        refresh_connections(ctx)
+        assert selected_index(ctx)==1
+        assert draw_again(ctx)==expected(kind,frame,1,rise)
+    # A raised stair remains ineligible even when masonry backs its location.
+    assert execute(kind,orientation,frame,((1,-16,0x900),),ground=104,
+                   foundation=True) is None
+
+
+@pytest.mark.parametrize('orientation,frame',list(itertools.product((0,2,4,6),(81,90))))
+def test_lower_foundation_joins_keep_height_then_centre_priority(orientation,frame):
+    ctx=execute(orientation=orientation,frame=frame,ground=104,
+                walls=((0,-6,0x100),(1,-36,0x100),(2,-6,0x100)),
+                foundation=True,context=True)
+    assert ctx['first_xy']==expected(frame=frame,index=2,rise=-6)
+    high=ctx['tile'](*ctx['points'][ctx['side']][2])
+    ctx['uc'].mem_write(LOGIC+high*4,bytes(4))
+    refresh_connections(ctx)
+    assert selected_index(ctx)==0
+    assert draw_again(ctx)==expected(frame=frame,index=0,rise=-6)
+
+
+def test_other_buildings_backing_cannot_supply_lower_tower_door():
+    ctx=execute(ground=104,walls=((1,-36,0x100),),foundation=True,context=True)
+    # South side index1 is backed by the inner footprint tile206,89.
+    backing=ctx['tile'](206,89)
+    ctx['uc'].mem_write(0x1c95bb8+backing*2,struct.pack('<H',2))
     refresh_connections(ctx)
     assert selected_index(ctx) is None
     assert draw_again(ctx) is None
