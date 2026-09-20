@@ -5,8 +5,8 @@ local M = {}
 function M.enable()
   -- This stack-sensitive acknowledgement is verified for both 1.41 executables.
   -- Failed eligibility/tutorial paths never reach the post-commit notification.
-  local site = core.AOBScan("53 B9 ? ? ? ? E8 ? ? ? ? 8B 44 24 2C 83 F8 05 7F 07") + 6
-  local entry = core.AOBScan("83 EC 08 53 55 8B 6C 24 18 56 8B F1 8B 4C 24 24")
+  local site = core.AOBScan(layout.patterns.PlacementNotifyCall) + 6
+  local entry = core.AOBScan(layout.patterns.PlacementEntry)
   if site ~= A.PlacementNotifyCall or entry ~= A.PlacementEntry then
     error("Interface and Visual Fixes: unsupported placement acknowledgement layout")
   end

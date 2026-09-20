@@ -5,8 +5,8 @@ local enabled = false
 
 function M.enable()
   if enabled then return end
-  local draw = core.AOBScan("83 3D ? ? ? ? 63 0F 84 89 02 00 00 39 2D ? ? ? ? 0F 84 6A 03 00 00")
-  local action = core.AOBScan("E8 ? ? ? ? 83 F8 02 7C AE BE 01 00 00 00 6A 09 B9 ? ? ? ? 89 35 ? ? ? ? E8") + 5
+  local draw = core.AOBScan(layout.patterns.LobbyLoadDraw)
+  local action = core.AOBScan(layout.patterns.LobbyLoadAction) + 5
   local prepare = core.AOBScan(layout.patterns.LobbyPrepare)
   -- These predicates belong to the Load cases, not the shared Start/team helper.
   if draw ~= A.LobbyLoadDraw or action ~= A.LobbyLoadAction or prepare ~= A.LobbyPrepare
