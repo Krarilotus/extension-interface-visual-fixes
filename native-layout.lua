@@ -171,9 +171,6 @@ function M.allocateAssembly(script)
   log(INFO, string.format("native code entry=0x%08X", address))
   return address
 end
-function M.assemble(script, origin)
-  return core.assemble(script, operands(script), origin)
-end
 
 -- Preflight every enabled binding before any feature installs its patches.
 local required = {

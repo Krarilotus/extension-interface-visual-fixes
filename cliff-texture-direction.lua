@@ -5,8 +5,7 @@ local M = {}
 function M.enable()
   -- One image contains consecutive left/right face strips. Its base phase
   -- follows the horizontal projection, including two steps per front diagonal.
-  local pattern = "8B 91 9C 48 55 00 85 D2 75 1B 83 F8 01 75 3E 8B 54 24 18 83 E2 1F BE 20 00 00 00 2B F2 89 B1 08 49 55 00 EB 38 83 FA 04 75 10 83 F8 01 75 10 8B 54 24 18 83 E2 1F 03 D0 EB 1D 83 FA 02 75 0E 83 E6 1F 83 C6 01 89 B1 08 49 55 00 EB 10 83 E6 1F BA 20 00 00 00 2B D6 89 91 08 49 55 00"
-  local site = core.AOBScan(pattern)
+  local site = core.AOBScan(layout.patterns.CliffSelector)
   if site ~= A.CliffSelector then
     error("Interface and Visual Fixes: unsupported cliff texture selector layout")
   end

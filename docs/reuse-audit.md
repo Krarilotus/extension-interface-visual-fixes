@@ -41,3 +41,19 @@ No new owner API, hook or runtime dependency is introduced by this audit.
 
 Validation: 1,501 offline tests pass and the 32-file package builds. This first
 cleanup changes no packaged files and is not a new native gameplay or crash test.
+
+## Production follow-up
+
+Remove the unused `native-layout.assemble` forwarding function. Placement, lobby
+Load and cliff selection now reference the five existing shared signature entries
+instead of copying their strings. The Load action uses the same complete pattern
+as preflight, including its final call operand, rather than a second shorter
+spelling. Pre-write checks remain in place. Component fixtures override only
+their isolated patterns, retaining production entries used by other capabilities.
+
+All 1,501 tests pass. Comparing complete local, EFIGS and Polish SHC/Extreme 1.41
+executables with the pinned UCP core gives identical native patches, allocation
+order and 151,284 startup allocation bytes. All 69 scan calls address the same
+sites; distinct signature strings fall from 47 to 46. No render/simulation
+instruction or allocation changes. This is a source cleanup for the next package,
+not a new Store release or a claim that the random crash is fixed.

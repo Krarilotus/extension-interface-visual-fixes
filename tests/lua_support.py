@@ -41,7 +41,8 @@ def LuaRuntime(*args, extreme=False, component_bindings=True, **kwargs):
         layout = lua.execute((ROOT/'native-layout.lua').read_text())
         for name, address in fixture['addresses'].items():
             layout.addresses[name] = address
-        layout.patterns = lua.table_from(fixture['patterns'])
+        for name, pattern in fixture['patterns'].items():
+            layout.patterns[name] = pattern
         layout.prepare = lambda config: None
         lua.globals().package.loaded['native-layout'] = layout
         lua.globals().component_layout = layout
