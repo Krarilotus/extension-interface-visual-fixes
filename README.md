@@ -3,9 +3,10 @@
 Seven optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
 controls, text areas and artwork.
 
-Version 0.1.4 improves diagonal cliff textures. All seven fixes remain enabled by
-default, with Extreme and taller-texture support. Each fix can still be disabled
-separately. Existing explicit choices in saved configurations remain in effect.
+Version 0.1.5 improves compatibility checks and crash diagnostics, and corrects
+lower tower doors. All seven fixes remain enabled by default, with Extreme and
+taller-texture support. Each fix can still be disabled separately. Existing
+explicit choices in saved configurations remain in effect.
 See the [short description](locale/description-en.md).
 
 For an intermittent crash, keep the session's UCP logs before restarting.

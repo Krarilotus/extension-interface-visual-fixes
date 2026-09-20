@@ -33,6 +33,12 @@ this desktop. No native game session or unpublished Reconquista asset was used.
 | Existing AOB usage | UCP2-Legacy 2.15.1 `caa50aba9fc85c5fc766c413b23085ddfbba4a79`, `init.lua` and `port/ai_attackwave.lua` | Reuse the same workflow: contextual wildcarded `core.AOBScan` in initialization, decode native operands/relative targets with `core.readInteger`, use framework allocation/patching. Keep discovery before feature writes. Consolidate repeated enable branches into one ordered list; no copied Legacy feature implementation. |
 | Diagnostic logging | UCP 3.0.7 `dll/core/initialization/logging.cpp`, `content/ucp/code/logging.lua`, `extensions/environment.lua`, `main.lua` | Use module-prefixed `log(INFO, ...)`. Existing logger owns files/filtering; main already logs config and versions. Add startup binding/code/cache addresses only. No private logger, extra native reads, render callback or exception handler. Windows LocalDumps supplies optional fault-time register/heap capture outside the extension. |
 
+The Store-pinned UCP2-Legacy 2.15.2 revision
+`3fd852df9ac3f2b00595512555e9043e3b624437` was also compared in these two files.
+It retains the same AOB/operand-decoding workflow; its additional persistent
+simulation-state ownership is unrelated to these presentation caches and is not
+copied into this module.
+
 Gynt's applicable framework guidance is [“No, improve AOB's, don't make the scanner slower.”](https://github.com/UnofficialCrusaderPatch/UnofficialCrusaderPatch3/issues/148#issuecomment-5665748438)
 No Gynt review was found in the inspected module issue comments, inline PR comments,
 commit comments, or reviews for its twenty previous PRs. This is not a claim about
