@@ -11,7 +11,7 @@ Neither issue is resolved by the assembler cleanup.
 | AOB discovery/cache | UCP 3.0.7 `content/ucp/code/core.lua`, `data/cache.lua`, tag `v3.0.7` (`77c6accf14a55fb95434fe6ffd96516e005568b5`) | Use `core.AOBScan`; it already owns cached discovery and revalidates cached matches. Verify signature uniqueness offline. Do not add a second scanner/cache. |
 | Assembly and patch allocation | Same tag, `core.assemble`, `core.allocateAssembly`, `core.allocateCode`, `core.writeCode`, `core.callTo`/`jmpTo` | Use the existing symbol-mapping argument, filtered to symbols referenced by a wrapper to fit the embedded 64 KB FASM workspace. Remove private textual operand substitution. |
 | Global structures | Same tag, `data/structures.lua` | Does not supply these bindings: its implemented game variable is game speed; `PlayerData` is empty and addresses are fixed. Not a suitable runtime resolver for this module. |
-| Existing lobby control | `ui` 1.0.1: `manager/init.lua:lookupMenu`, `api/ui/Menu.lua:fromID/fromPointer`, current local owner checkout | Public access resolves constructed menu objects; it does not expose the internal Load-case eligibility/draw predicates or the pre-initialization static item definition. Keep the existing native item/action/render path; no duplicate control or menu registry. Owner checkout has unrelated work and was not modified. |
+| Existing lobby control | `ui` 1.0.1: `manager/init.lua:lookupMenu`, `ui/menu.lua:fromID/fromPointer`, current local owner checkout | Public access resolves constructed menu objects; it does not expose the internal Load-case eligibility/draw predicates or the pre-initialization static item definition. Keep the existing native item/action/render path; no duplicate control or menu registry. Owner checkout has unrelated work and was not modified. |
 | GM resources | `TheRedDaemon--ucp_gmResourceModifier` `019039afcb29f3806aa30c7157ae5a1253c06673`, `init.lua`, `gmResourceModifier.cpp:SetGm/FreeGm1Resource/copyToShc` | Resource owner retains installed replacements through reference counts and refuses to free in-use resources. Exports loading/replacement/freeing; no inspected public raw-image generation/bounds notification. Do not replace resource ownership. |
 | Texture configuration | `extension-textureSwapper/init.lua`, public `ApplyConfiguration` and its `afterInit` caller | Uses the GM owner. Explicit configuration changes require the game thread outside drawing. The cliff cache must not infer that asset replacement cannot occur. |
 | Graphics/window integration | `graphicsApiReplacer` `473774d8b8028f4e9a4f4367291d54066bad57e3`, Lua initialization and DLL exports | Owns presentation/window changes; no inspected public map-render epoch callback. Preserve the module's existing single shared render-entry hook; do not add another. Exact installed DLL/preset for the reported crash is unavailable. |
@@ -56,7 +56,9 @@ fault pointer, complete stack, exact tester executable, or unpublished pack asse
 
 4,480 original-blitter emulation cases using 160/320-row synthetic source strips
 found no read outside the module's private allocations. Additional 161/240-row
-cases also passed. Synthetic strips below 160 rows expose out-of-allocation reads:
+cases also passed, followed by 4,480 cases using 512/1,024-row strips. Oversized
+Reconquista textures remain explicitly in scope; no vanilla-height cap is proposed.
+Synthetic strips below 160 rows expose out-of-allocation reads:
 the original Y-offset blitter uses a fixed 160-row anchor. Existing positive-height
 resolver tests alone do not establish safe downstream blitting for those sizes.
 This does not match the tester's reported taller artwork and is not attribution
