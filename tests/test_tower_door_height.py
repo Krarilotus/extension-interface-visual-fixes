@@ -479,3 +479,38 @@ def test_update_and_load_signatures_are_validated_before_allocation(site):
     with pytest.raises(Exception,match='unsupported tower connection update layout'):
         emit(moved=site)
     with pytest.raises(ValueError): emit(missing=site)
+
+
+@pytest.mark.parametrize('kind,orientation,frame', list(itertools.product(
+    range(75,79), (0,2,4,6), (81,90))))
+@pytest.mark.parametrize('backing_owner', (0,2))
+def test_cold_and_refreshed_lower_door_use_same_face_backing(kind,orientation,frame,backing_owner):
+    ctx=execute(kind,orientation,frame,((1,-36,0x100),),ground=104,
+                foundation=True,context=True)
+    # Step inward from the selected exterior wall, using independent geometry.
+    wx,wy=ctx['points'][ctx['side']][1]
+    inward=((0,1),(-1,0),(0,-1),(1,0))[ctx['side']]
+    backing=ctx['tile'](wx+inward[0],wy+inward[1])
+    ctx['uc'].mem_write(0x1c95bb8+backing*2,struct.pack('<H',backing_owner))
+    # Invalidate the selected-side discovery, as happens on load/cache reuse.
+    entry=DATA+((812//4)&2047)*32
+    ctx['uc'].mem_write(entry+24,bytes(4))
+    cold=draw_again(ctx)
+    refresh_connections(ctx)
+    refreshed=draw_again(ctx)
+    assert cold is None and refreshed is None
+
+
+@pytest.mark.parametrize('kind,orientation', list(itertools.product(range(75,79), (0,2,6))))
+def test_unrelated_north_backing_does_not_hide_another_faces_lower_door(kind,orientation):
+    ctx=execute(kind,orientation,81,((1,-36,0x100),),ground=104,
+                foundation=True,context=True)
+    assert ctx['side'] != 0
+    nx,ny=ctx['points'][0][1]
+    north_backing=ctx['tile'](nx,ny+1)
+    ctx['uc'].mem_write(0x1c95bb8+north_backing*2,bytes(2))
+    entry=DATA+((812//4)&2047)*32
+    ctx['uc'].mem_write(entry+24,bytes(4))
+    assert draw_again(ctx)==expected(kind,81,1,-36)
+    refresh_connections(ctx)
+    assert draw_again(ctx)==expected(kind,81,1,-36)

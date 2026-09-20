@@ -447,7 +447,10 @@ function M.enable()
     lea eax, [edx+edx*2]
     mov eax, [eax*4+TileRows]
     add eax, edi
-    mov ebx, [esp+20]
+    ; The shared ranker expects a perimeter index, as the native refresh does.
+    mov ebx, [esp+12]
+    imul ebx, ecx
+    add ebx, [esp+20]
     push edx
     call %d
     pop edx
