@@ -44,7 +44,31 @@ Validation on the local change:
   and do not measure whole-game FPS or prove a universal performance bound.
 
 The actual game crash was captured on0.1.4 with the supplied configuration.
-The fixed in-game retest, review and release remain pending. Private reproduction
-assets/dump/autosave and benchmark receipts stay under the task investigation
-directory; this document does not redistribute them. The already published0.1.5
-package has not been replaced.
+On 20 September the isolated 0.1.4 installation with only this correction loaded
+the preserved combat autosave, survived four orientations and both zooms, and
+continued through August1211 at the supplied speed1100 and FPS floor5 without
+another unhandled exception. The complete AoB-based0.1.5 candidate at source
+379109bd5624fd47d5e7b0acc3166ac9fda98539 was then tested in Extreme with the same
+save and module configuration, changing only the Interface version and FPS floor
+to30. It survived four orientations and both zooms; ProcDump recorded a normal
+exit and no unhandled crash dump. This is a bounded retest, not proof that every
+reported crash is fixed. See VALIDATION-PERFORMANCE.md for the timing comparison.
+
+Normal Crusader installed all seven features and rendered the existing
+iv-cliff-rotation save, but that fixture immediately ended in defeat under this
+configuration. Its full rotation acceptance remains incomplete. Additional
+language/distribution builds have offline binding/consumer evidence, not new
+full-game acceptance in this retest. The separate paused information-marker
+fade defect in issue46 remains open and is not corrected by this change.
+
+The production diff retains the existing AoB and decoded-operand bindings;
+six complete executable fixtures retain the same69 scan calls and hook sites,
+with45 added assembled bytes. Review found no new owner API, hook, private
+resolver or duplicated subsystem in this correction. The runtime scanner is
+the target framework's existing first-match API; fixture uniqueness must not
+be described as arbitrary-build runtime ambiguity detection.
+
+Private reproduction assets/dump/autosave and benchmark receipts stay under
+the task investigation directory; this document does not redistribute them.
+The already published0.1.5 package has not been replaced. Store publication and
+remaining native acceptance are still pending.
