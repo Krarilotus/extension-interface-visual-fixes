@@ -37,6 +37,7 @@ function M.enable()
   -- until its own face has been painted through the sprite's horizontal extent.
   -- This is per-frame drawing state, independent of connection discovery.
   local depth = core.allocate(2048 * 40, true)
+  log(INFO, string.format("tower depth cache=0x%08X entries=2048 stride=40", depth))
   local frameEpoch = require("render-frame").getEpoch()
   local depthAddress = string.format([[
     mov edi, esi
@@ -180,6 +181,7 @@ function M.enable()
   -- Each entry holds UID, origin, four ranked connections, valid sides, epoch.
   local cache = core.allocate(2048 * 32 + 4, true)
   local epoch = cache + 2048 * 32
+  log(INFO, string.format("tower connection cache=0x%08X entries=2048 stride=32 epoch=0x%08X", cache, epoch))
   local address = string.format([[
     mov edi, esi
     shr edi, 2

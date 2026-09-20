@@ -135,8 +135,19 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE, *cliff_source.PATTERNS,
     }
     before = list(writes)
+    logs = [row[2] for row in lua.globals().test_logs.values()]
+    assert logs[0] == 'startup diagnostics schema=1; begin'
+    assert logs[-1].startswith('startup complete;')
+    assert sum(message.startswith('native code entry=') for message in logs) > 0
+    assert sum(message.startswith('cliff cache bank=') for message in logs) == 1
+    assert sum(message.startswith('render epoch=') for message in logs) == 1
+    assert sum(message.startswith('tower depth cache=') for message in logs) == 1
+    assert sum(message.startswith('tower connection cache=') for message in logs) == 1
+    assert sum(message.startswith('installed ') for message in logs) == 7
+    assert all(row[1] == 0 for row in lua.globals().test_logs.values())
     module.enable(module, lua.table_from(config))
     assert writes == before
+    assert [row[2] for row in lua.globals().test_logs.values()] == logs
     packaged = {entry.attrib['src'] for entry in ET.parse(ROOT/'files.xml').findall('./files/file')}
     assert {f'{name}.lua' for name in cache} <= packaged
     expected_keys = set(yaml.safe_load((ROOT/'locale/en.yml').read_text(encoding='utf-8')))

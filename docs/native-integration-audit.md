@@ -2,7 +2,22 @@
 
 Related: [runtime bindings #33](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/33),
 [reported crashes #34](https://github.com/Krarilotus/extension-interface-visual-fixes/issues/34).
-Neither issue is resolved by the assembler cleanup.
+The binding correction resolves issue33; the crash investigation remains open.
+
+## Startup diagnostics validation
+
+All 1,488 tests pass. Six complete regular/Extreme local/EFIGS/PL executables
+produce identical game patches, allocations (151,284 bytes) and scan calls with
+or without the new startup diagnostics, compared with merged PR38. Seven extra
+native bytes relative to the original release belong to PR38's cold-door fix,
+not logging. No logging instruction or extra state read runs during drawing or
+simulation. Enabling all seven options writes 121 startup messages, 4,739 message
+bytes before the framework prefix/timestamp. Partial/disabled configurations
+do not initialize unused capabilities, and a second enable writes nothing.
+The feature loop retains its existing order and all-before-write preflight.
+
+The optional Windows dump procedure is documented, not enabled or exercised on
+this desktop. No native game session or unpublished Reconquista asset was used.
 
 ## Existing owners inspected
 
@@ -15,6 +30,8 @@ Neither issue is resolved by the assembler cleanup.
 | GM resources | `TheRedDaemon--ucp_gmResourceModifier` `019039afcb29f3806aa30c7157ae5a1253c06673`, `init.lua`, `gmResourceModifier.cpp:SetGm/FreeGm1Resource/copyToShc` | Resource owner retains installed replacements through reference counts and refuses to free in-use resources. Exports loading/replacement/freeing; no inspected public raw-image generation/bounds notification. Do not replace resource ownership. |
 | Texture configuration | `extension-textureSwapper/init.lua`, public `ApplyConfiguration` and its `afterInit` caller | Uses the GM owner. Explicit configuration changes require the game thread outside drawing. The cliff cache must not infer that asset replacement cannot occur. |
 | Graphics/window integration | `graphicsApiReplacer` `473774d8b8028f4e9a4f4367291d54066bad57e3`, Lua initialization and DLL exports | Owns presentation/window changes; no inspected public map-render epoch callback. Preserve the module's existing single shared render-entry hook; do not add another. Exact installed DLL/preset for the reported crash is unavailable. |
+| Existing AOB usage | UCP2-Legacy 2.15.1 `caa50aba9fc85c5fc766c413b23085ddfbba4a79`, `init.lua` and `port/ai_attackwave.lua` | Reuse the same workflow: contextual wildcarded `core.AOBScan` in initialization, decode native operands/relative targets with `core.readInteger`, use framework allocation/patching. Keep discovery before feature writes. Consolidate repeated enable branches into one ordered list; no copied Legacy feature implementation. |
+| Diagnostic logging | UCP 3.0.7 `dll/core/initialization/logging.cpp`, `content/ucp/code/logging.lua`, `extensions/environment.lua`, `main.lua` | Use module-prefixed `log(INFO, ...)`. Existing logger owns files/filtering; main already logs config and versions. Add startup binding/code/cache addresses only. No private logger, extra native reads, render callback or exception handler. Windows LocalDumps supplies optional fault-time register/heap capture outside the extension. |
 
 Gynt's applicable framework guidance is [“No, improve AOB's, don't make the scanner slower.”](https://github.com/UnofficialCrusaderPatch/UnofficialCrusaderPatch3/issues/148#issuecomment-5665748438)
 No Gynt review was found in the inspected module issue comments, inline PR comments,
