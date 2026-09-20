@@ -3,6 +3,12 @@ local enabled = false
 return {
   enable = function(self, config)
     if enabled then return end
+    for _, active in pairs(config) do
+      if active == true then
+        require("native-layout").prepare(config)
+        break
+      end
+    end
     if config["lobby-map-descriptions"] == true then
       require("lobby-description").enable()
     end

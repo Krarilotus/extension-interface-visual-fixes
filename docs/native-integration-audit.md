@@ -31,21 +31,43 @@ Both old and new assembly were checked with FASM's 64 KB workspace.
 No new runtime instruction, allocation, hook, dependency or feature behavior is added.
 This is offline verification, not new native gameplay acceptance or crash resolution.
 
-## Remaining binding work
+## Runtime binding correction
 
-The production fixed-address table is still present. Replace it completely before
-closing #33. Contextual common-signature candidates have been checked for 77 of its
-86 entries against the two local reference PEs; that is research, not a shipped
-resolver or completion evidence. Group roots and decode call/branch targets instead
-of creating a scanner per field. Preflight all enabled capabilities before writes.
-Verify the official EFIGS/PL fixtures as well as the local SHC/Extreme pair.
+The 86-entry SHC/Extreme address-pair table has been removed. Common contextual
+signatures use `core.AOBScan`, and matched instructions supply data operands and
+relative targets. Named bindings are retained at initialization; assembly receives
+the resolved values. There is no executable hash/base whitelist or address fallback.
 
-Two current names are misleading: `MapWidth` holds `ViewportState.viewportY`,
-and `CurrentBuildingLayerPointer` is `ViewportState.ptrColor`, the screen pixel used
-for native mouse picking. The render-map instructions initialize it from the map
-surface and cursor coordinates. Deferred door drawing saves/restores that pixel;
-it is not a pointer into the building tile layer. Correct these names as part of
-the binding change, with no invented replacement ownership.
+| Bindings | Resolution and layout contract | Existing patch interaction |
+| --- | --- | --- |
+| Placement acknowledgement and command return | Identify the post-commit notification, placement entry, its command caller and minimap callee; verify both relative call targets. Decode mode/player operands. | Preserve the single acknowledgement call and original tail call. Reject changed callees before any patch. |
+| Camera preview and dead trees | Identify the original scrolling gate and its exit; decode the branch and compare its target with the native exit context. Decode tree-frame array access and retain verified Tree field offsets/156-byte stride. | Existing preview gate and frame load only. No new input hook. |
+| Lobby Load | Identify native draw/action/preparation cases and the static existing item by type/parameter, coordinates, activity, art and tooltip. Item fields are offsets within that definition. | Same item, native action and render callbacks; all enabled binding discovery precedes R007 and other writes. |
+| Tower connections and drawing | Identify all five overlay calls, update/reset/selection sites and foundation call; verify native callees. Decode the Buildings array; fields use its 812-byte record layout. Decode TileMapState's LogicLayer, with verified member offsets for other layers/orientation. | Retain existing refresh hooks, one shared render entry and one foundation call. No additional cache, census or render pass. |
+| Cliff sources and GM metadata | Identify both source sites and validate agreement of primary/secondary image and offset operands. Decode header/size arrays, texture-renderer root and GM base-index array. GM IDs 9, 10 and 54 select cliff, wall and tower entries. | Existing source substitutions and selector only. Dimensions/pixel processing are unchanged, including oversized texture handling. |
+| Heap imports | Decode import slots from native allocation/reallocation contexts. | Same Win32 heap API/ABI; no private allocator introduced. |
+
+Struct offsets are cross-checked with native instructions and OpenSHC declarations
+at `b6e4a6ce1624c24953dfcbb71f99596f8e09ec9d` (`TileMapState.hpp`, `Tree.hpp`,
+`ViewportState.hpp`). Those declarations are evidence, not a shipped runtime API.
+The misleading names `MapWidth` and `CurrentBuildingLayerPointer` are now
+`ViewportY` and `CursorSamplePointer`: the latter is the screen pixel used by
+native mouse picking, not a pointer into the building tile layer. Behavior is unchanged.
+
+All 1,409 tests pass. Component/ABI tests explicitly isolate bindings; separate
+production-discovery tests cover both families, changed data operands, a moved
+render entry, missing contexts, redirected calls, disabled features and failure
+before patch allocation. The seven-option composition test uses production discovery.
+Offline uniqueness checking belongs to the test oracle; runtime uses the framework's
+existing first-match scanner/cache, following Gynt's guidance rather than adding
+another scanner. This does not claim support for arbitrary future executables.
+
+Complete-PE verification uses the local regular/Extreme pair plus official EFIGS
+and Polish regular/Extreme 1.41 fixtures. All six produce byte-for-byte identical
+patches and allocations to the pre-refactor module. Thus there are no added
+instructions, allocations or scans in rendering/simulation. Extra identifying
+contexts are resolved only at initialization. No native session or unreleased
+Reconquista pack was run; the random-crash investigation remains open.
 
 ## Crash investigation limits
 

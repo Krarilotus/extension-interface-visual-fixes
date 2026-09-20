@@ -132,7 +132,7 @@ def test_load_fits_between_master_and_start_at_minimum_canvas():
 def test_option_off_and_composition():
     for load,description in [(False,False),(True,False),(False,True),(True,True)]:
         lua=LuaRuntime()
-        lua.execute('calls={}; require=function(name) return {enable=function() calls[name]=(calls[name] or 0)+1 end} end')
+        lua.execute('calls={}; require=function(name) return {prepare=function() end, enable=function() calls[name]=(calls[name] or 0)+1 end} end')
         module=lua.execute((ROOT/'init.lua').read_text())
         cfg=lua.table_from({'lobby-load':load,'lobby-map-descriptions':description})
         module.enable(module,cfg);module.enable(module,cfg)

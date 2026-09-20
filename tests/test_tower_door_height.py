@@ -95,6 +95,7 @@ def emit(moved=None, missing=None):
     })
     modules = {}
     def require(name):
+        if name == "native-layout": return lua.globals().component_layout
         if name not in modules:
             modules[name] = lua.execute((ROOT/f'{name}.lua').read_text())
         return modules[name]
@@ -256,7 +257,7 @@ def test_every_site_is_validated_before_any_write(site):
 
 def test_disabled_and_repeated_enable():
     lua=LuaRuntime()
-    lua.execute('calls=0; require=function() return {enable=function() calls=calls+1 end} end')
+    lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
     module=lua.execute((ROOT/'init.lua').read_text())
     module.enable(module,lua.table_from({'tower-door-height':False}))
     assert lua.globals().calls == 0
