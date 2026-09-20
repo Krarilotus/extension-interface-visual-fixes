@@ -54,9 +54,13 @@ to30. It survived four orientations and both zooms; ProcDump recorded a normal
 exit and no unhandled crash dump. This is a bounded retest, not proof that every
 reported crash is fixed. See VALIDATION-PERFORMANCE.md for the timing comparison.
 
-Normal Crusader installed all seven features and rendered the existing
-iv-cliff-rotation save, but that fixture immediately ended in defeat under this
-configuration. Its full rotation acceptance remains incomplete. Additional
+Normal Crusader installed all seven features. The existing iv-cliff-rotation
+and iv-ai-foundation saves immediately ended in defeat under this configuration.
+A fresh two-AI game on the same cliff arena then passed all four orientations
+at both zoom levels on 20 September, with cliff faces visible and simulation
+continuing through November1181. ProcDump recorded exit code0 and no unhandled
+crash dump. This is a bounded cliff-rendering smoke test, not a second replay
+of the Extreme combat save or exhaustive acceptance of every feature. Additional
 language/distribution builds have offline binding/consumer evidence, not new
 full-game acceptance in this retest. The separate paused information-marker
 fade defect in issue46 remains open and is not corrected by this change.
@@ -70,5 +74,5 @@ be described as arbitrary-build runtime ambiguity detection.
 
 Private reproduction assets/dump/autosave and benchmark receipts stay under
 the task investigation directory; this document does not redistribute them.
-The already published0.1.5 package has not been replaced. Store publication and
-remaining native acceptance are still pending.
+The user requested replacement under the existing0.1.5 Store version. Publication
+is tracked separately; existing installations require an explicit reinstall.
