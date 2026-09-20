@@ -1,36 +1,32 @@
 local enabled = false
+local features = {
+  {"lobby-map-descriptions", "lobby-description"},
+  {"clear-unique-building-preview", "unique-placement"},
+  {"building-preview-during-camera-movement", "camera-preview"},
+  {"distinct-dead-tree-sprites", "dead-tree-sprites"},
+  {"tower-door-height", "tower-door-height"},
+  {"lobby-load", "lobby-load"},
+  {"cliff-texture-direction", "cliff-texture-direction"},
+}
 
 return {
   enable = function(self, config)
     if enabled then return end
-    for _, active in pairs(config) do
-      if active == true then
-        require("native-layout").prepare(config)
-        break
+    log(INFO, "startup diagnostics schema=1; begin")
+    local active = {}
+    for _, feature in ipairs(features) do
+      if config[feature[1]] == true then
+        active[#active+1] = feature
       end
     end
-    if config["lobby-map-descriptions"] == true then
-      require("lobby-description").enable()
-    end
-    if config["clear-unique-building-preview"] == true then
-      require("unique-placement").enable()
-    end
-    if config["building-preview-during-camera-movement"] == true then
-      require("camera-preview").enable()
-    end
-    if config["distinct-dead-tree-sprites"] == true then
-      require("dead-tree-sprites").enable()
-    end
-    if config["tower-door-height"] == true then
-      require("tower-door-height").enable()
-    end
-    if config["lobby-load"] == true then
-      require("lobby-load").enable()
-    end
-    if config["cliff-texture-direction"] == true then
-      require("cliff-texture-direction").enable()
+    if #active > 0 then require("native-layout").prepare(config) end
+    for _, feature in ipairs(active) do
+      log(INFO, "installing " .. feature[1])
+      require(feature[2]).enable()
+      log(INFO, "installed " .. feature[1])
     end
     enabled = true
+    log(INFO, "startup complete; diagnostics are startup-only, not a crash dump")
   end,
   disable = function()
     error("Interface and Visual Fixes requires a game restart to disable")

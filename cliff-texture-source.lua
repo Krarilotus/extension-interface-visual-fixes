@@ -29,6 +29,7 @@ function M.enable()
   -- compared once per frame, even when two pairs use it. Storage remains one
   -- source copy and one projection per image; no duplicated neighbour copies.
   local bank = core.allocate(32*20, true)
+  log(INFO, string.format("cliff cache bank=0x%08X entries=32 stride=20; fields=epoch,bytes,capacity,buffer,flags", bank))
   local ensureSource = layout.allocateAssembly(string.format([[
     pushfd
     pushad

@@ -153,6 +153,7 @@ setmetatable(A, {__index = function(self, name)
   if not resolve then return nil end
   local address = resolve()
   rawset(self, name, address)
+  log(INFO, string.format("native binding %s=0x%08X", name, address))
   return address
 end})
 local M = {addresses = A, patterns = P}
@@ -166,7 +167,9 @@ local function operands(script)
   return used
 end
 function M.allocateAssembly(script)
-  return core.allocateAssembly(script, operands(script))
+  local address = core.allocateAssembly(script, operands(script))
+  log(INFO, string.format("native code entry=0x%08X", address))
+  return address
 end
 function M.assemble(script, origin)
   return core.assemble(script, operands(script), origin)

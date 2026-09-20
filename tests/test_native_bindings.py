@@ -59,10 +59,14 @@ def test_all_bindings_match_independent_reference_and_are_retained(family):
     expected = EXPECTED[family]['addresses']
     assert {name: layout.addresses[name] for name in expected} == expected
     count = len(scans)
+    logs = [row[2] for row in lua.globals().test_logs.values()]
+    assert set(logs) == {f'native binding {name}=0x{address:08X}' for name, address in expected.items()}
+    assert len(logs) == len(expected)
     for _ in range(10):
         for name in expected:
             assert layout.addresses[name] == expected[name]
     assert len(scans) == count
+    assert [row[2] for row in lua.globals().test_logs.values()] == logs
     assert allocations == []
 
 

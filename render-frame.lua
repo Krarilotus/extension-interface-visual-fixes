@@ -11,6 +11,7 @@ function M.getEpoch()
     error("Interface and Visual Fixes: unsupported map renderer layout")
   end
   epoch = core.allocate(4, true)
+  log(INFO, string.format("render epoch=0x%08X", epoch))
   local entry = layout.allocateAssembly(string.format([[
     pushfd
     inc dword [%d]

@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def LuaRuntime(*args, extreme=False, component_bindings=True, **kwargs):
     lua=_LuaRuntime(*args, **kwargs)
+    lua.execute('INFO=0; test_logs={}; log=function(level, message) table.insert(test_logs, {level, message}) end')
     lua.execute('data={version={isExtreme=function() return '+str(extreme).lower()+' end}}')
     lua.globals().package.path=ROOT.as_posix()+'/?.lua;'+lua.globals().package.path
     if component_bindings:

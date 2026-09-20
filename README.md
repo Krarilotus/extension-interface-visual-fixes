@@ -8,6 +8,11 @@ default, with Extreme and taller-texture support. Each fix can still be disabled
 separately. Existing explicit choices in saved configurations remain in effect.
 See the [short description](locale/description-en.md).
 
+For an intermittent crash, keep the session's UCP logs before restarting.
+[Crash reporting](docs/crash-reporting.md) explains the automatic startup
+diagnostics and optional Windows dump capture. The reported blitter crash is
+still under investigation; diagnostics are not a claim that it is fixed.
+
 - **Show lobby map descriptions:** keeps custom descriptions visible when
   switching between custom and shipped maps.
 - **Clear unique-building preview after placement:** deselects the marketplace,
