@@ -84,7 +84,7 @@ function M.enable()
     mov [edi+32], edx
     or dword [edi+12], 2
   queued:
-    mov eax, [CurrentBuildingLayerPointer]
+    mov eax, [CursorSamplePointer]
     movzx eax, word [eax]
     mov [edi+36], eax
     popad
@@ -131,7 +131,7 @@ function M.enable()
     je done
     push dword [OverlayVerticalOffset]
     push dword [OverlayGm]
-    mov ebp, [CurrentBuildingLayerPointer]
+    mov ebp, [CursorSamplePointer]
     movzx eax, word [ebp]
     push eax
     mov ax, [edi+36]
@@ -341,7 +341,7 @@ function M.enable()
     inc dword [%d]
     popfd
     push ecx
-    mov eax, [MapWidth]
+    mov eax, [ViewportY]
     jmp MapResetResume
   ]], epoch))
 

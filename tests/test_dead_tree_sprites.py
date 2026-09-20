@@ -94,7 +94,7 @@ def test_unknown_moved_or_already_changed_renderer_rejected():
 
 def test_disabled_and_repeated_enable():
     lua = LuaRuntime()
-    lua.execute('calls=0; require=function() return {enable=function() calls=calls+1 end} end')
+    lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from({'distinct-dead-tree-sprites':False}))
     assert lua.globals().calls == 0

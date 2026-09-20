@@ -1,6 +1,7 @@
 """Exercise the real shared entry point against all seven synthetic native sites."""
 from pathlib import Path
 import re
+import json
 import struct
 import xml.etree.ElementTree as ET
 
@@ -45,7 +46,12 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     for address, pattern in doors.UPDATES.items():
         seed(address-(6 if address==0x41B855 else 10 if address==0x50EDAF else 0),bytes.fromhex(pattern))
 
-    lua = LuaRuntime(unpack_returned_tuples=True)
+    # Also exercise production discovery/preflight in the composition path;
+    # the individual ABI tests intentionally use isolated binding fixtures.
+    contexts = json.loads((ROOT/'tests/fixtures/native-contexts.json').read_text())['regular']
+    for fragment in contexts.values():
+        seed(fragment['address'], bytes.fromhex(fragment['bytes']))
+    lua = LuaRuntime(unpack_returned_tuples=True, component_bindings=False)
     writes, allocations, cache = [], [], {}
     next_address = CAVE
 

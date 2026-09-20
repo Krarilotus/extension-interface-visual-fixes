@@ -74,7 +74,7 @@ def test_signature_checked_before_any_write():
 
 def test_disabled_option_does_not_load_feature():
     lua=LuaRuntime()
-    lua.execute('calls=0; require=function() calls=calls+1; return {enable=function() end} end')
+    lua.execute('calls=0; require=function() calls=calls+1; return {prepare=function() end, enable=function() end} end')
     module=lua.execute((ROOT/'init.lua').read_text())
     module.enable(module,lua.table_from({'cliff-texture-direction':False}))
     assert lua.globals().calls==0

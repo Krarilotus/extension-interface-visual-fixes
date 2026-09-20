@@ -104,7 +104,7 @@ def test_unrecognized_or_moved_layout_rejected():
 
 def test_disabled_and_repeated_enable():
     lua=LuaRuntime()
-    lua.execute('calls=0; require=function() return {enable=function() calls=calls+1 end} end')
+    lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
     init=lua.execute((ROOT/'init.lua').read_text())
     init.enable(init,lua.table_from({'lobby-map-descriptions':False}))
     assert lua.globals().calls == 0

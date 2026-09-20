@@ -46,6 +46,7 @@ def emit(module='cliff-texture-source', moved=None, missing=None, extreme=False)
             else:data.extend(item(at+len(data)))
         writes.append((at,bytes(data)))
     def require(name):
+        if name == "native-layout": return lua.globals().component_layout
         if name not in modules:modules[name]=lua.execute((ROOT/f'{name}.lua').read_text())
         return modules[name]
     lua.globals().require=require

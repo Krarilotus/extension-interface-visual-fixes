@@ -116,7 +116,7 @@ def test_unsupported_layout_fails_before_write():
     with pytest.raises(Exception,match='notification was changed'):emit(bytes(b))
 
 def test_disabled_and_repeated_enable():
-    lua=LuaRuntime();lua.execute('calls=0; require=function() return {enable=function() calls=calls+1 end} end')
+    lua=LuaRuntime();lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
     m=lua.execute((ROOT/'init.lua').read_text());m.enable(m,lua.table_from({'clear-unique-building-preview':False}))
     assert lua.globals().calls==0
     m=lua.execute((ROOT/'init.lua').read_text());cfg=lua.table_from({'clear-unique-building-preview':True})
