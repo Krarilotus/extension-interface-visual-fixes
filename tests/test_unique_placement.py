@@ -2,8 +2,7 @@
 from pathlib import Path
 import re, struct
 import pytest
-from lupa import lua_type
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32
 from unicorn.x86_const import *
 ROOT=Path(__file__).resolve().parents[1]
@@ -30,27 +29,14 @@ def emit(blob=None, base=0x400000, cave=CAVE, extreme=False):
         if len(found) != 1:
             raise ValueError('AOB must match once: '+str([hex(base+m.start()) for m in found]))
         return base + found[0].start()
-    def relative(op, target):
-        return lambda address: bytes([op])+struct.pack('<i',target-address-5)
-    def write(address, table):
-        output = bytearray()
-        def flatten(t):
-            for v in t.values():
-                if isinstance(v, int):
-                    output.extend(bytes([v]) if 0 <= v <= 255 else struct.pack('<I',v))
-                elif lua_type(v) == 'table':
-                    flatten(v)
-                else:
-                    output.extend(v(address+len(output)))
-        flatten(table)
-        writes.append((address,bytes(output)))
+    def write(address, code):
+        writes.append((address, code))
     def allocate(size):
         allocations.append(size)
         return cave
-    lua.globals().core = lua.table_from({
+    framework_core(lua, {
         'AOBScan':scan, 'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
         'allocateCode':allocate, 'writeCode':write,
-        'jmpTo':lambda a:relative(0xe9,a), 'callTo':lambda a:relative(0xe8,a),
     })
     lua.execute((ROOT/'unique-placement.lua').read_text()).enable()
     assert allocations == [87]
@@ -114,10 +100,3 @@ def test_unsupported_layout_fails_before_write():
     with pytest.raises(Exception):emit(bytes(0x120000))
     b=bytearray(fixture());b[SITE+1-0x400000]^=1
     with pytest.raises(Exception,match='notification was changed'):emit(bytes(b))
-
-def test_disabled_and_repeated_enable():
-    lua=LuaRuntime();lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
-    m=lua.execute((ROOT/'init.lua').read_text());m.enable(m,lua.table_from({'clear-unique-building-preview':False}))
-    assert lua.globals().calls==0
-    m=lua.execute((ROOT/'init.lua').read_text());cfg=lua.table_from({'clear-unique-building-preview':True})
-    m.enable(m,cfg);m.enable(m,cfg);assert lua.globals().calls==1

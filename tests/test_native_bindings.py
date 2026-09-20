@@ -10,7 +10,7 @@ import struct
 from pathlib import Path
 
 import pytest
-from lua_support import LuaRuntime
+from lua_support import LuaRuntime, framework_core
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTEXTS = json.loads((ROOT / 'tests/fixtures/native-contexts.json').read_text())
@@ -40,7 +40,7 @@ def fixture(family='regular'):
         scans.append(pattern)
         return BASE + hits[0].start()
 
-    lua.globals().core = lua.table_from({
+    framework_core(lua, {
         'AOBScan': scan,
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'allocateCode': lambda size: allocations.append(size),

@@ -5,8 +5,7 @@ import json
 import struct
 import xml.etree.ElementTree as ET
 
-from lupa import lua_type
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 import yaml
 
 import test_camera_preview as camera
@@ -69,50 +68,26 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
         next_address += size
         return result
 
-    def data(size, zero):
+    def data(size, zero=False):
         address=allocate(size)
         if zero:writes.append((address,bytes(size)))
         return address
 
-    def write(address, table):
-        result = bytearray()
-        def flatten(values):
-            for value in values.values():
-                if isinstance(value, int):
-                    if 0 <= value <= 255:
-                        result.append(value)
-                    else:
-                        result.extend(struct.pack('<I', value & 0xffffffff))
-                elif lua_type(value) == 'table':
-                    flatten(value)
-                else:
-                    result.extend(value(address+len(result)))
-        flatten(table)
-        code = bytes(result)
+    def write(address, code):
         assert all(address+len(code) <= old or old+len(data) <= address
                    for old, data in writes), 'duplicate/overlapping patch write'
         writes.append((address, code))
         if address < CAVE:
             seed(address, code)
 
-    def assembly(source, mapping=None):
-        source=with_symbols(source,mapping)
-        size = len(doors.assemble(source, 0))
-        address = allocate(size)
-        writes.append((address, doors.assemble(source, address)))
-        return address
-
     def require(name):
         if name not in cache:
             cache[name] = lua.execute((ROOT/f'{name}.lua').read_text())
         return cache[name]
 
-    relative = lambda opcode, target: lambda at: bytes([opcode])+struct.pack('<i', target-at-5)
-    lua.globals().core = lua.table_from({
+    framework_core(lua, {
         'AOBScan': scan, 'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
-        'allocateCode': allocate, 'allocateAssembly': assembly, 'allocate': data, 'writeCode': write,
-        'jmpTo': lambda to: relative(0xe9, to), 'callTo': lambda to: relative(0xe8, to),
-        'assemble':lambda script,_mapping,origin:lua.table_from(list(doors.assemble(with_symbols(script,_mapping),origin))),
+        'allocateCode': allocate, 'allocate': data, 'writeCode': write,
     })
     lua.globals().require = require
     options = yaml.safe_load((ROOT/'options.yml').read_text())['options']

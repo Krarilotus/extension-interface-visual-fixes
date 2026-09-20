@@ -6,6 +6,33 @@ from lua_support import LuaRuntime
 ROOT = Path(__file__).resolve().parents[1]
 
 
+@pytest.mark.parametrize('option,feature', (
+    ('lobby-map-descriptions', 'lobby-description'),
+    ('clear-unique-building-preview', 'unique-placement'),
+    ('building-preview-during-camera-movement', 'camera-preview'),
+    ('distinct-dead-tree-sprites', 'dead-tree-sprites'),
+    ('tower-door-height', 'tower-door-height'),
+    ('lobby-load', 'lobby-load'),
+    ('cliff-texture-direction', 'cliff-texture-direction'),
+))
+@pytest.mark.parametrize('value', (None, False, True))
+def test_each_option_requires_only_its_feature_and_enables_once(option, feature, value):
+    lua = LuaRuntime(component_bindings=False)
+    actions = []
+    def require(name):
+        actions.append(('require', name))
+        if name == 'native-layout':
+            return lua.table_from({'prepare': lambda config: actions.append(('prepare', option))})
+        return lua.table_from({'enable': lambda: actions.append(('enable', name))})
+    lua.globals().require = require
+    module = lua.execute((ROOT/'init.lua').read_text())
+    config = lua.table_from({} if value is None else {option: value})
+    module.enable(module, config)
+    module.enable(module, config)
+    assert actions == ([('require', 'native-layout'), ('prepare', option),
+                        ('require', feature), ('enable', feature)] if value else [])
+
+
 def test_all_disabled_performs_no_discovery_or_installation_and_enables_once():
     lua = LuaRuntime(component_bindings=False)
     def require(name):

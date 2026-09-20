@@ -12,6 +12,16 @@ jobs:
           python-version: '3.13'
       - run: pip install -r requirements-test.txt
       - run: sudo apt-get update -qq && sudo apt-get install -y fasm
+      - name: Fetch pinned UCP 3.0.7 Lua core
+        uses: actions/checkout@v4
+        with:
+          repository: UnofficialCrusaderPatch/UnofficialCrusaderPatch3
+          ref: 77c6accf14a55fb95434fe6ffd96516e005568b5
+          path: .framework-fixture
+          sparse-checkout: |
+            content/ucp/code/core.lua
+            content/ucp/code/utils.lua
+          sparse-checkout-cone-mode: false
       - run: python -m pytest -q
       - run: python tools/build.py
       - uses: actions/setup-node@v4

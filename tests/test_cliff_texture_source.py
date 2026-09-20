@@ -1,11 +1,11 @@
 """Execute emitted source resolution with synthetic, replaceable GM9 pixels."""
 from pathlib import Path
+from functools import lru_cache
 import struct
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 import pytest
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_READ, UC_HOOK_CODE
 from unicorn.x86_const import *
-from test_tower_door_height import assemble
 
 ROOT = Path(__file__).resolve().parents[1]
 CAVE, STACK, STOP, RAW = 0x60000000, 0x61001000, 0x61001800, 0x30000000
@@ -16,6 +16,7 @@ PATTERNS = {
 }
 
 
+@lru_cache
 def emit(module='cliff-texture-source', moved=None, missing=None, extreme=False):
     from test_cliff_texture_direction import PATTERN, SITE
     patterns = {**PATTERNS, SITE:PATTERN}
@@ -35,31 +36,21 @@ def emit(module='cliff-texture-source', moved=None, missing=None, extreme=False)
         at=next_address;next_address+=size;allocations.append((at,size))
         if zero:writes.append((at,bytes(size)))
         return at
-    def assembly(source, mapping=None):
-        source=with_symbols(source,mapping)
-        size=len(assemble(source,0));at=allocate(size)
-        writes.append((at,assemble(source,at)));return at
-    def write(at,table):
-        data=bytearray()
-        for item in table.values():
-            if isinstance(item,int):data.append(item)
-            else:data.extend(item(at+len(data)))
-        writes.append((at,bytes(data)))
+    def write(at, code):
+        writes.append((at, code))
     def require(name):
         if name == "native-layout": return lua.globals().component_layout
         if name not in modules:modules[name]=lua.execute((ROOT/f'{name}.lua').read_text())
         return modules[name]
     lua.globals().require=require
-    lua.globals().core=lua.table_from({
-        'AOBScan':scan,'allocate':allocate,'allocateAssembly':assembly,'writeCode':write,
-        'assemble':lambda source,_m,at:lua.table_from(list(assemble(with_symbols(source,_m),at))),
-        'jmpTo':lambda target:lambda at:b'\xe9'+struct.pack('<i',target-at-5),
+    framework_core(lua, {
+        'AOBScan':scan,'allocate':allocate,'allocateCode':allocate,'writeCode':write,
     })
     require(module).enable()
-    return writes,allocations
+    return tuple(writes), tuple(allocations)
 
 
-def fixture(index=100,extreme=False):
+def fixture(extreme=False):
     writes,allocations=emit(extreme=extreme)
     uc=Uc(UC_ARCH_X86,UC_MODE_32)
     for at,size in [(0x32000000,0x800000),(0x400000,0x2c00000),(CAVE,0x200000),(0x61000000,0x2000),(RAW,0x60000)]:uc.mem_map(at,size)

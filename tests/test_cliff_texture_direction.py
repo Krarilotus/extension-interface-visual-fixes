@@ -1,14 +1,10 @@
 """Exercise the emitted rotated texture coordinates independently of pixels."""
-from pathlib import Path
 import itertools
 import struct
-from lua_support import LuaRuntime, with_symbols, flatten_code
 import pytest
 from unicorn import Uc,UC_ARCH_X86,UC_MODE_32,UC_HOOK_MEM_WRITE
 from unicorn.x86_const import *
-from test_tower_door_height import assemble
 
-ROOT=Path(__file__).resolve().parents[1]
 SITE,END,MAP,STACK=0x4fc95c,0x4fc9b9,0x1a93208,0x60001000
 PATTERN=bytes.fromhex('8B 91 9C 48 55 00 85 D2 75 1B 83 F8 01 75 3E 8B 54 24 18 83 E2 1F BE 20 00 00 00 2B F2 89 B1 08 49 55 00 EB 38 83 FA 04 75 10 83 F8 01 75 10 8B 54 24 18 83 E2 1F 03 D0 EB 1D 83 FA 02 75 0E 83 E6 1F 83 C6 01 89 B1 08 49 55 00 EB 10 83 E6 1F BA 20 00 00 00 2B D6 89 91 08 49 55 00')
 
@@ -70,14 +66,6 @@ def test_unsupported_orientation_retains_original_fallback(orientation):
 def test_signature_checked_before_any_write():
     with pytest.raises(Exception,match='unsupported cliff texture'):emit(moved=True)
     with pytest.raises(ValueError):emit(missing=True)
-
-
-def test_disabled_option_does_not_load_feature():
-    lua=LuaRuntime()
-    lua.execute('calls=0; require=function() calls=calls+1; return {prepare=function() end, enable=function() end} end')
-    module=lua.execute((ROOT/'init.lua').read_text())
-    module.enable(module,lua.table_from({'cliff-texture-direction':False}))
-    assert lua.globals().calls==0
 
 
 DIRECTIONS=((0,-1),(1,-1),(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1))

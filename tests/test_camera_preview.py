@@ -4,7 +4,7 @@ import itertools
 import re
 import struct
 import pytest
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE
 from unicorn.x86_const import *
 
@@ -30,15 +30,14 @@ def emit(blob=None, base=None, extreme=False):
         return base + matches[0].start()
 
     def write(address, values):
-        writes.append((address, flatten_code(values,address)))
+        writes.append((address, values))
 
     def allocate(size):
         allocations.append(size)
         return CAVE
 
-    lua.globals().core = lua.table_from({
+    framework_core(lua, {
         'AOBScan': scan, 'allocateCode': allocate, 'writeCode': write,
-        'jmpTo': lambda target: lambda address: b'\xe9'+struct.pack('<i', target-address-5),
     })
     lua.execute((ROOT/'camera-preview.lua').read_text()).enable()
     assert allocations == [39]
@@ -95,16 +94,3 @@ def test_unknown_moved_or_already_changed_guard_rejected():
         emit(PATTERN+PATTERN)
     with pytest.raises(Exception, match='unsupported camera preview layout'):
         emit(base=SITE-5)
-
-
-def test_disabled_and_repeated_enable():
-    lua = LuaRuntime()
-    lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
-    module = lua.execute((ROOT/'init.lua').read_text())
-    module.enable(module, lua.table_from({'building-preview-during-camera-movement':False}))
-    assert lua.globals().calls == 0
-    module = lua.execute((ROOT/'init.lua').read_text())
-    config = lua.table_from({'building-preview-during-camera-movement':True})
-    module.enable(module, config)
-    module.enable(module, config)
-    assert lua.globals().calls == 1
