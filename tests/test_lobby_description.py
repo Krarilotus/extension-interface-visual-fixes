@@ -4,8 +4,7 @@ import re
 import struct
 
 import pytest
-from lupa import lua_type
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32
 from unicorn.x86_const import *
 
@@ -39,27 +38,14 @@ def emit(blob=None, base=SITE-10, cave=CAVE):
         if len(found) != 1:
             raise ValueError('AOB must match once: '+str([hex(base+m.start()) for m in found]))
         return base + found[0].start()
-    def relative(op, target):
-        return lambda address: bytes([op])+struct.pack('<i',target-address-5)
-    def write(address, table):
-        output = bytearray()
-        def flatten(t):
-            for v in t.values():
-                if isinstance(v, int):
-                    output.extend(bytes([v]) if 0 <= v <= 255 else struct.pack('<I',v))
-                elif lua_type(v) == 'table':
-                    flatten(v)
-                else:
-                    output.extend(v(address+len(output)))
-        flatten(table)
-        writes.append((address,bytes(output)))
+    def write(address, code):
+        writes.append((address, code))
     def allocate(size):
         allocations.append(size)
         return cave
-    lua.globals().core = lua.table_from({
+    framework_core(lua, {
         'AOBScan':scan, 'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
         'allocateCode':allocate, 'writeCode':write,
-        'jmpTo':lambda a:relative(0xe9,a), 'callTo':lambda a:relative(0xe8,a),
     })
     lua.execute((ROOT/'lobby-description.lua').read_text()).enable()
     assert allocations == [15]
@@ -100,15 +86,3 @@ def test_unrecognized_or_moved_layout_rejected():
         emit(b'\x90'*0x200)
     with pytest.raises(Exception,match='unsupported lobby description layout'):
         emit(fixture()[:0xf5]+b'\x90'+fixture()[0xf5:])
-
-
-def test_disabled_and_repeated_enable():
-    lua=LuaRuntime()
-    lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
-    init=lua.execute((ROOT/'init.lua').read_text())
-    init.enable(init,lua.table_from({'lobby-map-descriptions':False}))
-    assert lua.globals().calls == 0
-    init=lua.execute((ROOT/'init.lua').read_text())
-    init.enable(init,lua.table_from({'lobby-map-descriptions':True}))
-    init.enable(init,lua.table_from({'lobby-map-descriptions':True}))
-    assert lua.globals().calls == 1

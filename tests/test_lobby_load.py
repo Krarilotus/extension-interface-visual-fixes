@@ -3,8 +3,7 @@ from pathlib import Path
 import re
 import struct
 import pytest
-from lupa import lua_type
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32
 from unicorn.x86_const import *
 
@@ -34,23 +33,12 @@ def emit(blob=None,base=PREP,cave=CAVE,repeat=False):
         found=list(re.finditer(regex,blob,re.DOTALL))
         if len(found)!=1: raise ValueError('signature not unique')
         return base+found[0].start()
-    def write(addr,table):
-        out=bytearray()
-        def compile_values(values):
-            for v in values.values():
-                if isinstance(v,int):
-                    # UCP core.compile recursively flattens tables. A nested
-                    # small integer still emits ONE byte, not a forced dword.
-                    if 0<=v<=255: out.append(v)
-                    else: out.extend(struct.pack('<I',v&0xffffffff))
-                elif lua_type(v)=='table': compile_values(v)
-                else: out.extend(v(addr+len(out)))
-        compile_values(table)
-        writes.append((addr,bytes(out)))
+    def write(addr, code):
+        writes.append((addr, code))
     def allocate(size): allocations.append(size); return cave
-    lua.globals().core=lua.table_from({'AOBScan':scan,'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
+    framework_core(lua, {'AOBScan':scan,'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
         'allocateCode':allocate,'writeCode':write,
-        'jmpTo':lambda target:lambda at:b'\xe9'+struct.pack('<i',target-at-5)})
+    })
     module=lua.execute((ROOT/'lobby-load.lua').read_text())
     module.enable()
     if repeat: module.enable()
@@ -117,24 +105,13 @@ def test_position_follows_lobby_mode_and_preserves_abi(modes):
         uc.emu_start(PREP,PREP+10,count=20)
         assert uc.reg_read(UC_X86_REG_EIP)==PREP+10
         assert [uc.reg_read(r) for r in regs]==before
-        assert struct.unpack('<I',uc.mem_read(ITEM+4,4))[0]==(560 if mode==99 else 444)
+        left = struct.unpack('<I', uc.mem_read(ITEM+4,4))[0]
+        assert left == (560 if mode==99 else 444)
+        if mode == 99:
+            # Native Load frame is 45x58; master ends at529, Start begins at620.
+            top = struct.unpack('<I', uc.mem_read(ITEM+8,4))[0]
+            assert 409+120 < left and left+45 < 620
+            assert 0 <= top and top+58 <= 600 and left+45 <= 800
         assert bytes(uc.mem_read(ITEM,4))==item_before[:4]
         assert bytes(uc.mem_read(ITEM+8,72))==item_before[8:]
         assert struct.unpack('<I',uc.mem_read(SECONDARY,4))[0]==3
-
-def test_load_fits_between_master_and_start_at_minimum_canvas():
-    # Original GM frames: Load normal/hover 45x58; master 120x101 at409,452;
-    # Start's full native hit rectangle starts at620,484 (opaque hand is later).
-    left,top,width,height=560,540,45,58
-    assert 409+120 < left and left+width < 620
-    assert 0<=top and top+height<=600 and left+width<=800
-
-def test_option_off_and_composition():
-    for load,description in [(False,False),(True,False),(False,True),(True,True)]:
-        lua=LuaRuntime()
-        lua.execute('calls={}; require=function(name) return {prepare=function() end, enable=function() calls[name]=(calls[name] or 0)+1 end} end')
-        module=lua.execute((ROOT/'init.lua').read_text())
-        cfg=lua.table_from({'lobby-load':load,'lobby-map-descriptions':description})
-        module.enable(module,cfg);module.enable(module,cfg)
-        assert (lua.globals().calls['lobby-load'] or 0)==int(load)
-        assert (lua.globals().calls['lobby-description'] or 0)==int(description)

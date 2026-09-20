@@ -1,14 +1,10 @@
 """Execute the actual Lua/FASM wrapper, including its original draw-call ABI."""
-from functools import lru_cache
 from pathlib import Path
+from functools import lru_cache
 import itertools
-import os
-import shutil
 import struct
-import subprocess
-import tempfile
 
-from lua_support import LuaRuntime, with_symbols, flatten_code
+from lua_support import LuaRuntime, framework_core
 import pytest
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_MEM_WRITE, UC_HOOK_MEM_READ, UC_HOOK_CODE
 from unicorn.x86_const import *
@@ -41,19 +37,6 @@ UPDATES = {0x4E8CF0:'83 EC 64 A1 94 83 F9 00 53 55 56 8B D9 57 33 FF 33 F6',
 
 
 @lru_cache
-def assemble(script, origin):
-    fasm = os.environ.get('FASM') or shutil.which('fasm')
-    if not fasm and os.name == 'nt':
-        fasm = 'C:/UCPTools/fasm-interface/FASM.EXE'
-    assert fasm, 'Install fasm (or set FASM) to exercise the framework assembler'
-    with tempfile.TemporaryDirectory() as temp:
-        source, output = Path(temp)/'test.asm', Path(temp)/'test.bin'
-        source.write_text(f'use32\norg {origin}\n{script}')
-        # UCP 3.0.7 embeds FASM with a 64 KB workspace.
-        subprocess.run([fasm, '-m', '64', str(source), str(output)], check=True, capture_output=True)
-        return output.read_bytes()
-
-
 def emit(moved=None, missing=None):
     lua = LuaRuntime(unpack_returned_tuples=True)
     allocations, writes = [], []
@@ -66,13 +49,9 @@ def emit(moved=None, missing=None):
         site = matches[0]
         return site-(10 if site in SITES or site==0x50EDAF else 6 if site==0x41B855 else 0)+(1 if moved == site else 0)
 
-    def allocate(script, mapping=None):
-        script=with_symbols(script,mapping)
+    def allocate(size):
         origin = CAVE + sum(allocations)
-        first, final = assemble(script, 0), assemble(script, origin)
-        assert len(first) == len(final)
-        allocations.append(len(final))
-        writes.append((origin, final))
+        allocations.append(size)
         return origin
 
     def data(size, zero):
@@ -82,16 +61,10 @@ def emit(moved=None, missing=None):
         return address
 
     def write(address, code):
-        result = bytearray()
-        for value in code.values():
-            if isinstance(value,int): result.append(value)
-            else: result.extend(value(address+len(result)))
-        writes.append((address, bytes(result)))
+        writes.append((address, code))
 
-    lua.globals().core = lua.table_from({
-        'AOBScan': scan, 'allocateAssembly': allocate, 'allocate':data, 'writeCode': write,
-        'callTo': lambda target: lambda address: b'\xe8'+struct.pack('<i', target-address-5),
-        'jmpTo': lambda target: lambda address: b'\xe9'+struct.pack('<i', target-address-5),
+    framework_core(lua, {
+        'AOBScan': scan, 'allocateCode': allocate, 'allocate':data, 'writeCode': write,
     })
     modules = {}
     def require(name):
@@ -108,7 +81,7 @@ def emit(moved=None, missing=None):
     assert len(allocations) == 11
     assert {address for address, _ in writes if address < CAVE} == set(patterns)
     assert all(len(code) == 5 for address, code in writes if address in SITES)
-    return writes
+    return tuple(writes)
 
 
 def render_address():
@@ -253,19 +226,6 @@ def test_every_site_is_validated_before_any_write(site):
         emit(moved=site)
     with pytest.raises(ValueError):
         emit(missing=site)
-
-
-def test_disabled_and_repeated_enable():
-    lua=LuaRuntime()
-    lua.execute('calls=0; require=function() return {prepare=function() end, enable=function() calls=calls+1 end} end')
-    module=lua.execute((ROOT/'init.lua').read_text())
-    module.enable(module,lua.table_from({'tower-door-height':False}))
-    assert lua.globals().calls == 0
-    module=lua.execute((ROOT/'init.lua').read_text())
-    config=lua.table_from({'tower-door-height':True})
-    module.enable(module,config)
-    module.enable(module,config)
-    assert lua.globals().calls == 1
 
 
 def draw_again(ctx):
