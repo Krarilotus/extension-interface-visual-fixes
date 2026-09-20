@@ -26,8 +26,11 @@ function M.enable()
   -- Entry: source-check epoch, bytes, capacity, private buffer, flags.
   -- Flags: 1 = source copy valid, 2 = paired projection valid. A source change
   -- invalidates its own projection and the preceding pair. Each original is
-  -- compared once per frame, even when two pairs use it. Storage remains one
-  -- source copy and one projection per image; no duplicated neighbour copies.
+  -- compared once per frame, even when two pairs use it. The offset consumer
+  -- anchors at row 160 independently of the requested draw height. Its byte
+  -- offset and <255-row draw can reach rows -103..413 (including face3's -8).
+  -- Give the projection cyclic coverage of [-104, max(rows,416)); don't assume
+  -- draw height <= terrain offset or rely on adjacent heap/atlas allocations.
   local bank = core.allocate(32*20, true)
   log(INFO, string.format("cliff cache bank=0x%08X entries=32 stride=20; fields=epoch,bytes,capacity,buffer,flags", bank))
   local ensureSource = layout.allocateAssembly(string.format([[
@@ -72,7 +75,13 @@ function M.enable()
     push ecx
     call dword [ProcessHeap]
     mov ecx, [esp]
-    add ecx, ecx
+    mov edx, ecx
+    cmp edx, 416*60
+    jae projection_capacity
+    mov edx, 416*60
+  projection_capacity:
+    add ecx, edx
+    add ecx, 104*60
     push ecx
     cmp dword [ebx+12], 0
     je allocate
@@ -185,6 +194,7 @@ function M.enable()
     mov [esp], eax
   column_source:
     movzx eax, byte [ebx*2+%d+1]
+    add eax, 104
     xor edx, edx
     div dword [esp+8]
     mov eax, [esp+8]
@@ -200,6 +210,11 @@ function M.enable()
     mov edi, [esp+12]
     lea edi, [edi+ebx*2]
     mov ecx, [esp+8]
+    cmp ecx, 416
+    jae projection_rows
+    mov ecx, 416
+  projection_rows:
+    add ecx, 104
   pixel:
     mov dx, [eax]
     mov [edi], dx
@@ -221,6 +236,7 @@ function M.enable()
   cached:
     mov eax, [ebx+12]
     add eax, [ebx+4]
+    add eax, 104*60
     mov [esp+28], eax
   done:
     popad

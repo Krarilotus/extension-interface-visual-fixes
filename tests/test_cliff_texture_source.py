@@ -265,3 +265,84 @@ def test_unavailable_neighbour_is_stable_and_recovers_without_stale_pair():
     uc.mem_write(0xb98790+101*16,struct.pack('<H',30))
     resolve(uc,entry,100)
     assert writes and bytes(uc.mem_read(pointer,9600))!=before
+
+
+def consumer_fixture(extreme, rows=160):
+    """Original consumers with emitted hooks, checking exact heap extents."""
+    import json
+    uc, _entry, _epoch = fixture(extreme=extreme)
+    reference = json.loads((ROOT/'tests/fixtures/cliff-consumers.json').read_text())[
+        'extreme' if extreme else 'regular']
+    uc.mem_write(reference['start'], bytes.fromhex(reference['code']))
+    for at, data in emit(extreme=extreme)[0]:
+        uc.mem_write(at, data)
+    set_strip(uc, rows)
+    set_strip(uc, rows, index=101, offset=0x20000, salt=12345)
+    uc.mem_map(0x40000000, 0x1000000)
+    shift = 0x480 if extreme else 0
+    consumer_end = reference['start']+len(bytes.fromhex(reference['code']))
+    failures = []
+    def check_read(u, _access, address, size, _value, _data):
+        ip = u.reg_read(UC_X86_REG_EIP)
+        if not reference['start'] <= ip < consumer_end:
+            return
+        if not 0x31f00000 <= address < 0x32800000:
+            return
+        # Both selected images are 100: reading the next allocation is also bad.
+        if 0x32000000 <= address and address+size <= 0x32000000+uc.iv_heap['calls'][0][1]:
+            return
+        failures.append((hex(ip), hex(address), size))
+        u.emu_stop()
+    uc.hook_add(UC_HOOK_MEM_READ, check_read)
+    def draw(offset=8, height=90, face=2, zoom=1, clip_top=0, offset_consumer=True):
+        values = {0xed3154:90, 0xed3160:624, 0xed3164:offset, 0xed3170:height,
+                  0xed3174:100, 0xed316c:100, 0xed3178:2822, 0xed317c:face}
+        for at, value in values.items():
+            uc.mem_write(at+shift, struct.pack('<I', value))
+        for at, value in [(0x2a7d5e4 if extreme else 0x1fea0e4, zoom),
+                          (0x2a7d5e8 if extreme else 0x1fea0e8, clip_top),
+                          (0x2a7d5ec if extreme else 0x1fea0ec, 1472),
+                          (0xf98890 if extreme else 0xf98410, 0x40000000)]:
+            uc.mem_write(at, struct.pack('<I', value))
+        uc.mem_write(STACK, struct.pack('<I', STOP))
+        uc.reg_write(UC_X86_REG_ESP, STACK)
+        uc.reg_write(UC_X86_REG_EFLAGS, 0x202)
+        entry = (0x4542b0 if extreme else 0x454080) if offset_consumer else reference['start']
+        uc.emu_start(entry, STOP, count=3000000)
+        assert failures == []
+        assert uc.reg_read(UC_X86_REG_EIP) == STOP
+    return draw
+
+
+@pytest.mark.parametrize('extreme', (False, True))
+def test_captured_combat_draw_stays_inside_its_private_allocation(extreme):
+    """Captured offset8/height90 starts at row152; page slack hid the overread."""
+    consumer_fixture(extreme)()
+
+
+@pytest.mark.parametrize('extreme', (False, True))
+@pytest.mark.parametrize('rows', (1, 160, 320, 1024))
+def test_original_consumers_cover_independent_heights_offsets_and_clipping(extreme, rows):
+    from itertools import product
+    draw = consumer_fixture(extreme, rows)
+    for offset_height, face, zoom, clip, offset_consumer in product(
+            ((0,254), (8,90), (255,254), (160,8), (96,254), (200,254)),
+            range(4), range(2), (0,750), (False,True)):
+        draw(*offset_height, face, zoom, clip, offset_consumer)
+
+
+@pytest.mark.parametrize('rows', (1, 160, 320, 1024))
+def test_extended_projection_wraps_pixels_without_changing_phase(rows):
+    uc, entry, _ = fixture()
+    source = set_strip(uc, rows)
+    neighbour = set_strip(uc, rows, index=101, offset=0x20000, salt=12345)
+    pointer = resolve(uc, entry, 100)
+    pixels = bytes(uc.mem_read(pointer-104*60, (max(rows,416)+104)*60))
+    for row in range(-104, max(rows,416)):
+        for x in range(30):
+            sx = int((x%15)*29/14+0.5)
+            skew = min(sx//2, 14-sx//2)
+            source_index = ((row-skew)%rows)*60+sx*2
+            original = neighbour if x>=15 else source
+            index = (row+104)*60+x*2
+            assert pixels[index:index+2] == original[source_index:source_index+2]
