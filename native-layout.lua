@@ -105,6 +105,7 @@ bindings.LobbyLoadTooltip = function() return A.LobbyLoadItem + 44 end
 bindings.ImageHeaders = function() return core.readInteger(scan("ImageHeaders") + 3) end
 bindings.ImageSizes = function() return core.readInteger(scan("ImageSizes") + 12) end
 bindings.ImageOffsets = function() return core.readInteger(A.CliffSource + 8) end
+-- GM base-index array: GM IDs 9 (cliff), 10 (wall), 54 (tower).
 bindings.CliffImages = function() return core.readInteger(A.DrawBuildingOverlay + 12) + 9*4 end
 bindings.WallImages = function() return core.readInteger(A.DrawBuildingOverlay + 12) + 10*4 end
 bindings.TowerImages = function() return core.readInteger(A.DrawBuildingOverlay + 12) + 54*4 end
@@ -116,15 +117,16 @@ bindings.CliffFace = function() return core.readInteger(scan("CliffFace") + 15) 
 bindings.OverlayGm = function() return core.readInteger(scan("OverlayVerticalOffset") + 7) end
 bindings.RenderMapState = function() return core.readInteger(A.RenderMapEntry + 4) end
 bindings.Buildings = function() return core.readInteger(scan("Buildings") + 2) end
+-- Offsets within the native 812-byte Building record.
 bindings.BuildingKind = function() return A.Buildings + 0xD2 end
 bindings.BuildingId = function() return A.Buildings + 0xD8 end
 bindings.BuildingX = function() return A.Buildings + 0xEE end
 bindings.BuildingY = function() return A.Buildings + 0xF0 end
 bindings.BuildingTile = function() return A.Buildings + 0xF4 end
 bindings.BuildingState = function() return A.Buildings + 0xF8 end
-bindings.CameraScrolling = function() return core.readInteger(A.CameraPreviewBranch - 4) end
 bindings.LobbyMode = function() return core.readInteger(A.LobbyLoadDraw + 2) end
 bindings.TileLogic = function() return core.readInteger(scan("TileLogic") + 3) end
+-- TileMapState members, relative to its discovered LogicLayer operand.
 bindings.TileBuilding = function() return A.TileLogic - 0x165160 + 0x2029B0 end
 bindings.TileHeight = function() return A.TileLogic - 0x165160 + 0x29FA30 end
 bindings.TileTerrain = function() return A.TileLogic - 0x165160 + 0x2B3440 end
@@ -132,6 +134,7 @@ bindings.MapOrientation = function() return A.TileLogic - 0x165160 + 0x55489C en
 bindings.GameMode = function() return core.readInteger(scan("GameMode") + 2) end
 bindings.TextureRenderer = function() return core.readInteger(scan("TextureRenderer") + 1) end
 bindings.ImageData = function() return A.TextureRenderer + 0x78 end
+-- ViewportState.ptrColor (+0x74), relative to viewportY (+0x7C).
 bindings.CursorSamplePointer = function() return A.ViewportY - 8 end
 bindings.ViewportY = function() return core.readInteger(A.MapReset + 2) end
 bindings.TileRows = function() return core.readInteger(scan("TileRows") + 3) end
@@ -140,6 +143,7 @@ bindings.LeftHeld = function() return core.readInteger(scan("LeftHeld") + 2) end
 bindings.LeftReleased = function() return core.readInteger(scan("LeftReleased") + 2) end
 bindings.LocalPlayer = function() return core.readInteger(scan("LocalPlayer") + 1) end
 bindings.TreeFrame = function() return core.readInteger(A.TreeFrameLoad + 2) end
+-- Native Tree fields relative to animationFrameUnk (+0), stride 156.
 bindings.TreeStage = function() return A.TreeFrame + 0x80 end
 bindings.TreeFelling = function() return A.TreeFrame + 0x76 end
 bindings.TreeKind = function() return A.TreeFrame + 0x46 end
