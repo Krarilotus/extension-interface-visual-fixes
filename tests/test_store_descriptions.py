@@ -29,3 +29,17 @@ def test_each_description_is_packaged_concise_and_has_real_screenshots(language)
             r'[0-9a-f]{40}/(docs/store/[^/]+\.png)', url)
         assert match, 'Installed and Store viewers need immutable absolute image URLs'
         assert (ROOT / match[1]).read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
+
+
+@pytest.mark.parametrize('language', [language for language in LANGUAGES if language != 'en'])
+def test_new_default_paragraph_and_ghost_bullet_are_translated(language):
+    # 0.2.0 added the defaults/plugins paragraph and the Ghost Objects bullet; an
+    # English copy in another language's viewer is a missing translation.
+    def parts(name):
+        lines = (ROOT / 'locale' / f'description-{name}.md').read_text(encoding='utf-8').splitlines()
+        # Title, blank line, then the defaults/plugins paragraph (one line).
+        bullets = [line for line in lines if line.startswith('- ')]
+        return lines[2], bullets[-1]
+    english, translated = parts('en'), parts(language)
+    assert translated[0].strip() and translated[0] != english[0]
+    assert translated[1] != english[1]

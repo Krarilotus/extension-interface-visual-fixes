@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
+Opcionális javítások az SHC/SHCE 1.41-hez és az UCP 3.0.7-hez, alapértelmezés szerint mind kikapcsolva. Az "UCP3 Fixes" bővítmény bekapcsolja az előnézet-, fa-, toronyajtó- és sziklajavításokat; az "UCP3 Recommended" a két előszobai funkciót is bekapcsolja. Alkalmazd a beállításokat, majd indítsd újra a játékot.
 
 - Láthatóvá teszi az egyéni térképek leírását az előszobában.
 - Egyedi épület sikeres elhelyezése után eltünteti az építési előnézetet.
@@ -9,7 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - A toronyajtókat a csatlakozásokhoz igazítja, és falazatot jelenít meg a sziklaszéli tornyok alatt.
 - Megjeleníti a meglévő Betöltés gombot az egyjátékos előszobában.
 - Javítja a sziklatextúrák illeszkedését kameraforgatás után és az átlós lépcsőkön.
-- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
+- Újraépíti a mezők objektumlistáit, így a kósza zászlók, kövek és nyilak többé nem jelennek meg rossz mezőn.
 
 A szembenéző lépcsők egymást követő textúrákat kapnak; a hátrafelé futók állandó változatosságot ott, ahol az átfedés nem enged folytonos illeszkedést.
 

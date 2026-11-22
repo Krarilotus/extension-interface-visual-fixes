@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
+Correcciones opcionales para SHC/SHCE 1.41 y UCP 3.0.7, todas desactivadas por defecto. El complemento "UCP3 Fixes" activa las correcciones de vista previa, árboles, puertas de torre y acantilados; "UCP3 Recommended" también activa las dos funciones de la sala. Aplica los ajustes y reinicia el juego.
 
 - Mantiene visibles las descripciones de mapas personalizados en la sala.
 - Retira la vista previa tras construir correctamente un edificio único.
@@ -9,7 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Alinea las puertas con las conexiones y prolonga la mampostería bajo las torres al borde de acantilados.
 - Muestra el botón Cargar existente en la sala de un jugador.
 - Mejora la continuidad de los acantilados al girar la cámara y en escalones diagonales.
-- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
+- Reconstruye las listas de objetos de cada casilla para que las banderas, piedras y flechas sueltas dejen de aparecer en la casilla equivocada.
 
 Los escalones de frente usan texturas consecutivas; los que se alejan mantienen una variación estable donde el solapamiento impide la continuidad.
 

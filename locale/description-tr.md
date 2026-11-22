@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
+SHC/SHCE 1.41 ve UCP 3.0.7 için isteğe bağlı düzeltmeler; varsayılan olarak tümü kapalıdır. "UCP3 Fixes" eklentisi önizleme, ağaç, kule kapısı ve uçurum düzeltmelerini açar; "UCP3 Recommended" iki lobi özelliğini de açar. Ayarlarınızı uygulayıp oyunu yeniden başlatın.
 
 - Özel harita açıklamalarını lobide görünür tutar.
 - Benzersiz bir bina başarıyla yerleştirildiğinde inşa önizlemesini kaldırır.
@@ -9,7 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Kule kapılarını bağlantılara hizalar ve uçurum kenarındaki kulelerin altına duvar dokusunu uzatır.
 - Tek oyunculu lobide mevcut Yükle düğmesini gösterir.
 - Kamera dönüşünden sonra ve çapraz basamaklarda uçurum dokularının birleşimini iyileştirir.
-- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
+- Kare nesne listelerini yeniden oluşturur; böylece sahipsiz bayrak, taş ve oklar artık yanlış karede görünmez.
 
 Öne bakan basamaklar ardışık dokular kullanır; geriye uzanan basamaklar, örtüşmenin sürekliliği engellediği yerlerde sabit çeşitlilik kullanır.
 

@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
+Необязательные исправления для SHC/SHCE 1.41 и UCP 3.0.7, по умолчанию все отключены. Плагин "UCP3 Fixes" включает исправления предпросмотра, деревьев, дверей башен и скал; "UCP3 Recommended" также включает обе функции лобби. Примените настройки и перезапустите игру.
 
 - Сохраняет описания пользовательских карт видимыми в лобби.
 - Убирает предпросмотр после успешной постройки уникального здания.
@@ -9,7 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Выравнивает двери башен по примыканиям и продолжает каменную кладку под башнями у края обрыва.
 - Показывает существующую кнопку загрузки в одиночном лобби.
 - Улучшает стыки текстур скал после поворота камеры и на диагональных уступах.
-- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
+- Пересобирает списки объектов на клетках, чтобы посторонние флаги, камни и стрелы больше не появлялись на чужой клетке.
 
 Передние уступы используют последовательные текстуры; уходящие вглубь — стабильное разнообразие там, где перекрытие мешает непрерывности.
 

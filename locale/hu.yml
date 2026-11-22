@@ -5,7 +5,7 @@ unique_preview_text: Egyedi épületek előnézetének törlése építés után
 unique_preview_description: Sikeres építés után megszünteti a piac, laktanya, zsoldostábor és céhek kijelölését.
 
 camera_preview_text: Épületek előnézetének megjelenítése görgetés közben
-camera_preview_description: Láthatóan tartja a kiválasztott épület előnézetét a kamera mozgatása közben.
+camera_preview_description: Látható marad a kiválasztott épület előnézete a kamera mozgatása közben.
 
 dead_tree_text: Elhalt fák állapotainak megkülönböztetése
 dead_tree_description: Megmutatja az álló elhalt fákat, mielőtt kidőlt törzsekké válnának.
@@ -24,5 +24,5 @@ cliff_texture_description: A kamera forgatása után is illeszti a sziklatextúr
 
 ghost_objects_text: Objektumlisták javítása
 ghost_objects_description: A játék minden mezőről listát vezet a rajta lévő apró objektumokról (zászlók, lövedékek, por, füst, madarak), és minden listát a saját mezőjén rajzol ki. Néha egy objektum úgy törlődik, hogy benne marad egy mező listájában, ezért a helyére lépő következő objektum (zászló, kő, nyíl...) ezen a régi mezőn is megjelenik, gyakran villogva. Ez a javítás az objektumok valós helye alapján újraépíti minden mező listáját. Használata előtt kapcsold ki az olajcélzás és olajterjedés beállításait az Improved Siege Engines modulban.
-ghost_objects_interval_text: Javítás ennyi játék-tickenként
-ghost_objects_interval_description: Milyen gyakran épülnek újra a listák, játék-tickekben mérve (1 és 200 között). A számlálás a játék saját tick-ciklusát követi, így minden játékos és minden betöltött mentés ugyanazt az ütemezést használja. Az újraépítés gyors; az alacsonyabb értékek hamarabb eltüntetik a szellemobjektumokat.
+ghost_objects_interval_text: Javítás a tick-ciklus minden N-edik lépésében
+ghost_objects_interval_description: "N, 1-től 200-ig: a listák a játék saját 200 tickes ciklusának minden N-edik lépésében épülnek újra (0., N., 2N. lépés és így tovább; ha N nem osztója a 200-nak, a ciklus újraindulása előtti utolsó időköz rövidebb). A ciklus a játékkal együtt mentődik, így minden játékos és minden betöltött mentés ugyanazt az ütemezést használja. Az újraépítés gyors; az alacsonyabb értékek hamarabb eltüntetik a szellemobjektumokat."

@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
+Optionale Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7, alle standardmäßig deaktiviert. Das Plugin "UCP3 Fixes" aktiviert die Korrekturen für Vorschau, Bäume, Turmtüren und Klippen; "UCP3 Recommended" aktiviert zusätzlich die beiden Lobby-Funktionen. Einstellungen anwenden und das Spiel neu starten.
 
 - Eigene Kartenbeschreibungen bleiben in der Lobby sichtbar.
 - Nach erfolgreichem Bau eines einzigartigen Gebäudes verschwindet die Bauvorschau.
@@ -9,7 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Turmtüren folgen den Anschlüssen; Mauerwerk setzt sich unter Türmen am Klippenrand fort.
 - Der vorhandene Laden-Knopf erscheint in der Einzelspieler-Lobby.
 - Klippentexturen verbinden sich nach Kameradrehungen und entlang diagonaler Stufen besser.
-- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
+- Baut die Objektlisten der Felder neu auf, damit verirrte Flaggen, Steine und Pfeile nicht mehr auf dem falschen Feld erscheinen.
 
 Vordere Stufen nutzen aufeinanderfolgende Texturen; nach hinten verlaufende Stufen variieren gleichbleibend, wenn Überlappungen eine Fortsetzung verhindern.
 

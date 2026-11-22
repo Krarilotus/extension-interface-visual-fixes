@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
+适用于 SHC/SHCE 1.41 与 UCP 3.0.7 的可选修复，默认全部关闭。"UCP3 Fixes" 插件会开启建筑预览、枯树、塔门和悬崖修复；"UCP3 Recommended" 还会同时开启两项大厅功能。请应用设置并重启游戏。
 
 - 保持大厅中的自定义地图描述可见。
 - 成功放置唯一建筑后清除建造预览。
@@ -9,7 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - 使塔门对齐连接处，并将石墙纹理延伸到悬崖边的塔楼下方。
 - 在单人大厅中显示原有的载入按钮。
 - 改善镜头旋转后及对角阶梯处的悬崖纹理衔接。
-- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
+- 重建地块物体列表，防止错位的旗帜、石块和箭矢继续出现在错误的地块上。
 
 朝向镜头的阶梯使用连续纹理；向远处延伸的阶梯在重叠妨碍衔接时使用固定的纹理变化。
 
