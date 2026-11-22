@@ -152,3 +152,9 @@ winProcHandler0.2.0 and graphicsApiReplacer1.3.0. Exact revisions, tests and lim
 [cliff textures](VALIDATION-CLIFF-TEXTURES.md).
 Automated and original-code tests are distinguished from native results;
 multiplayer, replay and broader compatibility are not inferred from them.
+
+## Licence
+
+Interface and Visual Fixes is licensed under the GNU General Public License,
+version 3 (GPL-3.0); see [LICENSE](LICENSE). Ghost Objects is included under the same
+licence by its author's grant; see [CREDITS](CREDITS.md).
