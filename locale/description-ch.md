@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-适用于 SHC/SHCE 1.41 和 UCP 3.0.7 的七项修复，默认全部启用。每项均可单独关闭。应用设置后请重启游戏。
+Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
 
 - 保持大厅中的自定义地图描述可见。
 - 成功放置唯一建筑后清除建造预览。

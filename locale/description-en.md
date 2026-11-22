@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Seven fixes for SHC/SHCE 1.41 and UCP 3.0.7, enabled by default. Each can be switched off separately. Apply your settings and restart the game.
+Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
 
 - Keep custom map descriptions visible in the lobby.
 - Clear the building preview after successfully placing a unique building.

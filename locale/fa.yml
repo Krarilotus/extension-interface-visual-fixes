@@ -4,14 +4,14 @@ lobby_description: توضیحات نقشهٔ انتخاب‌شده را در ل�
 unique_preview_text: بستن پیش‌نمایش ساختمان‌های یکتا پس از ساخت
 unique_preview_description: پس از ساخت موفق، انتخاب بازار، سربازخانه، اردوگاه مزدوران و انجمن‌ها را لغو می‌کند.
 
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
+camera_preview_text: نمایش پیش‌نمایش ساختمان هنگام جابه‌جایی دوربین
+camera_preview_description: هنگام حرکت دوربین، پیش‌نمایش ساختمان انتخاب‌شده را قابل مشاهده نگه می‌دارد.
 
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+dead_tree_text: متمایز کردن مراحل درختان خشک
+dead_tree_description: درختان خشک ایستاده را پیش از آنکه به تنه‌های افتاده تبدیل شوند، نمایش می‌دهد.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
+tower_door_text: هماهنگ‌سازی درهای برج با دیوارهای متصل
+tower_door_description: درها را با بلندترین اتصال معتبر هماهنگ می‌کند؛ در صورت تساوی، نزدیک‌ترین اتصال به مرکز همان ضلع برگزیده می‌شود. درهای کناری نیم خانه به داخل می‌روند. سنگ‌چینی را زیر برج‌های لبهٔ پرتگاه ادامه می‌دهد و امکان ایجاد درهای پایین‌تر برای دیوار و stair6 را فراهم می‌کند. پله‌های مرتفع حساب نمی‌شوند.
 lobby_load_text: نمایش بارگذاری در لابی نبرد
 lobby_load_description: دکمهٔ بارگذاری موجود را در لابی نبرد تک‌نفره نمایش می‌دهد و بارگذاری بازی بدون حریف هوش
   مصنوعی را ممکن می‌کند. برای اعمال تغییرات، بازی را دوباره اجرا کنید.
@@ -19,5 +19,5 @@ lobby_load_description: دکمهٔ بارگذاری موجود را در لاب�
 tags.bugfixes: رفع اشکال
 tags.interface: رابط کاربری
 
-cliff_texture_text: ??????? ???? ???? ????? ????
-cliff_texture_description: ????? ??????? ??????? ??????? ???? ?? ?? ?? ?? ??? ?????? ???? ??? ??????. ?? ????? ???? ???? ??????? ??????.
+cliff_texture_text: حفظ پیوستگی بافت پرتگاه‌ها پس از چرخش
+cliff_texture_description: هنگام چرخش دوربین، پیوستگی بافت پرتگاه‌ها را در هر دو وجه قابل مشاهده حفظ می‌کند. از بستهٔ بافت فعلی استفاده می‌کند.

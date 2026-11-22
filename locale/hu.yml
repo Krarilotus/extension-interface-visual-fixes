@@ -4,14 +4,14 @@ lobby_description: Látható marad a kiválasztott pálya leírása az előszob�
 unique_preview_text: Egyedi épületek előnézetének törlése építés után
 unique_preview_description: Sikeres építés után megszünteti a piac, laktanya, zsoldostábor és céhek kijelölését.
 
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
+camera_preview_text: Épületek előnézetének megjelenítése görgetés közben
+camera_preview_description: Láthatóan tartja a kiválasztott épület előnézetét a kamera mozgatása közben.
 
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+dead_tree_text: Elhalt fák állapotainak megkülönböztetése
+dead_tree_description: Megmutatja az álló elhalt fákat, mielőtt kidőlt törzsekké válnának.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
+tower_door_text: Toronyajtók igazítása a csatlakozó falakhoz
+tower_door_description: Az ajtókat a legmagasabb megfelelő csatlakozáshoz igazítja; egyenlőség esetén az oldal közepéhez közelebbi dönt. A szélső ajtók fél mezővel beljebb kerülnek. Meghosszabbítja a falazatot a sziklaszéli tornyok alatt, lehetővé téve az alacsonyabb fal- és stair6-ajtókat. A megemelt lépcsők nem számítanak.
 lobby_load_text: Betöltés megjelenítése a csata előszobájában
 lobby_load_description: Megjeleníti a meglévő Betöltés gombot az egyjátékos csata előszobájában, és lehetővé teszi
   a betöltést gépi ellenfél nélkül. A módosítások alkalmazásához indítsd újra a játékot.
@@ -19,5 +19,5 @@ lobby_load_description: Megjeleníti a meglévő Betöltés gombot az egyjáték
 tags.bugfixes: Hibajavítások
 tags.interface: Kezelőfelület
 
-cliff_texture_text: Sziklatext?r?k illeszt?se forgat?skor
-cliff_texture_description: A kamera forgat?sa ut?n is illeszti a sziklatext?r?kat mindk?t l?that? oldalon. A jelenlegi text?racsomagot haszn?lja.
+cliff_texture_text: Sziklatextúrák illesztése forgatáskor
+cliff_texture_description: A kamera forgatása után is illeszti a sziklatextúrákat mindkét látható oldalon. A jelenlegi textúracsomagot használja.

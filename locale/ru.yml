@@ -4,14 +4,14 @@ lobby_description: Сохраняет видимость описания выб
 unique_preview_text: Убирать предпросмотр уникальных зданий после постройки
 unique_preview_description: Снимает выбор рынка, казарм, лагеря наёмников и гильдий после успешного строительства.
 
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
+camera_preview_text: Показывать предпросмотр зданий при прокрутке
+camera_preview_description: Сохраняет предпросмотр выбранного здания видимым при перемещении камеры.
 
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+dead_tree_text: Различать стадии мёртвых деревьев
+dead_tree_description: Показывает стоящие мёртвые деревья, прежде чем они станут поваленными стволами.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
+tower_door_text: Выравнивать двери башен по примыкающим стенам
+tower_door_description: Выравнивает двери по самому высокому подходящему примыканию; при равной высоте выбирается ближайшее к центру стороны. Крайние двери сдвигаются на полклетки внутрь. Продолжает каменную кладку под башнями у края обрыва, позволяя делать более низкие двери к стенам и stair6. Приподнятые лестницы не учитываются.
 lobby_load_text: Показывать загрузку в лобби схватки
 lobby_load_description: Показывает существующую кнопку загрузки в лобби одиночной схватки и позволяет загружать
   игру без противника под управлением ИИ. Для применения изменений перезапустите игру.
@@ -19,5 +19,5 @@ lobby_load_description: Показывает существующую кнопк
 tags.bugfixes: Исправления
 tags.interface: Интерфейс
 
-cliff_texture_text: ????????? ???????? ???? ??? ????????
-cliff_texture_description: ????????? ????????????? ??????? ?? ????? ??????? ???????? ???? ??? ???????? ??????. ?????????? ??????? ????? ???????.
+cliff_texture_text: Продолжать текстуры скал после поворота
+cliff_texture_description: Сохраняет стыковку текстур скал на обеих видимых гранях при повороте камеры. Использует текущий набор текстур.

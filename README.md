@@ -3,11 +3,23 @@
 Seven optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
 controls, text areas and artwork.
 
-Version 0.1.5 improves compatibility checks and crash diagnostics, and corrects
-lower tower doors. All seven fixes remain enabled by default, with Extreme and
-taller-texture support. Each fix can still be disabled separately. Existing
-explicit choices in saved configurations remain in effect.
+Version 0.2.0 ships the game's original behaviour: **every fix is off by default**, so
+adding the module alone changes nothing. The "UCP3 Fixes" plugin turns on the five bug
+fixes for building previews, dead trees, tower doors and cliffs; "UCP3 Recommended" also
+turns on the two lobby features. You can switch each fix on or off
+yourself. Values you saved in a configuration stay as they are;
+if you added an earlier version on its own and update it, switch the fixes you want back on.
 See the [short description](locale/description-en.md).
+
+| Fix | Option URL | Default | Turned on by |
+|---|---|---|---|
+| Show lobby map descriptions | `interface-visual-fixes.lobby-map-descriptions` | off | UCP3 Recommended |
+| Clear unique-building preview after placement | `interface-visual-fixes.clear-unique-building-preview` | off | UCP3 Fixes |
+| Show building previews while scrolling | `interface-visual-fixes.building-preview-during-camera-movement` | off | UCP3 Fixes |
+| Distinguish dead tree stages | `interface-visual-fixes.distinct-dead-tree-sprites` | off | UCP3 Fixes |
+| Align tower doors with connecting walls | `interface-visual-fixes.tower-door-height` | off | UCP3 Fixes |
+| Show Load in skirmish lobby | `interface-visual-fixes.lobby-load` | off | UCP3 Recommended |
+| Continue cliff textures after rotation | `interface-visual-fixes.cliff-texture-direction` | off | UCP3 Fixes |
 
 For an intermittent crash, keep the session's UCP logs before restarting.
 [Crash reporting](docs/crash-reporting.md) explains the automatic startup
@@ -33,8 +45,8 @@ still under investigation; diagnostics are not a claim that it is fixed.
   both visible faces when the map is rotated, using the current texture pack,
   including taller cliff strips.
 
-Enable the module, apply your settings and restart the game. All seven fixes
-start enabled; switch off any you do not want. The module targets UCP 3.0.7 with
+Enable the module, switch on the fixes you want (or select a plugin that does),
+apply your settings and restart the game. The module targets UCP 3.0.7 with
 SHC or SHCE 1.41.
 
 ## Feature screenshots

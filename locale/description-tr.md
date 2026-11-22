@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-SHC/SHCE 1.41 ve UCP 3.0.7 için varsayılan olarak etkin yedi düzeltme. Her biri ayrı ayrı kapatılabilir. Ayarları uygulayın ve oyunu yeniden başlatın.
+Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fixes" plugin turns on the preview, tree, tower door and cliff fixes; "UCP3 Recommended" also turns on the two lobby features. Apply your settings and restart the game.
 
 - Özel harita açıklamalarını lobide görünür tutar.
 - Benzersiz bir bina başarıyla yerleştirildiğinde inşa önizlemesini kaldırır.

@@ -4,14 +4,14 @@ lobby_description: Seçilen haritanın açıklamasını lobide görünür tutar.
 unique_preview_text: Yerleştirmeden sonra benzersiz bina önizlemesini kapat
 unique_preview_description: Başarılı yerleştirmeden sonra pazar, kışla, paralı asker kampı ve lonca seçimini kaldırır.
 
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
+camera_preview_text: Kaydırırken bina önizlemelerini göster
+camera_preview_description: Kamera hareket ettirilirken seçili binanın önizlemesini görünür tutar.
 
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+dead_tree_text: Ölü ağaç aşamalarını ayır
+dead_tree_description: Ölü ağaçları devrilmiş kütüklere dönüşmeden önce ayakta duran hâlleriyle gösterir.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
+tower_door_text: Kule kapılarını bağlı duvarlara hizala
+tower_door_description: Kapıları en yüksek uygun bağlantıya hizalar; eşitlik durumunda kenarın merkezine en yakın olan seçilir. Dıştaki kapılar yarım kare içeri kayar. Uçurum kenarındaki kulelerin altına duvar dokusunu uzatarak daha alçak duvar ve stair6 kapılarına izin verir. Yükseltilmiş merdivenler sayılmaz.
 lobby_load_text: Çatışma lobisinde Yükle düğmesini göster
 lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmesini gösterir ve yapay zekâ rakibi olmadan
   oyun yüklemeye izin verir. Değişiklikleri uygulamak için oyunu yeniden başlatın.
@@ -19,5 +19,5 @@ lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmes
 tags.bugfixes: Hata düzeltmeleri
 tags.interface: Arayüz
 
-cliff_texture_text: D?nd?r?rken u?urum dokular?n? birle?tir
-cliff_texture_description: Kamera d?nd?r?ld???nde u?urum dokular?n? g?r?nen iki y?zde de birbirine ba?lar. Mevcut doku paketini kullan?r.
+cliff_texture_text: Döndürürken uçurum dokularını birleştir
+cliff_texture_description: Kamera döndürüldüğünde uçurum dokularını görünen iki yüzde de birbirine bağlar. Mevcut doku paketini kullanır.

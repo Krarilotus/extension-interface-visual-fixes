@@ -4,14 +4,14 @@ lobby_description: Garde visible la description de la carte sélectionnée dans 
 unique_preview_text: Fermer l’aperçu des bâtiments uniques après construction
 unique_preview_description: Désélectionne le marché, la caserne, le camp de mercenaires et les guildes après une construction réussie.
 
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
+camera_preview_text: Afficher l’aperçu des bâtiments lors du défilement
+camera_preview_description: Garde visible l’aperçu du bâtiment sélectionné pendant le déplacement de la caméra.
 
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+dead_tree_text: Distinguer les stades des arbres morts
+dead_tree_description: Affiche les arbres morts encore debout avant qu’ils ne deviennent des troncs abattus.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
+tower_door_text: Aligner les portes des tours sur les murs reliés
+tower_door_description: Aligne les portes sur le raccordement admissible le plus haut ; le plus proche du centre du côté départage les égalités. Les portes extérieures rentrent d’une demi-case. Prolonge la maçonnerie sous les tours au bord des falaises, permettant des portes plus basses vers les murs et stair6. Les escaliers surélevés ne comptent pas.
 lobby_load_text: Afficher Charger dans le salon d’escarmouche
 lobby_load_description: Affiche le bouton Charger existant dans le salon d’escarmouche solo et permet de charger
   une partie sans adversaire IA. Redémarrez le jeu pour appliquer les modifications.
@@ -20,4 +20,4 @@ tags.bugfixes: Corrections
 tags.interface: Interface
 
 cliff_texture_text: Raccorder les textures des falaises
-cliff_texture_description: Pr?serve la continuit? des textures sur les deux faces visibles apr?s rotation de la cam?ra. Utilise le pack de textures actuel.
+cliff_texture_description: Préserve la continuité des textures sur les deux faces visibles après rotation de la caméra. Utilise le pack de textures actuel.
