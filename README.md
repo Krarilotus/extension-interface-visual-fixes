@@ -1,13 +1,13 @@
 # Interface and Visual Fixes
 
-Seven optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
+Eight optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
 controls, text areas and artwork.
 
 Version 0.2.0 ships the game's original behaviour: **every fix is off by default**, so
 adding the module alone changes nothing. The "UCP3 Fixes" plugin turns on the five bug
 fixes for building previews, dead trees, tower doors and cliffs; "UCP3 Recommended" also
-turns on the two lobby features. You can switch each fix on or off
-yourself. Values you saved in a configuration stay as they are;
+turns on the two lobby features. Ghost Objects is not turned on by either plugin. You can
+switch each fix on or off yourself. Values you saved in a configuration stay as they are;
 if you added an earlier version on its own and update it, switch the fixes you want back on.
 See the [short description](locale/description-en.md).
 
@@ -20,6 +20,8 @@ See the [short description](locale/description-en.md).
 | Align tower doors with connecting walls | `interface-visual-fixes.tower-door-height` | off | UCP3 Fixes |
 | Show Load in skirmish lobby | `interface-visual-fixes.lobby-load` | off | UCP3 Recommended |
 | Continue cliff textures after rotation | `interface-visual-fixes.cliff-texture-direction` | off | UCP3 Fixes |
+| Repair tile object lists (Ghost Objects) | `interface-visual-fixes.ghost-objects` | off | none |
+| Ghost Objects interval (game ticks, 1 to 200) | `interface-visual-fixes.ghost-objects-interval` | 10 | none |
 
 For an intermittent crash, keep the session's UCP logs before restarting.
 [Crash reporting](docs/crash-reporting.md) explains the automatic startup
@@ -44,6 +46,10 @@ still under investigation; diagnostics are not a claim that it is fixed.
 - **Continue cliff textures after rotation:** makes cliff textures advance along
   both visible faces when the map is rotated, using the current texture pack,
   including taller cliff strips.
+- **Repair tile object lists (Ghost Objects):** rebuilds each tile's list of small
+  objects (flags, projectiles, dust, smoke, birds) from where each object really is,
+  so stray flags, stones and arrows stop being drawn on an old tile. Based on
+  Monsterfish's Ghost Objects Fix; see [credits](CREDITS.md).
 
 Enable the module, switch on the fixes you want (or select a plugin that does),
 apply your settings and restart the game. The module targets UCP 3.0.7 with
@@ -113,6 +119,28 @@ stable variation where their overlapping faces cannot form a continuous strip.
 
 See [the current comparison, compatibility checks and measured cost](VALIDATION-CLIFF-UV.md).
 See [diagonal sequencing and its native validation](VALIDATION-DIAGONAL-CLIFFS.md).
+
+### Ghost Objects
+
+The game links the small objects on each tile into a list. When an object is freed while
+a list still reaches it, the next object created in that slot is drawn on the old tile
+too, and saved games keep the tangle. On every N-th step of the game's own 200-tick
+cycle (N is the interval, default 10; if N does not divide 200, the last gap before the
+cycle restarts is shorter) the fix rebuilds all lists from each object's own tile, at the
+start of the game's object update. That tick cycle is saved with the game and the same
+for every player, so the schedule needs no extra save data and is identical after loading
+a save, in multiplayer and in replays. All players in a multiplayer game, and a replay
+when it is played back, need the same Ghost Objects setting as when it was recorded.
+
+Improved Siege Engines' oil aim and oil spread options change the same object update.
+If Improved Siege Engines has already changed it when Ghost Objects is on, **UCP stops at
+startup with an error** that names `improved-siegeengines.oil.aim` and
+`improved-siegeengines.oil.spread`; no fix of this module is installed. Turn those options
+off (or Ghost Objects) and start again. If this module loads first instead, Improved Siege
+Engines' oil feature turns itself off with a warning in the log and its other features
+keep working. The reported river flag could not yet be reproduced in a native session,
+so the visual repair is not confirmed in-game; see
+[the native integration audit](docs/native-integration-audit.md) for what was checked.
 
 ## Validation
 

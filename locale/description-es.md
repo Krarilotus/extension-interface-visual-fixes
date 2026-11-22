@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Alinea las puertas con las conexiones y prolonga la mampostería bajo las torres al borde de acantilados.
 - Muestra el botón Cargar existente en la sala de un jugador.
 - Mejora la continuidad de los acantilados al girar la cámara y en escalones diagonales.
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 Los escalones de frente usan texturas consecutivas; los que se alejan mantienen una variación estable donde el solapamiento impide la continuidad.
 

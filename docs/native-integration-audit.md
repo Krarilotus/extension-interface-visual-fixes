@@ -115,3 +115,53 @@ keyboard/screen-change dispatch, not the map blitters. Its optional in-game guar
 fail open if discovery fails; that is a separate behavior to investigate with its
 owner, not proof of the source-image crash. No change to that supplied module has
 been made, and neither game nor desktop was used during this audit.
+
+## Ghost Objects (0.2.0)
+
+Merged from `Krarilotus/GhostObjectsFix@489d388` (Monsterfisch/GhostObjectsFix#1),
+relicensed by the author under GPL-3.0 for inclusion; see [CREDITS](../CREDITS.md).
+Off by default; no UCP3 plugin turns it on.
+
+### Reuse decision: rebuild schedule
+
+| Capability | Inspected | Decision |
+| --- | --- | --- |
+| Load lifecycle | UCP 3.0.7 `content/ucp/code/hooks.lua` (`77c6accf`) and framework main `d891e0e`: only `afterInit` (process start) exists | No game-load event in the framework. |
+| Save sections | map-extensions `registerSection` (used by the reviewed version to reset its countdown on initialize/deserialize) | Not used: Map Extensions is not part of the default setup, and a save section would make saves differ between UCP3 family members. |
+| Code section bounds (for the uniqueness scan) | UCP 3.0.7 `core.lua` exposes no image/section bounds; `core.scanForAOB` without a limit searches up to `0x7FFFFFFF`; `data/version.lua` uses fixed `0x400000`-`0x600000` bounds | Find the game image's DOS header with `core.AOBScan` (first image at or after UCP's scan origin), validate its PE headers (`ImageBase` equals the match) and use the end of the section containing the entity update as the scan limit. No fixed address. |
+| Saved game clock | `GameStateStructures.gameTicksLoadBalancer` (OpenSHC `Game/GameStateStructures.hpp` +0x918A4). The entity update reads it with its first instruction (`mov ecx, [tick]`, then `tick % 10`). `processSingleTimeTick` increments it and wraps at 200 (SHC `0x45CC19`, SHCE `0x45CE29`). It is serialized as save section 1024 (section table entry at SHC `0xB92CA8` / SHCE `0xB92E38`, 4 bytes) | **Used.** Read from the matched entity-update instruction (`EntityTick` = operand at body +2), no extra signature. Rebuild when `tick % interval == 0`; interval 1 to 200 (one cycle). Same schedule for every player, after loading a save and in replays; no process-local countdown and no extension save data. |
+
+### Bindings
+
+| Binding | Responsibility | Resolution | Checks before any write |
+| --- | --- | --- | --- |
+| `EntityUpdate` / `EntityUpdateBody` / `EntityUpdateResume` | Patch site: `updateEntities` prologue (6 bytes `51 53 55 56 8B F1`), stub resumes after it | `EntityUpdate` AOB matches the body after the prologue, so an occupied prologue is still found | Second `core.scanForAOB` from body+1 to the end of the code section containing the body must find nothing (ambiguous otherwise); copies of code bytes in data or heap memory are ignored. Prologue bytes must be original, else refuse naming `improved-siegeengines.oil.aim` / `oil.spread` (`requireOriginalEntityUpdate`, also called in `ghost-objects.lua` right before writing). |
+| `ImageBase` | The game image's PE headers, for the end of its code section | `ImageHeader` AOB (DOS header) through `core.AOBScan`: first image at or after UCP's scan origin | The headers' `PE` signature and `ImageBase` must equal the match, and one of their sections must contain the entity update body (`.text`, ends `0x59D806` SHC / `0x59DC36` SHCE); otherwise unsupported. |
+| `EntityTick` | Saved 0-199 tick cycle | Operand of the body's first instruction | Same match as the patch site. |
+| `EntityTileWalker`, `EntityByteHeads`, `EntityWordHeads` | Per-tile head byte array (ids < 25) and head word array | Walker AOB, operands at +0x2A and +0x78 | Opcode `0F BF 14 45` before +0x78; heads exactly 80,400 x 2 bytes apart. |
+| `SeagullRemoval`, `EntitySlots` | Entity slot count (3,000 SHC, 6,000 SHCE) | Seagull removal loop, `cmp ecx, imm32` at +0x40 | Opcode `81 F9`; count 100 to 20,000. |
+
+Entity record layout (stride 232; next +0x32, liveness word +0x3C, tile +0x60 relative
+to the `EntityState` receiver in ECX) is the reviewed version's, cross-checked against
+OpenSHC `Map/Entities/Entity.hpp` (record fields +0x1E/+0x2A/+0x4C plus the receiver's
+array offset 0x14). The stub, its slot walk and its quarantine of off-map tile values
+(set to 0) are the reviewed version's.
+
+### Compatibility
+
+| Overlap | Decision |
+| --- | --- |
+| Improved Siegeengines 1.0.28 `oil.aim`/`oil.spread` (same prologue; not in the Store) | If Improved Siegeengines loads first and Ghost Objects is on, the preflight raises an error naming those options. Framework 3.0.7 `main.lua` calls `enable` without `pcall`, so **UCP stops at startup**: no fix of this module and no later extension is enabled. In the other order Improved Siegeengines' own `try` turns its oil feature off with a warning (its short `51 53 55 56 8B F1 8B 0D` signature no longer matches); its other features keep working. The result depends on load order; acceptable while Improved Siegeengines is not in the Store and Ghost Objects is off by default and turned on by no plugin. A declared conflict would be cleaner once Improved Siegeengines is published. |
+| Standalone Ghost Objects Fix (Monsterfish; not in the Store) | Same prologue; whichever loads second refuses. Use one of them. |
+| Smarter Buildings decorations, MapEditorImprovements, BuildingOverlays | No shared patch site with Ghost Objects (their I&V overlaps are other features' sites, unchanged here). |
+
+### Static checks against both executables
+
+Full-PE check of `Stronghold Crusader.exe` (SHA-256 `3bb0a8c1…`) and
+`Stronghold_Crusader_Extreme.exe` (`55648e6b…`), 1.41: each of the three signatures
+matches exactly once, every opcode/layout check holds, and the derived bindings equal
+`tests/fixtures/component-bindings.json`. SHC: patch site `0x4087C0`, tick `0x011BC95C`,
+heads `0x01CF7E08`/`0x01D1F228`, 3,000 slots. SHCE: `0x4087D0`, `0x0129144C`,
+`0x0278B308`/`0x027B2728`, 6,000 slots. `tests/test_ghost_objects.py` repeats discovery,
+refusal and layout checks on the extracted contexts and emulates the emitted stub on
+both families. EFIGS/Polish executables were not available for this change.

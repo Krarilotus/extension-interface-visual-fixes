@@ -21,3 +21,8 @@ tags.interface: Arayüz
 
 cliff_texture_text: Döndürürken uçurum dokularını birleştir
 cliff_texture_description: Kamera döndürüldüğünde uçurum dokularını görünen iki yüzde de birbirine bağlar. Mevcut doku paketini kullanır.
+
+ghost_objects_text: Nesne listelerini onar
+ghost_objects_description: Oyun her karedeki küçük nesnelerin (bayraklar, mermiler, toz, duman, kuşlar) bir listesini tutar ve her listeyi kendi karesinde çizer. Bazen bir nesne hâlâ bir karenin listesindeyken silinir; onun yerini alan sonraki nesne (bayrak, taş, ok...) o eski karede de çizilir ve sıkça titrer. Bu ayar her karenin listesini nesnelerin gerçek konumundan yeniden oluşturur. Bu düzeltmeyi kullanmadan önce Improved Siege Engines içindeki yağ hedefleme ve yağ yayılma ayarlarını kapatın.
+ghost_objects_interval_text: Bu kadar oyun tikinde bir onar
+ghost_objects_interval_description: Listelerin oyun tiki cinsinden (1 ile 200 arası) ne sıklıkta yeniden oluşturulacağı. Sayım oyunun kendi tik döngüsünü izler, böylece her oyuncu ve yüklenen her kayıt dosyası aynı zamanlamayı kullanır. Yeniden oluşturma hızlıdır; daha düşük değerler hayalet nesneleri daha çabuk temizler.

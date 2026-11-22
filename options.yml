@@ -57,3 +57,24 @@ options:
     url: interface-visual-fixes.cliff-texture-direction
     contents:
       value: false
+  - name: ghost_objects
+    category: ['{{interface_visual_fixes}}']
+    text: '{{ghost_objects_text}}'
+    description: '{{ghost_objects_description}}'
+    display: Switch
+    url: interface-visual-fixes.ghost-objects
+    contents:
+      value: false
+  - name: ghost_objects_interval
+    category: ['{{interface_visual_fixes}}']
+    text: '{{ghost_objects_interval_text}}'
+    description: '{{ghost_objects_interval_description}}'
+    display: Number
+    url: interface-visual-fixes.ghost-objects-interval
+    enabled: interface-visual-fixes.ghost-objects
+    contents:
+      type: integer
+      value: 10
+      min: 1
+      max: 200
+      step: 1

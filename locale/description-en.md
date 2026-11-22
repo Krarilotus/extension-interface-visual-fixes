@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Align tower doors with connections and extend wall masonry beneath cliff-edge towers.
 - Show the existing Load button in the single-player lobby.
 - Improve cliff continuity after rotation and on diagonal steps.
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 Front-facing steps use consecutive strips; receding steps use stable variation where overlap prevents continuity.
 

@@ -43,6 +43,15 @@ local P = {
   LocalPlayer = "A1 ? ? ? ? 8B 54 24 20 69 C0 F4 39 00 00 01 90 ? ? ? ? 8D 80 ? ? ? ? 8B 44 24 28 50",
   LobbyLoadDraw = "83 3D ? ? ? ? 63 0F 84 89 02 00 00 39 2D ? ? ? ? 0F 84 6A 03 00 00",
   LobbyLoadItem = "03 00 00 02 BC 01 00 00 1C 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 AB 01 00 40 03 00 00 00 00 00 00 00 49 01 00 00",
+  -- updateEntities after its 6-byte prologue: mov ecx, [tick] / tick % 10 / ...
+  -- Matches even when another extension has replaced the prologue.
+  EntityUpdate = "8B 0D ? ? ? ? B8 67 66 66 66 F7 E9 C1 FA 02 8B C2 C1 E8 1F 03 C2 8D 04 80 03 C0 2B C8 75 07 C7 46 08 19 00 00 00",
+  -- The per-tile entity list walker: byte heads operand at +0x2A, word heads at +0x78.
+  EntityTileWalker = "53 55 56 8B 74 24 10 8B C6 69 C0 E8 00 00 00 57 8D 3C 08 8B 47 60 33 ED 33 DB 3B C5 0F 84 ? ? ? ? 83 FE 19 7D 4D 0F B6 90",
+  -- The seagull removal loop: `cmp ecx, <entity slots>` at +0x40.
+  SeagullRemoval = "B9 01 00 00 00 56 89 0D ? ? ? ? BE 02 00 00 00 8B C1 69 C0 E8 00 00 00 66 39 B0",
+  -- The game image's DOS header: the first image at or after UCP's scan origin.
+  ImageHeader = "4D 5A 90 00 03 00 00 00 04 00 00 00 FF FF 00 00",
 }
 P.CameraPreview = P.CameraPreviewBranch
 P.CameraPreviewExit = "E8 ? ? ? ? 5E 5F 5D 5B 83 C4 08 C3 8D 49 00"
@@ -147,6 +156,21 @@ bindings.TreeFrame = function() return core.readInteger(A.TreeFrameLoad + 2) end
 bindings.TreeStage = function() return A.TreeFrame + 0x80 end
 bindings.TreeFelling = function() return A.TreeFrame + 0x76 end
 bindings.TreeKind = function() return A.TreeFrame + 0x46 end
+-- Entity update (Ghost Objects). The 6-byte prologue precedes the matched body.
+bindings.EntityUpdateBody = function() return scan("EntityUpdate") end
+bindings.EntityUpdate = function() return A.EntityUpdateBody - 6 end
+bindings.EntityUpdateResume = function() return A.EntityUpdate + 6 end
+-- GameStateStructures.gameTicksLoadBalancer, read by the entity update itself:
+-- the game's 0-199 tick cycle. It is saved with the game and identical for all
+-- players, so a schedule derived from it needs no extension save data.
+bindings.EntityTick = function() return core.readInteger(A.EntityUpdateBody + 2) end
+bindings.EntityTileWalker = function() return scan("EntityTileWalker") end
+bindings.EntityByteHeads = function() return core.readInteger(A.EntityTileWalker + 0x2A) end
+bindings.EntityWordHeads = function() return core.readInteger(A.EntityTileWalker + 0x78) end
+bindings.SeagullRemoval = function() return scan("SeagullRemoval") end
+-- Entity slot count (3000 SHC, 6000 SHCE), not an address.
+bindings.EntitySlots = function() return core.readInteger(A.SeagullRemoval + 0x42) end
+bindings.ImageBase = function() return scan("ImageHeader") end
 
 setmetatable(A, {__index = function(self, name)
   local resolve = bindings[name]
@@ -207,7 +231,47 @@ local required = {
     "PrimaryImage", "RenderMapState", "TileLogic", "TileHeight", "TileTerrain",
     "ImageData", "TileRows",
   },
+  ["ghost-objects"] = {
+    "EntityUpdateBody", "EntityUpdate", "EntityUpdateResume", "EntityTick", "EntityTileWalker",
+    "EntityByteHeads", "EntityWordHeads", "SeagullRemoval", "EntitySlots", "ImageBase",
+  },
 }
+-- The original entity update prologue: push ecx/ebx/ebp/esi, mov esi, ecx.
+M.ENTITY_UPDATE_PROLOGUE = {0x51, 0x53, 0x55, 0x56, 0x8B, 0xF1}
+M.ENTITY_TILES = 80400 -- 400 x 400 diamond
+function M.bytesAre(address, expected)
+  for i, byte in ipairs(expected) do
+    if core.readByte(address + i - 1) & 0xFF ~= byte then return false end
+  end
+  return true
+end
+-- Improved Siegeengines' oil options (and the standalone Ghost Objects Fix) take
+-- the same prologue. Refuse instead of jumping into another extension's code.
+function M.requireOriginalEntityUpdate()
+  if not M.bytesAre(A.EntityUpdate, M.ENTITY_UPDATE_PROLOGUE) then
+    error("Interface and Visual Fixes: interface-visual-fixes.ghost-objects requires the original entity update. "
+      .. "Disable the improved-siegeengines.oil.aim and improved-siegeengines.oil.spread options "
+      .. "(and the separate ghost-objects-fix module, if installed) or switch off Ghost Objects.")
+  end
+end
+-- End of the game image's section that contains a matched code address, read
+-- from the image's own PE headers (found by AOB, checked by their ImageBase).
+-- Nil if the headers do not describe this image or no section contains it.
+function M.codeSectionEnd(address)
+  local base = A.ImageBase
+  local offset = core.readInteger(base + 0x3C)
+  if offset <= 0 or offset >= 0x1000 then return nil end
+  local pe = base + offset
+  if core.readInteger(pe) ~= 0x4550 or core.readInteger(pe + 0x34) ~= base then return nil end
+  local count = core.readInteger(pe + 4) >> 16 & 0xFFFF
+  local first = pe + 0x18 + (core.readInteger(pe + 0x14) & 0xFFFF)
+  for i = 0, count - 1 do
+    local start = base + core.readInteger(first + i * 40 + 12)
+    local stop = start + core.readInteger(first + i * 40 + 8)
+    if address >= start and address < stop then return stop end
+  end
+  return nil
+end
 function M.prepare(config)
   for option, names in pairs(required) do
     if config[option] == true then
@@ -242,6 +306,23 @@ function M.prepare(config)
     expect(core.readInteger(A.CliffOffsetSource + 18), A.SecondaryImage, "offset cliff secondary image")
     expect(core.readInteger(A.CliffOffsetSource + 9), A.ImageOffsets, "offset cliff primary offsets")
     expect(core.readInteger(A.CliffOffsetSource + 25), A.ImageOffsets, "offset cliff secondary offsets")
+  end
+  if config["ghost-objects"] == true then
+    -- The patch site must be the only copy of the entity update in the game's code
+    -- section. Copies of code bytes elsewhere (heap buffers) are not game code.
+    local codeEnd = M.codeSectionEnd(A.EntityUpdateBody)
+    if not codeEnd then
+      error("Interface and Visual Fixes: unsupported or occupied native capability entity update section")
+    end
+    local duplicate = core.scanForAOB(P.EntityUpdate, A.EntityUpdateBody + 1, codeEnd)
+    if duplicate and duplicate ~= 0 then
+      error("Interface and Visual Fixes: ambiguous native capability entity update")
+    end
+    expect(M.bytesAre(A.EntityTileWalker + 0x74, {0x0F, 0xBF, 0x14, 0x45}), true, "entity word heads")
+    expect(M.bytesAre(A.SeagullRemoval + 0x40, {0x81, 0xF9}), true, "entity slot count")
+    expect(A.EntityByteHeads - A.EntityWordHeads, M.ENTITY_TILES * 2, "entity tile heads")
+    expect(A.EntitySlots >= 100 and A.EntitySlots <= 20000, true, "entity slot count")
+    M.requireOriginalEntityUpdate()
   end
 end
 return M

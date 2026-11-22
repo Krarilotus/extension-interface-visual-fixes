@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - 使塔门对齐连接处，并将石墙纹理延伸到悬崖边的塔楼下方。
 - 在单人大厅中显示原有的载入按钮。
 - 改善镜头旋转后及对角阶梯处的悬崖纹理衔接。
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 朝向镜头的阶梯使用连续纹理；向远处延伸的阶梯在重叠妨碍衔接时使用固定的纹理变化。
 

@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE, CAVE = 0x400000, 0x60000000
 
 
-def test_seven_options_compose_without_duplicate_or_overlapping_patches():
+def test_eight_options_compose_without_duplicate_or_overlapping_patches():
     # Reuse narrow public regression fixtures; no game binary is distributed.
     memory = bytearray(b'\x90' * 0x200000)
     memory[:len(placement.fixture())] = placement.fixture()
@@ -85,19 +85,30 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
             cache[name] = lua.execute((ROOT/f'{name}.lua').read_text())
         return cache[name]
 
+    def scan_from(pattern, start, stop):
+        regex = b''.join(b'.' if p == '?' else re.escape(bytes([int(p, 16)]))
+                         for p in pattern.split())
+        match = re.compile(regex, re.DOTALL).search(memory, max(start-BASE, 0), stop-BASE)
+        return BASE + match.start() if match else 0
+
     framework_core(lua, {
-        'AOBScan': scan, 'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
+        'AOBScan': scan, 'scanForAOB': scan_from,
+        'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
+        'readByte': lambda at: memory[at-BASE],
         'allocateCode': allocate, 'allocate': data, 'writeCode': write,
     })
     lua.globals().require = require
     options = yaml.safe_load((ROOT/'options.yml').read_text())['options']
-    assert len(options) == 7
+    switches = [option for option in options if option['display'] == 'Switch']
+    assert len(options) == 9 and len(switches) == 8
     # Neutral module: every fix ships off; profiles or plugins turn them on.
-    assert all(option['contents']['value'] is False for option in options)
-    config = {option['url'].split('.', 1)[1]: True for option in options}
+    assert all(option['contents']['value'] is False for option in switches)
+    config = {option['url'].split('.', 1)[1]: option['contents']['value'] for option in options}
+    config.update({option['url'].split('.', 1)[1]: True for option in switches})
+    assert config['ghost-objects-interval'] == 10
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
-    assert len(cache) == 10
+    assert len(cache) == 11
     # Fixed code/cache allocation stays below 160 KiB; cliff pixel storage is
     # allocated lazily for visible image sizes, instead of 32 vanilla strips.
     assert sum(size for _, size in allocations) < 160*1024
@@ -109,6 +120,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
         0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE, *cliff_source.PATTERNS,
+        0x4087c0,
     }
     before = list(writes)
     logs = [row[2] for row in lua.globals().test_logs.values()]
@@ -119,7 +131,7 @@ def test_seven_options_compose_without_duplicate_or_overlapping_patches():
     assert sum(message.startswith('render epoch=') for message in logs) == 1
     assert sum(message.startswith('tower depth cache=') for message in logs) == 1
     assert sum(message.startswith('tower connection cache=') for message in logs) == 1
-    assert sum(message.startswith('installed ') for message in logs) == 7
+    assert sum(message.startswith('installed ') for message in logs) == 8
     assert all(row[1] == 0 for row in lua.globals().test_logs.values())
     module.enable(module, lua.table_from(config))
     assert writes == before

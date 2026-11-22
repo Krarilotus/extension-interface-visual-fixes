@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Turmtüren folgen den Anschlüssen; Mauerwerk setzt sich unter Türmen am Klippenrand fort.
 - Der vorhandene Laden-Knopf erscheint in der Einzelspieler-Lobby.
 - Klippentexturen verbinden sich nach Kameradrehungen und entlang diagonaler Stufen besser.
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 Vordere Stufen nutzen aufeinanderfolgende Texturen; nach hinten verlaufende Stufen variieren gleichbleibend, wenn Überlappungen eine Fortsetzung verhindern.
 

@@ -21,3 +21,8 @@ tags.interface: Interfaz
 
 cliff_texture_text: Conectar texturas de acantilados al girar
 cliff_texture_description: Mantiene la continuidad de las texturas en ambas caras visibles al girar la cámara. Usa el paquete de texturas actual.
+
+ghost_objects_text: Reparar listas de objetos
+ghost_objects_description: El juego guarda una lista de los objetos pequeños en cada casilla (banderas, proyectiles, polvo, humo, pájaros) y dibuja cada lista en su casilla. A veces un objeto se elimina mientras sigue en la lista de una casilla, y el siguiente objeto que ocupa su lugar (una bandera, una piedra, una flecha...) también se dibuja en esa vieja casilla, a menudo parpadeando. Esta opción reconstruye la lista de cada casilla según la posición real de cada objeto. Desactiva las opciones de apuntado y expansión de aceite de Improved Siege Engines antes de usar esta corrección.
+ghost_objects_interval_text: Reparar cada tantos ticks del juego
+ghost_objects_interval_description: Con qué frecuencia se reconstruyen las listas, en ticks del juego (de 1 a 200). El conteo sigue el propio ciclo de ticks del juego, de modo que cada jugador y cada partida guardada cargada usan la misma programación. La reconstrucción es rápida; valores más bajos eliminan antes los objetos fantasma.

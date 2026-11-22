@@ -7,6 +7,7 @@ local features = {
   {"tower-door-height", "tower-door-height"},
   {"lobby-load", "lobby-load"},
   {"cliff-texture-direction", "cliff-texture-direction"},
+  {"ghost-objects", "ghost-objects"},
 }
 
 return {
@@ -22,7 +23,7 @@ return {
     if #active > 0 then require("native-layout").prepare(config) end
     for _, feature in ipairs(active) do
       log(INFO, "installing " .. feature[1])
-      require(feature[2]).enable()
+      require(feature[2]).enable(config)
       log(INFO, "installed " .. feature[1])
     end
     enabled = true

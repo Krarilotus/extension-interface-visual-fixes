@@ -19,3 +19,8 @@ tags.interface: Oberfläche
 
 cliff_texture_text: Klippen-Texturen beim Drehen verbinden
 cliff_texture_description: Verbindet Klippen-Texturen auf beiden sichtbaren Seiten auch nach dem Drehen der Kamera. Verwendet das aktuelle Texturpaket.
+
+ghost_objects_text: Objektlisten reparieren
+ghost_objects_description: Das Spiel führt für jedes Feld eine Liste kleiner Objekte (Flaggen, Geschosse, Staub, Rauch, Vögel) und zeichnet jede Liste auf ihrem Feld. Manchmal wird ein Objekt gelöscht, während es noch in der Liste eines Feldes steht. Das nächste Objekt, das seinen Platz einnimmt (eine Flagge, ein Stein, ein Pfeil ...), wird dann ebenfalls auf diesem alten Feld gezeichnet und flackert oft. Diese Option baut die Liste jedes Feldes anhand der tatsächlichen Position jedes Objekts neu auf. Deaktiviere vor der Nutzung dieses Fixes die Optionen zum Ölzielen und zur Ölausbreitung in Improved Siege Engines.
+ghost_objects_interval_text: Alle so viele Spielticks reparieren
+ghost_objects_interval_description: Wie oft die Listen neu aufgebaut werden, in Spielticks (1 bis 200). Die Zählung folgt dem spielinternen Tick-Zyklus, sodass jeder Spieler und jeder geladene Spielstand denselben Zeitplan nutzt. Der Neuaufbau ist schnell; kleinere Werte entfernen Geisterobjekte schneller.

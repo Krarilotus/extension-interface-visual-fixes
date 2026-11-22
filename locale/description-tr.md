@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Kule kapılarını bağlantılara hizalar ve uçurum kenarındaki kulelerin altına duvar dokusunu uzatır.
 - Tek oyunculu lobide mevcut Yükle düğmesini gösterir.
 - Kamera dönüşünden sonra ve çapraz basamaklarda uçurum dokularının birleşimini iyileştirir.
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 Öne bakan basamaklar ardışık dokular kullanır; geriye uzanan basamaklar, örtüşmenin sürekliliği engellediği yerlerde sabit çeşitlilik kullanır.
 

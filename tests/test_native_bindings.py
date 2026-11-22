@@ -18,7 +18,7 @@ EXPECTED = json.loads((ROOT / 'tests/fixtures/component-bindings.json').read_tex
 BASE = 0x400000
 OPTIONS = ('clear-unique-building-preview', 'building-preview-during-camera-movement',
            'distinct-dead-tree-sprites', 'tower-door-height', 'lobby-load',
-           'cliff-texture-direction')
+           'cliff-texture-direction', 'ghost-objects')
 
 
 def fixture(family='regular'):
@@ -40,9 +40,17 @@ def fixture(family='regular'):
         scans.append(pattern)
         return BASE + hits[0].start()
 
+    def scan_from(pattern, start, stop):
+        regex = b''.join(b'.' if t == '?' else re.escape(bytes([int(t, 16)]))
+                         for t in pattern.split())
+        match = re.compile(regex, re.S).search(memory, max(start-BASE, 0), stop-BASE)
+        return BASE + match.start() if match else 0
+
     framework_core(lua, {
         'AOBScan': scan,
+        'scanForAOB': scan_from,
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
+        'readByte': lambda at: memory[at-BASE],
         'allocateCode': lambda size: allocations.append(size),
     })
     layout = lua.eval('require("native-layout")')

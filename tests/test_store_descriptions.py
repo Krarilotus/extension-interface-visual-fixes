@@ -16,7 +16,7 @@ def test_each_description_is_packaged_concise_and_has_real_screenshots(language)
     assert 'locale' in entries
     text = (ROOT / 'locale' / f'description-{language}.md').read_text(encoding='utf-8')
     assert text.startswith('# Interface and Visual Fixes\n')
-    assert len(re.findall(r'^- ', text, re.M)) == 7
+    assert len(re.findall(r'^- ', text, re.M)) == 8
     # The default/plugin paragraph added in 0.2.0; still a short viewer text.
     assert len(text.split()) < 280
     assert '\ufffd' not in text and 'stair6' in text.lower()

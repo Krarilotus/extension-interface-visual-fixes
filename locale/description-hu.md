@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - A toronyajtókat a csatlakozásokhoz igazítja, és falazatot jelenít meg a sziklaszéli tornyok alatt.
 - Megjeleníti a meglévő Betöltés gombot az egyjátékos előszobában.
 - Javítja a sziklatextúrák illeszkedését kameraforgatás után és az átlós lépcsőkön.
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 A szembenéző lépcsők egymást követő textúrákat kapnak; a hátrafelé futók állandó változatosságot ott, ahol az átfedés nem enged folytonos illeszkedést.
 

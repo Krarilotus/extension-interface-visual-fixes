@@ -9,6 +9,7 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. The "UCP3 Fi
 - Aligne les portes des tours sur les raccordements et prolonge la maçonnerie sous les tours au bord des falaises.
 - Affiche le bouton Charger existant dans le salon solo.
 - Améliore les raccords des falaises après rotation et sur les marches diagonales.
+- Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
 
 Les marches de face utilisent des textures successives ; celles qui fuient vers le fond gardent une variation stable lorsque le chevauchement empêche la continuité.
 

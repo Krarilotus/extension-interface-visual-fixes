@@ -13,7 +13,9 @@
     <file src="cliff-texture-direction.lua" />
     <file src="render-frame.lua" />
     <file src="cliff-texture-source.lua" />
+    <file src="ghost-objects.lua" />
     <file src="docs/crash-reporting.md" />
+    <file src="CREDITS.md" />
     <file src="locale" />
   </files>
 </module>

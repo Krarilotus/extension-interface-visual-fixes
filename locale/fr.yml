@@ -21,3 +21,9 @@ tags.interface: Interface
 
 cliff_texture_text: Raccorder les textures des falaises
 cliff_texture_description: Préserve la continuité des textures sur les deux faces visibles après rotation de la caméra. Utilise le pack de textures actuel.
+
+ghost_objects_text: Réparer les listes d'objets
+ghost_objects_description: |-
+  Le jeu maintient une liste des petits objets présents sur chaque case (drapeaux, projectiles, poussière, fumée, oiseaux) et affiche chaque liste sur sa case. Parfois un objet est supprimé alors qu'il figure encore dans la liste d'une case : l'objet suivant qui réutilise son emplacement (drapeau, pierre, flèche...) s'affiche alors aussi sur cette ancienne case, souvent en scintillant. Cette option reconstruit la liste de chaque case d'après la position réelle de chaque objet. Désactivez les options de visée et d'écoulement d'huile d'Improved Siege Engines avant d'utiliser ce correctif.
+ghost_objects_interval_text: Réparer tous les N ticks de jeu
+ghost_objects_interval_description: Fréquence de reconstruction des listes, en ticks de jeu (1 à 200). Le compteur suit le cycle de ticks du jeu, de sorte que chaque joueur et chaque sauvegarde chargée suivent le même rythme. La reconstruction est rapide ; des valeurs plus basses effacent les objets fantômes plus tôt.

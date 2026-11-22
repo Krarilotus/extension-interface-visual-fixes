@@ -19,3 +19,8 @@ tags.interface: Interface
 
 cliff_texture_text: Continue cliff textures after rotation
 cliff_texture_description: Keeps cliff textures connected along both visible faces when rotating the camera. Uses the current texture pack.
+
+ghost_objects_text: Repair tile object lists
+ghost_objects_description: The game keeps a list of the small objects on each tile (flags, projectiles, dust, smoke, birds). Sometimes an object is deleted while it is still in a list, and the next object that takes its place (a flag, a stone, an arrow) is also drawn on the old tile, often flickering. This rebuilds every tile's list from where each object really is. Turn off the Improved Siege Engines oil aim and oil spread options before using this fix.
+ghost_objects_interval_text: Repair on every N-th step of the tick cycle
+ghost_objects_interval_description: "N, from 1 to 200: the lists are rebuilt on every N-th step of the game's own 200-tick cycle (steps 0, N, 2N and so on; if N does not divide 200, the last gap before the cycle restarts is shorter). The cycle is saved with the game, so every player and every loaded save uses the same schedule. The rebuild is quick; lower numbers clear ghost objects sooner."
