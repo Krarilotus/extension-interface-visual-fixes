@@ -19,3 +19,8 @@ tags.interface: Interface
 
 cliff_texture_text: Continue cliff textures after rotation
 cliff_texture_description: Keeps cliff textures connected along both visible faces when rotating the camera. Uses the current texture pack.
+
+ghost_objects_text: Repair tile object lists
+ghost_objects_description: Stray flags, stones and arrows no longer show up, often flickering, on the wrong tile. Turn off the Improved Siege Engines oil aim and oil spread options when using this fix.
+ghost_objects_interval_text: Repair on every N-th step of the tick cycle
+ghost_objects_interval_description: "From 1 to 200. Lower numbers clear stray objects sooner."

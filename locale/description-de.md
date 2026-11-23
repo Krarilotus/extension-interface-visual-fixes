@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Sieben Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7, standardmäßig aktiviert. Jede lässt sich einzeln ausschalten. Einstellungen anwenden und das Spiel neu starten.
+Optionale Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7. Einstellungen anwenden und das Spiel neu starten.
 
 - Eigene Kartenbeschreibungen bleiben in der Lobby sichtbar.
 - Nach erfolgreichem Bau eines einzigartigen Gebäudes verschwindet die Bauvorschau.
@@ -9,10 +9,7 @@ Sieben Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7, standardmäßig aktiviert. 
 - Turmtüren folgen den Anschlüssen; Mauerwerk setzt sich unter Türmen am Klippenrand fort.
 - Der vorhandene Laden-Knopf erscheint in der Einzelspieler-Lobby.
 - Klippentexturen verbinden sich nach Kameradrehungen und entlang diagonaler Stufen besser.
-
-Vordere Stufen nutzen aufeinanderfolgende Texturen; nach hinten verlaufende Stufen variieren gleichbleibend, wenn Überlappungen eine Fortsetzung verhindern.
-
-Die höchste geeignete Verbindung bestimmt die Tür; bei gleicher Höhe zählt die Nähe zur Mitte. Äußere Türen rücken eine halbe Kachel nach innen. KI-Stair6 allein ermöglicht eine bodennahe Tür; erhöhte Treppen zählen nicht.
+- Baut die Objektlisten der Felder neu auf, damit verirrte Flaggen, Steine und Pfeile nicht mehr auf dem falschen Feld erscheinen.
 
 Turmfundament mit Türen auf Höhe der angeschlossenen Wälle.
 

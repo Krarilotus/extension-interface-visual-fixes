@@ -1,13 +1,24 @@
 # Interface and Visual Fixes
 
-Seven optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
+Eight optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
 controls, text areas and artwork.
 
-Version 0.1.5 improves compatibility checks and crash diagnostics, and corrects
-lower tower doors. All seven fixes remain enabled by default, with Extreme and
-taller-texture support. Each fix can still be disabled separately. Existing
-explicit choices in saved configurations remain in effect.
+Every fix is off by default; the table lists each option and the UCP3 plugin that
+turns it on. Values explicitly saved in a configuration stay as they are; if you relied
+on the earlier defaults, check the switches after updating.
 See the [short description](locale/description-en.md).
+
+| Fix | Option URL | Default | Turned on by |
+|---|---|---|---|
+| Show lobby map descriptions | `interface-visual-fixes.lobby-map-descriptions` | off | UCP3 Recommended |
+| Clear unique-building preview after placement | `interface-visual-fixes.clear-unique-building-preview` | off | UCP3 Fixes |
+| Show building previews while scrolling | `interface-visual-fixes.building-preview-during-camera-movement` | off | UCP3 Fixes |
+| Distinguish dead tree stages | `interface-visual-fixes.distinct-dead-tree-sprites` | off | UCP3 Fixes |
+| Align tower doors with connecting walls | `interface-visual-fixes.tower-door-height` | off | UCP3 Fixes |
+| Show Load in skirmish lobby | `interface-visual-fixes.lobby-load` | off | UCP3 Recommended |
+| Continue cliff textures after rotation | `interface-visual-fixes.cliff-texture-direction` | off | UCP3 Fixes |
+| Repair tile object lists (Ghost Objects) | `interface-visual-fixes.ghost-objects` | off | none |
+| Ghost Objects interval (game ticks, 1 to 200) | `interface-visual-fixes.ghost-objects-interval` | 10 | none |
 
 For an intermittent crash, keep the session's UCP logs before restarting.
 [Crash reporting](docs/crash-reporting.md) explains the automatic startup
@@ -32,9 +43,13 @@ still under investigation; diagnostics are not a claim that it is fixed.
 - **Continue cliff textures after rotation:** makes cliff textures advance along
   both visible faces when the map is rotated, using the current texture pack,
   including taller cliff strips.
+- **Repair tile object lists (Ghost Objects):** rebuilds each tile's list of small
+  objects (flags, projectiles, dust, smoke, birds) from where each object really is,
+  so stray flags, stones and arrows stop being drawn on an old tile. Based on
+  Monsterfish's [Ghost Objects Fix](https://github.com/Monsterfisch/GhostObjectsFix).
 
-Enable the module, apply your settings and restart the game. All seven fixes
-start enabled; switch off any you do not want. The module targets UCP 3.0.7 with
+Enable the module, switch on the fixes you want (or select a plugin that does),
+apply your settings and restart the game. The module targets UCP 3.0.7 with
 SHC or SHCE 1.41.
 
 ## Feature screenshots
@@ -102,6 +117,24 @@ stable variation where their overlapping faces cannot form a continuous strip.
 See [the current comparison, compatibility checks and measured cost](VALIDATION-CLIFF-UV.md).
 See [diagonal sequencing and its native validation](VALIDATION-DIAGONAL-CLIFFS.md).
 
+### Ghost Objects
+
+The game links the small objects on each tile into a list. When an object is freed while
+a list still reaches it, the next object created in that slot is drawn on the old tile
+too, and saved games keep the tangle. The fix rebuilds all lists from each object's own
+tile whenever the game's 0-199 tick cycle is at a multiple of the interval N (default 10):
+at tick 0 and every N ticks up to 199. If N does not divide 200, the gap across the wrap
+to tick 0 is shorter. That cycle is saved with the game and the same for every player, so
+the fix needs no extra save data. All players in a multiplayer game, and a replay when it
+is played back, need the same Ghost Objects switch and interval.
+
+Use only one Ghost Objects fix: this one or the standalone Ghost Objects Fix. Improved
+Siege Engines' oil aim and oil spread options change the same game function. If they, or
+the standalone fix, changed it first while Ghost Objects is on, **UCP stops at startup
+with an error** that names them; turn them off, or switch Ghost Objects off. If this
+module loads first, Improved Siege Engines turns its oil feature off with a warning in
+the log. The repair is not yet confirmed in game.
+
 ## Validation
 
 Native screenshots come from an isolated SHC 1.41 test installation with UCP3.0.7,
@@ -112,3 +145,9 @@ winProcHandler0.2.0 and graphicsApiReplacer1.3.0. Exact revisions, tests and lim
 [cliff textures](VALIDATION-CLIFF-TEXTURES.md).
 Automated and original-code tests are distinguished from native results;
 multiplayer, replay and broader compatibility are not inferred from them.
+
+## Licence
+
+Interface and Visual Fixes is licensed under the GNU General Public License,
+version 3 (GPL-3.0); see [LICENSE](LICENSE). Ghost Objects is based on Monsterfish's
+Ghost Objects Fix and included under the same licence with his permission.

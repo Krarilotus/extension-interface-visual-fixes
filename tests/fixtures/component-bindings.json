@@ -85,7 +85,17 @@
       "BuildingRefreshResume": 4306950,
       "TreeFrameLoad": 5158961,
       "ViewportY": 35318868,
-      "CursorSamplePointer": 35318860
+      "CursorSamplePointer": 35318860,
+      "EntityUpdateBody": 4229062,
+      "EntityUpdate": 4229056,
+      "EntityUpdateResume": 4229062,
+      "EntityTick": 18598236,
+      "EntityTileWalker": 4199520,
+      "EntityByteHeads": 30536232,
+      "EntityWordHeads": 30375432,
+      "SeagullRemoval": 4213360,
+      "EntitySlots": 3000,
+      "ImageBase": 4194304
     },
     "patterns": {
       "TowerDoorCall4": "CD 52 50 6A 36 B9 90 A0 FE 01 E8 84 1B F7 FF",
@@ -191,7 +201,17 @@
       "BuildingRefreshResume": 4306966,
       "TreeFrameLoad": 5159873,
       "ViewportY": 46408020,
-      "CursorSamplePointer": 46408012
+      "CursorSamplePointer": 46408012,
+      "EntityUpdateBody": 4229078,
+      "EntityUpdate": 4229072,
+      "EntityUpdateResume": 4229078,
+      "EntityTick": 19469388,
+      "EntityTileWalker": 4199520,
+      "EntityByteHeads": 41625384,
+      "EntityWordHeads": 41464584,
+      "SeagullRemoval": 4213376,
+      "EntitySlots": 6000,
+      "ImageBase": 4194304
     },
     "patterns": {
       "TowerDoorCall4": "CD 52 50 6A 36 B9 90 D5 A7 02 E8 24 1A F7 FF",

@@ -4,6 +4,7 @@ from pathlib import Path
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -47,6 +48,12 @@ def LuaRuntime(*args, extreme=False, component_bindings=True, **kwargs):
         lua.globals().package.loaded['native-layout'] = layout
         lua.globals().component_layout = layout
     return lua
+
+
+def aob(pattern):
+    """A UCP AOB pattern ('?' matches any byte) as a bytes regex."""
+    return re.compile(b''.join(b'.' if t == '?' else re.escape(bytes([int(t, 16)]))
+                               for t in pattern.split()), re.S)
 
 
 @lru_cache

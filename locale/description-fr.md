@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Sept corrections pour SHC/SHCE 1.41 et UCP 3.0.7, activées par défaut. Chacune peut être désactivée séparément. Appliquez les réglages et redémarrez le jeu.
+Correctifs optionnels pour SHC/SHCE 1.41 et UCP 3.0.7. Appliquez vos paramètres et redémarrez le jeu.
 
 - Garde les descriptions des cartes personnalisées visibles dans le salon.
 - Efface l’aperçu après la construction réussie d’un bâtiment unique.
@@ -9,10 +9,7 @@ Sept corrections pour SHC/SHCE 1.41 et UCP 3.0.7, activées par défaut. Chacune
 - Aligne les portes des tours sur les raccordements et prolonge la maçonnerie sous les tours au bord des falaises.
 - Affiche le bouton Charger existant dans le salon solo.
 - Améliore les raccords des falaises après rotation et sur les marches diagonales.
-
-Les marches de face utilisent des textures successives ; celles qui fuient vers le fond gardent une variation stable lorsque le chevauchement empêche la continuité.
-
-La porte suit le raccordement admissible le plus haut ; à hauteur égale, le plus central. Aux extrémités, elle rentre d’une demi-case. Stair6 construit par l’IA suffit pour une porte au sol ; les escaliers surélevés sont exclus.
+- Reconstruit les listes d’objets des cases afin que drapeaux, pierres et flèches égarés cessent d’apparaître sur la mauvaise case.
 
 Maçonnerie sous la tour et portes à la hauteur des remparts raccordés.
 

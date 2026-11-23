@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Siete correcciones para SHC/SHCE 1.41 y UCP 3.0.7, activadas por defecto. Cada una se puede desactivar por separado. Aplica los ajustes y reinicia el juego.
+Correcciones opcionales para SHC/SHCE 1.41 y UCP 3.0.7. Aplica los ajustes y reinicia el juego.
 
 - Mantiene visibles las descripciones de mapas personalizados en la sala.
 - Retira la vista previa tras construir correctamente un edificio único.
@@ -9,10 +9,7 @@ Siete correcciones para SHC/SHCE 1.41 y UCP 3.0.7, activadas por defecto. Cada u
 - Alinea las puertas con las conexiones y prolonga la mampostería bajo las torres al borde de acantilados.
 - Muestra el botón Cargar existente en la sala de un jugador.
 - Mejora la continuidad de los acantilados al girar la cámara y en escalones diagonales.
-
-Los escalones de frente usan texturas consecutivas; los que se alejan mantienen una variación estable donde el solapamiento impide la continuidad.
-
-La puerta elige la conexión válida más alta; en caso de empate, la más central. En los extremos se desplaza media casilla hacia dentro. Stair6 de la IA permite una puerta a nivel del suelo; las escaleras elevadas no cuentan.
+- Reconstruye las listas de objetos de cada casilla para que las banderas, piedras y flechas sueltas dejen de aparecer en la casilla equivocada.
 
 Mampostería bajo la torre y puertas a la altura de los muros conectados.
 

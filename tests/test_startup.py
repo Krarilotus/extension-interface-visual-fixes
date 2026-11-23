@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
     ('tower-door-height', 'tower-door-height'),
     ('lobby-load', 'lobby-load'),
     ('cliff-texture-direction', 'cliff-texture-direction'),
+    ('ghost-objects', 'ghost-objects'),
 ))
 @pytest.mark.parametrize('value', (None, False, True))
 def test_each_option_requires_only_its_feature_and_enables_once(option, feature, value):
@@ -23,7 +24,7 @@ def test_each_option_requires_only_its_feature_and_enables_once(option, feature,
         actions.append(('require', name))
         if name == 'native-layout':
             return lua.table_from({'prepare': lambda config: actions.append(('prepare', option))})
-        return lua.table_from({'enable': lambda: actions.append(('enable', name))})
+        return lua.table_from({'enable': lambda config: actions.append(('enable', name))})
     lua.globals().require = require
     module = lua.execute((ROOT/'init.lua').read_text())
     config = lua.table_from({} if value is None else {option: value})
@@ -58,7 +59,7 @@ def test_sparse_features_preserve_order_and_failed_install_does_not_log_completi
     def require(name):
         if name == 'native-layout':
             return lua.table_from({'prepare': lambda config: actions.append('preflight')})
-        return lua.table_from({'enable': lambda: install(name)})
+        return lua.table_from({'enable': lambda config: install(name)})
     lua.globals().require = require
     module = lua.execute((ROOT/'init.lua').read_text())
     config = lua.table_from({'lobby-map-descriptions': True,

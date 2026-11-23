@@ -4,14 +4,14 @@ lobby_description: Mantiene visible la descripción del mapa seleccionado en la 
 unique_preview_text: Cerrar la vista previa de edificios únicos tras construir
 unique_preview_description: Deselecciona el mercado, los cuarteles, el campamento de mercenarios y los gremios tras construirlos correctamente.
 
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
+camera_preview_text: Mostrar vistas previas de edificios al desplazar la cámara
+camera_preview_description: Mantiene visible la vista previa del edificio seleccionado al mover la cámara.
 
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+dead_tree_text: Distinguir las fases de los árboles muertos
+dead_tree_description: Muestra los árboles muertos en pie antes de que pasen a ser troncos caídos.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
+tower_door_text: Alinear las puertas de las torres con los muros conectados
+tower_door_description: Alinea las puertas con la conexión válida más alta; en caso de empate, elige la más cercana al centro del lado. Las puertas exteriores se desplazan media casilla hacia dentro. Prolonga la mampostería bajo las torres al borde de acantilados, permitiendo puertas más bajas para muros y stair6. Las escaleras elevadas no cuentan.
 lobby_load_text: Mostrar Cargar en la sala de escaramuza
 lobby_load_description: Muestra el botón Cargar existente en la sala de escaramuza de un jugador y permite cargar
   una partida sin un oponente de IA. Reinicia el juego para aplicar los cambios.
@@ -20,4 +20,9 @@ tags.bugfixes: Correcciones
 tags.interface: Interfaz
 
 cliff_texture_text: Conectar texturas de acantilados al girar
-cliff_texture_description: Mantiene la continuidad de las texturas en ambas caras visibles al girar la c?mara. Usa el paquete de texturas actual.
+cliff_texture_description: Mantiene la continuidad de las texturas en ambas caras visibles al girar la cámara. Usa el paquete de texturas actual.
+
+ghost_objects_text: Reparar listas de objetos
+ghost_objects_description: Las banderas, piedras y flechas sueltas ya no aparecen, a menudo parpadeando, en la casilla equivocada. Desactiva las opciones de apuntado y expansión de aceite de Improved Siege Engines al usar esta corrección.
+ghost_objects_interval_text: Reparar en cada paso N del ciclo de ticks
+ghost_objects_interval_description: "De 1 a 200. Valores más bajos eliminan antes los objetos sueltos."
