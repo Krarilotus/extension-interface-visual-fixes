@@ -15,7 +15,6 @@
     <file src="cliff-texture-source.lua" />
     <file src="ghost-objects.lua" />
     <file src="docs/crash-reporting.md" />
-    <file src="CREDITS.md" />
     <file src="LICENSE" />
     <file src="locale" />
   </files>

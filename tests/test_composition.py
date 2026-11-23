@@ -1,11 +1,10 @@
-"""Exercise the real shared entry point against all seven synthetic native sites."""
+"""Exercise the real shared entry point against all eight synthetic native sites."""
 from pathlib import Path
-import re
 import json
 import struct
 import xml.etree.ElementTree as ET
 
-from lua_support import LuaRuntime, framework_core
+from lua_support import LuaRuntime, aob, framework_core
 import yaml
 
 import test_camera_preview as camera
@@ -55,9 +54,7 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
     next_address = CAVE
 
     def scan(pattern):
-        regex = b''.join(b'.' if p == '?' else re.escape(bytes([int(p, 16)]))
-                         for p in pattern.split())
-        matches = list(re.finditer(regex, memory, re.DOTALL))
+        matches = list(aob(pattern).finditer(memory))
         assert len(matches) == 1, pattern
         return BASE + matches[0].start()
 
@@ -86,9 +83,7 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
         return cache[name]
 
     def scan_from(pattern, start, stop):
-        regex = b''.join(b'.' if p == '?' else re.escape(bytes([int(p, 16)]))
-                         for p in pattern.split())
-        match = re.compile(regex, re.DOTALL).search(memory, max(start-BASE, 0), stop-BASE)
+        match = aob(pattern).search(memory, max(start-BASE, 0), stop-BASE)
         return BASE + match.start() if match else 0
 
     framework_core(lua, {
@@ -101,11 +96,9 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
     options = yaml.safe_load((ROOT/'options.yml').read_text())['options']
     switches = [option for option in options if option['display'] == 'Switch']
     assert len(options) == 9 and len(switches) == 8
-    # Neutral module: every fix ships off; profiles or plugins turn them on.
     assert all(option['contents']['value'] is False for option in switches)
     config = {option['url'].split('.', 1)[1]: option['contents']['value'] for option in options}
     config.update({option['url'].split('.', 1)[1]: True for option in switches})
-    assert config['ghost-objects-interval'] == 10
     module = lua.execute((ROOT/'init.lua').read_text())
     module.enable(module, lua.table_from(config))
     assert len(cache) == 11

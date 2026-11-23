@@ -161,8 +161,7 @@ bindings.EntityUpdateBody = function() return scan("EntityUpdate") end
 bindings.EntityUpdate = function() return A.EntityUpdateBody - 6 end
 bindings.EntityUpdateResume = function() return A.EntityUpdate + 6 end
 -- GameStateStructures.gameTicksLoadBalancer, read by the entity update itself:
--- the game's 0-199 tick cycle. It is saved with the game and identical for all
--- players, so a schedule derived from it needs no extension save data.
+-- the game's 0-199 tick cycle, saved with the game.
 bindings.EntityTick = function() return core.readInteger(A.EntityUpdateBody + 2) end
 bindings.EntityTileWalker = function() return scan("EntityTileWalker") end
 bindings.EntityByteHeads = function() return core.readInteger(A.EntityTileWalker + 0x2A) end

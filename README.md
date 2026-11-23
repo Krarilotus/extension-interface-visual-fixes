@@ -3,12 +3,9 @@
 Eight optional fixes for Stronghold Crusader and Crusader Extreme 1.41, using the game's existing
 controls, text areas and artwork.
 
-Version 0.2.0 ships the game's original behaviour: **every fix is off by default**, so
-adding the module alone changes nothing. The "UCP3 Fixes" plugin turns on the five bug
-fixes for building previews, dead trees, tower doors and cliffs; "UCP3 Recommended" also
-turns on the two lobby features. Ghost Objects is not turned on by either plugin. You can
-switch each fix on or off yourself. Values you saved in a configuration stay as they are;
-if you added an earlier version on its own and update it, switch the fixes you want back on.
+Every fix is off by default; the table lists each option and the UCP3 plugin that
+turns it on. Values explicitly saved in a configuration stay as they are; if you relied
+on the earlier defaults, check the switches after updating.
 See the [short description](locale/description-en.md).
 
 | Fix | Option URL | Default | Turned on by |
@@ -49,7 +46,7 @@ still under investigation; diagnostics are not a claim that it is fixed.
 - **Repair tile object lists (Ghost Objects):** rebuilds each tile's list of small
   objects (flags, projectiles, dust, smoke, birds) from where each object really is,
   so stray flags, stones and arrows stop being drawn on an old tile. Based on
-  Monsterfish's Ghost Objects Fix; see [credits](CREDITS.md).
+  Monsterfish's [Ghost Objects Fix](https://github.com/Monsterfisch/GhostObjectsFix).
 
 Enable the module, switch on the fixes you want (or select a plugin that does),
 apply your settings and restart the game. The module targets UCP 3.0.7 with
@@ -124,23 +121,19 @@ See [diagonal sequencing and its native validation](VALIDATION-DIAGONAL-CLIFFS.m
 
 The game links the small objects on each tile into a list. When an object is freed while
 a list still reaches it, the next object created in that slot is drawn on the old tile
-too, and saved games keep the tangle. On every N-th step of the game's own 200-tick
-cycle (N is the interval, default 10; if N does not divide 200, the last gap before the
-cycle restarts is shorter) the fix rebuilds all lists from each object's own tile, at the
-start of the game's object update. That tick cycle is saved with the game and the same
-for every player, so the schedule needs no extra save data and is identical after loading
-a save, in multiplayer and in replays. All players in a multiplayer game, and a replay
-when it is played back, need the same Ghost Objects setting as when it was recorded.
+too, and saved games keep the tangle. The fix rebuilds all lists from each object's own
+tile whenever the game's 0-199 tick cycle is at a multiple of the interval N (default 10):
+at tick 0 and every N ticks up to 199. If N does not divide 200, the gap across the wrap
+to tick 0 is shorter. That cycle is saved with the game and the same for every player, so
+the fix needs no extra save data. All players in a multiplayer game, and a replay when it
+is played back, need the same Ghost Objects switch and interval.
 
-Improved Siege Engines' oil aim and oil spread options change the same object update.
-If Improved Siege Engines has already changed it when Ghost Objects is on, **UCP stops at
-startup with an error** that names `improved-siegeengines.oil.aim` and
-`improved-siegeengines.oil.spread`; no fix of this module is installed. Turn those options
-off (or Ghost Objects) and start again. If this module loads first instead, Improved Siege
-Engines' oil feature turns itself off with a warning in the log and its other features
-keep working. The reported river flag could not yet be reproduced in a native session,
-so the visual repair is not confirmed in-game; see
-[the native integration audit](docs/native-integration-audit.md) for what was checked.
+Use only one Ghost Objects fix: this one or the standalone Ghost Objects Fix. Improved
+Siege Engines' oil aim and oil spread options change the same game function. If they, or
+the standalone fix, changed it first while Ghost Objects is on, **UCP stops at startup
+with an error** that names them; turn them off, or switch Ghost Objects off. If this
+module loads first, Improved Siege Engines turns its oil feature off with a warning in
+the log. The repair is not yet confirmed in game.
 
 ## Validation
 
@@ -156,5 +149,5 @@ multiplayer, replay and broader compatibility are not inferred from them.
 ## Licence
 
 Interface and Visual Fixes is licensed under the GNU General Public License,
-version 3 (GPL-3.0); see [LICENSE](LICENSE). Ghost Objects is included under the same
-licence by its author's grant; see [CREDITS](CREDITS.md).
+version 3 (GPL-3.0); see [LICENSE](LICENSE). Ghost Objects is based on Monsterfish's
+Ghost Objects Fix and included under the same licence with his permission.

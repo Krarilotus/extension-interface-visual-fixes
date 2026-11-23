@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Opcionális javítások az SHC/SHCE 1.41-hez és az UCP 3.0.7-hez, alapértelmezés szerint mind kikapcsolva. Mindegyik külön bekapcsolható. Alkalmazd a beállításokat, majd indítsd újra a játékot.
+Opcionális javítások az SHC/SHCE 1.41-hez és az UCP 3.0.7-hez. Alkalmazd a beállításokat, majd indítsd újra a játékot.
 
 - Láthatóvá teszi az egyéni térképek leírását az előszobában.
 - Egyedi épület sikeres elhelyezése után eltünteti az építési előnézetet.
@@ -10,10 +10,6 @@ Opcionális javítások az SHC/SHCE 1.41-hez és az UCP 3.0.7-hez, alapértelmez
 - Megjeleníti a meglévő Betöltés gombot az egyjátékos előszobában.
 - Javítja a sziklatextúrák illeszkedését kameraforgatás után és az átlós lépcsőkön.
 - Újraépíti a mezők objektumlistáit, így a kósza zászlók, kövek és nyilak többé nem jelennek meg rossz mezőn.
-
-A szembenéző lépcsők egymást követő textúrákat kapnak; a hátrafelé futók állandó változatosságot ott, ahol az átfedés nem enged folytonos illeszkedést.
-
-Az ajtó a legmagasabb megfelelő csatlakozást követi; azonos magasságnál a középsőhöz közelebbit. A szélső ajtók fél mezővel beljebb kerülnek. Az MI Stair6 eleme önmagában talajszinti ajtót ad; a megemelt lépcsők nem számítanak.
 
 Falazat a torony alatt, ajtók a csatlakozó falak magasságában.
 

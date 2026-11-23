@@ -1,7 +1,6 @@
 -- Ghost Objects: rebuild the per-tile entity lists from each entity's own tile.
 --
--- Based on Ghost Objects Fix by Monsterfish, relicensed by the author under
--- GPL-3.0 for inclusion in Interface and Visual Fixes. See CREDITS.md.
+-- Based on Ghost Objects Fix by Monsterfish, relicensed by the author under GPL-3.0.
 --
 -- The game keeps the small objects ("entities": flags, projectiles, dust and spray
 -- clouds, smoke, birds ...) of each tile in a linked list: a head word per tile and

@@ -5,12 +5,11 @@ contexts let CI check relocation and unsupported/occupied capabilities without
 redistributing game executables or assuming fixed bindings in production.
 """
 import json
-import re
 import struct
 from pathlib import Path
 
 import pytest
-from lua_support import LuaRuntime, framework_core
+from lua_support import LuaRuntime, aob, framework_core
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTEXTS = json.loads((ROOT / 'tests/fixtures/native-contexts.json').read_text())
@@ -32,18 +31,14 @@ def fixture(family='regular'):
     scans, allocations = [], []
 
     def scan(pattern):
-        regex = b''.join(b'.' if t == '?' else re.escape(bytes([int(t, 16)]))
-                         for t in pattern.split())
-        hits = list(re.finditer(regex, memory, re.S))
+        hits = list(aob(pattern).finditer(memory))
         # Offline uniqueness oracle, not an alternative production scanner.
         assert len(hits) == 1, (pattern, len(hits))
         scans.append(pattern)
         return BASE + hits[0].start()
 
     def scan_from(pattern, start, stop):
-        regex = b''.join(b'.' if t == '?' else re.escape(bytes([int(t, 16)]))
-                         for t in pattern.split())
-        match = re.compile(regex, re.S).search(memory, max(start-BASE, 0), stop-BASE)
+        match = aob(pattern).search(memory, max(start-BASE, 0), stop-BASE)
         return BASE + match.start() if match else 0
 
     framework_core(lua, {

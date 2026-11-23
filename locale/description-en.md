@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. Each can be switched on separately. Apply your settings and restart the game.
+Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7. Apply your settings and restart the game.
 
 - Keep custom map descriptions visible in the lobby.
 - Clear the building preview after successfully placing a unique building.
@@ -10,10 +10,6 @@ Optional fixes for SHC/SHCE 1.41 and UCP 3.0.7, all off by default. Each can be 
 - Show the existing Load button in the single-player lobby.
 - Improve cliff continuity after rotation and on diagonal steps.
 - Rebuild tile object lists so stray flags, stones and arrows stop appearing on the wrong tile.
-
-Front-facing steps use consecutive strips; receding steps use stable variation where overlap prevents continuity.
-
-Tower doors choose the highest eligible connection; nearest centre breaks ties. Outer doors move half a tile inward. AI stair6 alone allows a ground door; raised stairs do not count.
 
 Tower masonry with doors at the connecting wall heights.
 
