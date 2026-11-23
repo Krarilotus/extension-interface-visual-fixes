@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Opcionális javítások az SHC/SHCE 1.41-hez és az UCP 3.0.7-hez, alapértelmezés szerint mind kikapcsolva. Az "UCP3 Fixes" bővítmény bekapcsolja az előnézet-, fa-, toronyajtó- és sziklajavításokat; az "UCP3 Recommended" a két előszobai funkciót is bekapcsolja. Alkalmazd a beállításokat, majd indítsd újra a játékot.
+Opcionális javítások az SHC/SHCE 1.41-hez és az UCP 3.0.7-hez, alapértelmezés szerint mind kikapcsolva. Mindegyik külön bekapcsolható. Alkalmazd a beállításokat, majd indítsd újra a játékot.
 
 - Láthatóvá teszi az egyéni térképek leírását az előszobában.
 - Egyedi épület sikeres elhelyezése után eltünteti az építési előnézetet.

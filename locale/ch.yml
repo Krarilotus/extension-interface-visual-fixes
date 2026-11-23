@@ -22,6 +22,6 @@ cliff_texture_text: 旋转镜头后保持悬崖纹理连续
 cliff_texture_description: 旋转镜头时，让悬崖纹理在两个可见面上都保持衔接。使用当前纹理包。
 
 ghost_objects_text: 修复地块物体列表
-ghost_objects_description: 游戏为每个地块维护一份小型物体列表（旗帜、投射物、尘土、烟雾、飞鸟），并在对应地块上绘制。有时物体已被删除却仍残留在地块列表中，下一个复用该槽位的物体（旗帜、石块、箭矢等）就会同时在旧地块上显示并常常闪烁。本选项会依据每个物体的真实位置重建所有地块的列表。使用此修复前，请先关闭 Improved Siege Engines 中的滚油瞄准与滚油蔓延选项。
+ghost_objects_description: 错位的旗帜、石块和箭矢不再出现在错误的地块上（往往伴随闪烁）。使用此修复时，请关闭 Improved Siege Engines 中的滚油瞄准与滚油蔓延选项。
 ghost_objects_interval_text: 在刻循环的每第 N 步执行修复
-ghost_objects_interval_description: "N（1 至 200）：在游戏自身 200 刻循环的每第 N 步重建列表（第 0、N、2N 步等；若 N 不能整除 200，则循环重新开始前的最后一次间隔会更短）。该循环会随游戏一起保存，因此每位玩家和每个载入的存档都使用相同的计划。重建速度很快；数值越小，残影物体清除得越快。"
+ghost_objects_interval_description: "1 至 200。数值越小，错位物体清除得越快。"

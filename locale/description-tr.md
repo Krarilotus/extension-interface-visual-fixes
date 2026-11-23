@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-SHC/SHCE 1.41 ve UCP 3.0.7 için isteğe bağlı düzeltmeler; varsayılan olarak tümü kapalıdır. "UCP3 Fixes" eklentisi önizleme, ağaç, kule kapısı ve uçurum düzeltmelerini açar; "UCP3 Recommended" iki lobi özelliğini de açar. Ayarlarınızı uygulayıp oyunu yeniden başlatın.
+SHC/SHCE 1.41 ve UCP 3.0.7 için isteğe bağlı düzeltmeler; varsayılan olarak tümü kapalıdır. Her biri ayrı ayrı açılabilir. Ayarlarınızı uygulayıp oyunu yeniden başlatın.
 
 - Özel harita açıklamalarını lobide görünür tutar.
 - Benzersiz bir bina başarıyla yerleştirildiğinde inşa önizlemesini kaldırır.

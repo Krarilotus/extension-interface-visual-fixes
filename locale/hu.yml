@@ -23,6 +23,6 @@ cliff_texture_text: Sziklatextúrák illesztése forgatáskor
 cliff_texture_description: A kamera forgatása után is illeszti a sziklatextúrákat mindkét látható oldalon. A jelenlegi textúracsomagot használja.
 
 ghost_objects_text: Objektumlisták javítása
-ghost_objects_description: A játék minden mezőről listát vezet a rajta lévő apró objektumokról (zászlók, lövedékek, por, füst, madarak), és minden listát a saját mezőjén rajzol ki. Néha egy objektum úgy törlődik, hogy benne marad egy mező listájában, ezért a helyére lépő következő objektum (zászló, kő, nyíl...) ezen a régi mezőn is megjelenik, gyakran villogva. Ez a javítás az objektumok valós helye alapján újraépíti minden mező listáját. Használata előtt kapcsold ki az olajcélzás és olajterjedés beállításait az Improved Siege Engines modulban.
+ghost_objects_description: A kósza zászlók, kövek és nyilak többé nem jelennek meg, gyakran villogva, rossz mezőn. A javítás használatakor kapcsold ki az olajcélzás és olajterjedés beállításait az Improved Siege Engines modulban.
 ghost_objects_interval_text: Javítás a tick-ciklus minden N-edik lépésében
-ghost_objects_interval_description: "N, 1-től 200-ig: a listák a játék saját 200 tickes ciklusának minden N-edik lépésében épülnek újra (0., N., 2N. lépés és így tovább; ha N nem osztója a 200-nak, a ciklus újraindulása előtti utolsó időköz rövidebb). A ciklus a játékkal együtt mentődik, így minden játékos és minden betöltött mentés ugyanazt az ütemezést használja. Az újraépítés gyors; az alacsonyabb értékek hamarabb eltüntetik a szellemobjektumokat."
+ghost_objects_interval_description: "1-től 200-ig. Az alacsonyabb értékek hamarabb eltüntetik a kósza objektumokat."

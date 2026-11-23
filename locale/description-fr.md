@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Correctifs optionnels pour SHC/SHCE 1.41 et UCP 3.0.7, tous désactivés par défaut. Le plugin "UCP3 Fixes" active les correctifs d’aperçu, d’arbres, de portes de tour et de falaises ; "UCP3 Recommended" active aussi les deux fonctions du salon. Appliquez vos paramètres et redémarrez le jeu.
+Correctifs optionnels pour SHC/SHCE 1.41 et UCP 3.0.7, tous désactivés par défaut. Chacun peut être activé séparément. Appliquez vos paramètres et redémarrez le jeu.
 
 - Garde les descriptions des cartes personnalisées visibles dans le salon.
 - Efface l’aperçu après la construction réussie d’un bâtiment unique.

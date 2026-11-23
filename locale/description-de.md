@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Optionale Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7, alle standardmäßig deaktiviert. Das Plugin "UCP3 Fixes" aktiviert die Korrekturen für Vorschau, Bäume, Turmtüren und Klippen; "UCP3 Recommended" aktiviert zusätzlich die beiden Lobby-Funktionen. Einstellungen anwenden und das Spiel neu starten.
+Optionale Korrekturen für SHC/SHCE 1.41 und UCP 3.0.7, alle standardmäßig deaktiviert. Jede lässt sich einzeln einschalten. Einstellungen anwenden und das Spiel neu starten.
 
 - Eigene Kartenbeschreibungen bleiben in der Lobby sichtbar.
 - Nach erfolgreichem Bau eines einzigartigen Gebäudes verschwindet die Bauvorschau.

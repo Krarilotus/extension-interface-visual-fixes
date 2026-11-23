@@ -1,6 +1,6 @@
 # Interface and Visual Fixes
 
-Correcciones opcionales para SHC/SHCE 1.41 y UCP 3.0.7, todas desactivadas por defecto. El complemento "UCP3 Fixes" activa las correcciones de vista previa, árboles, puertas de torre y acantilados; "UCP3 Recommended" también activa las dos funciones de la sala. Aplica los ajustes y reinicia el juego.
+Correcciones opcionales para SHC/SHCE 1.41 y UCP 3.0.7, todas desactivadas por defecto. Cada una puede activarse por separado. Aplica los ajustes y reinicia el juego.
 
 - Mantiene visibles las descripciones de mapas personalizados en la sala.
 - Retira la vista previa tras construir correctamente un edificio único.
