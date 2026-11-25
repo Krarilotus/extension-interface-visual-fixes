@@ -24,6 +24,6 @@ cliff_texture_description: Préserve la continuité des textures sur les deux fa
 
 ghost_objects_text: Réparer les listes d'objets
 ghost_objects_description: |-
-  Les drapeaux, pierres et flèches égarés ne s'affichent plus, souvent en scintillant, sur la mauvaise case. Désactivez les options de visée et d'écoulement d'huile d'Improved Siege Engines lorsque vous utilisez ce correctif.
+  Les drapeaux, pierres et flèches égarés ne s'affichent plus, souvent en scintillant, sur la mauvaise case.
 ghost_objects_interval_text: Réparer à chaque N-ième étape du cycle de ticks
 ghost_objects_interval_description: "De 1 à 200. Des valeurs plus basses effacent les objets égarés plus tôt."

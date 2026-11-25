@@ -23,6 +23,6 @@ cliff_texture_text: Döndürürken uçurum dokularını birleştir
 cliff_texture_description: Kamera döndürüldüğünde uçurum dokularını görünen iki yüzde de birbirine bağlar. Mevcut doku paketini kullanır.
 
 ghost_objects_text: Nesne listelerini onar
-ghost_objects_description: Sahipsiz bayrak, taş ve oklar artık yanlış karede sıkça titreyerek görünmez. Bu düzeltmeyi kullanırken Improved Siege Engines içindeki yağ hedefleme ve yağ yayılma ayarlarını kapatın.
+ghost_objects_description: Sahipsiz bayrak, taş ve oklar artık yanlış karede sıkça titreyerek görünmez.
 ghost_objects_interval_text: Tik döngüsünün her N'inci adımında onar
 ghost_objects_interval_description: "1 ile 200 arasında. Daha düşük değerler sahipsiz nesneleri daha çabuk temizler."

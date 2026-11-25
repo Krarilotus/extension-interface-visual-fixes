@@ -129,11 +129,10 @@ the fix needs no extra save data. All players in a multiplayer game, and a repla
 is played back, need the same Ghost Objects switch and interval.
 
 Use only one Ghost Objects fix: this one or the standalone Ghost Objects Fix. Improved
-Siege Engines' oil aim and oil spread options change the same game function. If they, or
-the standalone fix, changed it first while Ghost Objects is on, **UCP stops at startup
-with an error** that names them; turn them off, or switch Ghost Objects off. If this
-module loads first, Improved Siege Engines turns its oil feature off with a warning in
-the log. The repair is not yet confirmed in game.
+Siege Engines' oil aim and oil spread options and Custom Projectiles hook the start of the
+same game function. In any load order, the module that hooks later passes on to the earlier
+hook, so all of them run. If another module changed that function start in any other way,
+Ghost Objects stays off with a warning in the log. The repair is not yet confirmed in game.
 
 ## Validation
 

@@ -1,5 +1,6 @@
-"""Ghost Objects: refusal of a changed, ambiguous or unexpected entity update, and
-the emitted tile-list rebuild on the game's tick cycle.
+"""Ghost Objects: chaining to another module's entity update redirect, refusal of an
+ambiguous or unexpected entity update, and the emitted tile-list rebuild on the
+game's tick cycle.
 
 The contexts are instruction fragments of the SHC/SHCE 1.41 reference executables
 (tests/fixtures/native-contexts.json).
@@ -20,7 +21,6 @@ CONTEXTS = json.loads((ROOT / 'tests/fixtures/native-contexts.json').read_text()
 EXPECTED = json.loads((ROOT / 'tests/fixtures/component-bindings.json').read_text())
 BASE, CAVE, STATE, STACK = 0x400000, 0x60000000, 0x03000000, 0x60100000
 TILES, STRIDE = 80400, 0xE8
-SIEGE_OPTIONS = r'improved-siegeengines\.oil\.aim and improved-siegeengines\.oil\.spread'
 
 
 def discovery(family='regular', change=None):
@@ -55,19 +55,29 @@ def enable(lua, config):
     module.enable(module, lua.table_from(config))
 
 
-def occupy_prologue(memory, chunks):
-    # What Improved Siegeengines' oil options leave behind: jmp rel32 / nop.
-    at = chunks['EntityUpdate']['address'] - BASE
-    memory[at:at+6] = b'\xe9\x10\x20\x30\x40\x90'
+def occupy_prologue(start):
+    def change(memory, chunks):
+        at = chunks['EntityUpdate']['address'] - BASE
+        memory[at:at+6] = start
+    return change
 
 
 @pytest.mark.parametrize('family', ('regular', 'extreme'))
-def test_changed_entity_update_is_refused_before_any_patch(family):
-    lua, allocations, writes = discovery(family, occupy_prologue)
-    config = {'ghost-objects': True, 'distinct-dead-tree-sprites': True}
-    with pytest.raises(Exception, match=SIEGE_OPTIONS):
-        enable(lua, config)
+def test_redirected_entity_update_is_chained_and_unknown_start_left_alone(family):
+    # What Improved Siegeengines' oil options and Custom Projectiles leave behind:
+    # jmp rel32 / nop. Ghost Objects continues into that redirect.
+    site = EXPECTED[family]['addresses']['EntityUpdate']
+    lua, allocations, writes = discovery(family, occupy_prologue(b'\xe9\x10\x20\x30\x40\x90'))
+    enable(lua, {'ghost-objects': True})
+    logs = [row[2] for row in lua.globals().test_logs.values()]
+    assert writes == [CAVE, site] and len(allocations) == 1
+    assert f'ghost objects: chained to the existing entity update redirect 0x{site + 5 + 0x40302010:08X}' in logs
+    # Any other start: Ghost Objects stays off with a warning and startup continues.
+    lua, allocations, writes = discovery(family, occupy_prologue(b'\xcc' * 6))
+    enable(lua, {'ghost-objects': True})
+    logs = [row[2] for row in lua.globals().test_logs.values()]
     assert allocations == [] and writes == []
+    assert 'ghost objects: another module changed the start of the entity update; Ghost Objects is off' in logs
 
 
 def copy_update(address):

@@ -23,6 +23,6 @@ cliff_texture_text: Conectar texturas de acantilados al girar
 cliff_texture_description: Mantiene la continuidad de las texturas en ambas caras visibles al girar la cámara. Usa el paquete de texturas actual.
 
 ghost_objects_text: Reparar listas de objetos
-ghost_objects_description: Las banderas, piedras y flechas sueltas ya no aparecen, a menudo parpadeando, en la casilla equivocada. Desactiva las opciones de apuntado y expansión de aceite de Improved Siege Engines al usar esta corrección.
+ghost_objects_description: Las banderas, piedras y flechas sueltas ya no aparecen, a menudo parpadeando, en la casilla equivocada.
 ghost_objects_interval_text: Reparar en cada paso N del ciclo de ticks
 ghost_objects_interval_description: "De 1 a 200. Valores más bajos eliminan antes los objetos sueltos."

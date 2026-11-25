@@ -244,15 +244,6 @@ function M.bytesAre(address, expected)
   end
   return true
 end
--- Improved Siegeengines' oil options (and the standalone Ghost Objects Fix) take
--- the same prologue. Refuse instead of jumping into another extension's code.
-function M.requireOriginalEntityUpdate()
-  if not M.bytesAre(A.EntityUpdate, M.ENTITY_UPDATE_PROLOGUE) then
-    error("Interface and Visual Fixes: interface-visual-fixes.ghost-objects requires the original entity update. "
-      .. "Disable the improved-siegeengines.oil.aim and improved-siegeengines.oil.spread options "
-      .. "(and the separate ghost-objects-fix module, if installed) or switch off Ghost Objects.")
-  end
-end
 -- End of the game image's section that contains a matched code address, read
 -- from the image's own PE headers (found by AOB, checked by their ImageBase).
 -- Nil if the headers do not describe this image or no section contains it.
@@ -321,7 +312,6 @@ function M.prepare(config)
     expect(M.bytesAre(A.SeagullRemoval + 0x40, {0x81, 0xF9}), true, "entity slot count")
     expect(A.EntityByteHeads - A.EntityWordHeads, M.ENTITY_TILES * 2, "entity tile heads")
     expect(A.EntitySlots >= 100 and A.EntitySlots <= 20000, true, "entity slot count")
-    M.requireOriginalEntityUpdate()
   end
 end
 return M

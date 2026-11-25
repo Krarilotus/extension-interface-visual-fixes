@@ -15,6 +15,10 @@
 -- game and identical for every player, so the schedule needs no extension save data
 -- and is the same after loading a save, in multiplayer and in replays (given the
 -- same setting).
+--
+-- Improved Siegeengines' oil options and Custom Projectiles redirect the same
+-- prologue (jmp rel32 / nop) and run it in their own code. Whichever module comes
+-- first, the later one jumps on to the earlier redirect.
 local layout = require("native-layout")
 local A = layout.addresses
 local M = {}
@@ -29,11 +33,32 @@ local function interval(config)
   return math.max(1, math.min(MAX_INTERVAL, math.floor(value)))
 end
 
+-- Where the stub continues: the displaced prologue, or another module's redirect.
+local function continuation(site)
+  if layout.bytesAre(site, layout.ENTITY_UPDATE_PROLOGUE) then
+    return [[
+    push ecx
+    push ebx
+    push ebp
+    push esi
+    mov esi, ecx
+    jmp EntityUpdateResume]]
+  end
+  if layout.bytesAre(site, {0xE9}) and layout.bytesAre(site + 5, {0x90}) then
+    local target = (site + 5 + core.readInteger(site + 1)) & 0xFFFFFFFF
+    log(INFO, string.format("ghost objects: chained to the existing entity update redirect 0x%08X", target))
+    return string.format("jmp %d", target)
+  end
+end
+
 function M.enable(config)
-  -- Bindings and checks ran in the shared preflight; recheck the prologue right
-  -- before writing it.
+  -- Bindings and checks ran in the shared preflight.
   local site = A.EntityUpdate
-  layout.requireOriginalEntityUpdate()
+  local tail = continuation(site)
+  if not tail then
+    log(WARNING, "ghost objects: another module changed the start of the entity update; Ghost Objects is off")
+    return
+  end
   local every = interval(config)
   local tiles = layout.ENTITY_TILES
   local stub = layout.allocateAssembly(string.format([[
@@ -88,13 +113,8 @@ function M.enable(config)
   ghost_done:
     popfd
     popad
-    push ecx
-    push ebx
-    push ebp
-    push esi
-    mov esi, ecx
-    jmp EntityUpdateResume
-  ]], every, tiles // 2, tiles // 4, tiles, BYTE_IDS))
+%s
+  ]], every, tiles // 2, tiles // 4, tiles, BYTE_IDS, tail))
   core.writeCode(site, {core.jmpTo(stub), 0x90})
   log(INFO, string.format("ghost objects: tile object lists rebuilt every %d ticks of the game's tick cycle (%d slots)",
     every, A.EntitySlots))

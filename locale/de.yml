@@ -21,6 +21,6 @@ cliff_texture_text: Klippen-Texturen beim Drehen verbinden
 cliff_texture_description: Verbindet Klippen-Texturen auf beiden sichtbaren Seiten auch nach dem Drehen der Kamera. Verwendet das aktuelle Texturpaket.
 
 ghost_objects_text: Objektlisten reparieren
-ghost_objects_description: Verirrte Flaggen, Steine und Pfeile erscheinen nicht mehr, oft flackernd, auf dem falschen Feld. Deaktiviere bei der Nutzung dieses Fixes die Optionen zum Ölzielen und zur Ölausbreitung in Improved Siege Engines.
+ghost_objects_description: Verirrte Flaggen, Steine und Pfeile erscheinen nicht mehr, oft flackernd, auf dem falschen Feld.
 ghost_objects_interval_text: Bei jedem N-ten Schritt des Tick-Zyklus reparieren
 ghost_objects_interval_description: "Von 1 bis 200. Kleinere Werte entfernen verirrte Objekte schneller."

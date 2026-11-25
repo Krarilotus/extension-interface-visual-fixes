@@ -23,6 +23,6 @@ cliff_texture_text: Sziklatextúrák illesztése forgatáskor
 cliff_texture_description: A kamera forgatása után is illeszti a sziklatextúrákat mindkét látható oldalon. A jelenlegi textúracsomagot használja.
 
 ghost_objects_text: Objektumlisták javítása
-ghost_objects_description: A kósza zászlók, kövek és nyilak többé nem jelennek meg, gyakran villogva, rossz mezőn. A javítás használatakor kapcsold ki az olajcélzás és olajterjedés beállításait az Improved Siege Engines modulban.
+ghost_objects_description: A kósza zászlók, kövek és nyilak többé nem jelennek meg, gyakran villogva, rossz mezőn.
 ghost_objects_interval_text: Javítás a tick-ciklus minden N-edik lépésében
 ghost_objects_interval_description: "1-től 200-ig. Az alacsonyabb értékek hamarabb eltüntetik a kósza objektumokat."
