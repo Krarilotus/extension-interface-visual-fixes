@@ -244,23 +244,34 @@ function M.bytesAre(address, expected)
   end
   return true
 end
--- End of the game image's section that contains a matched code address, read
--- from the image's own PE headers (found by AOB, checked by their ImageBase).
--- Nil if the headers do not describe this image or no section contains it.
-function M.codeSectionEnd(address)
+-- The game image's PE header (found by AOB, checked by its ImageBase), or nil.
+local function peHeader()
   local base = A.ImageBase
   local offset = core.readInteger(base + 0x3C)
   if offset <= 0 or offset >= 0x1000 then return nil end
   local pe = base + offset
   if core.readInteger(pe) ~= 0x4550 or core.readInteger(pe + 0x34) ~= base then return nil end
+  return pe
+end
+-- Start and end of the game image's section that contains a matched code address.
+-- Nil if the headers do not describe this image or no section contains it.
+function M.codeSection(address)
+  local pe = peHeader()
+  if not pe then return nil end
   local count = core.readInteger(pe + 4) >> 16 & 0xFFFF
   local first = pe + 0x18 + (core.readInteger(pe + 0x14) & 0xFFFF)
   for i = 0, count - 1 do
-    local start = base + core.readInteger(first + i * 40 + 12)
+    local start = A.ImageBase + core.readInteger(first + i * 40 + 12)
     local stop = start + core.readInteger(first + i * 40 + 8)
-    if address >= start and address < stop then return stop end
+    if address >= start and address < stop then return start, stop end
   end
   return nil
+end
+-- True if an address lies outside the null region and the whole game image.
+function M.outsideGameImage(address)
+  local pe = peHeader()
+  if not pe or address < 0x10000 then return false end
+  return address < A.ImageBase or address >= A.ImageBase + core.readInteger(pe + 0x50)
 end
 function M.prepare(config)
   for option, names in pairs(required) do
@@ -300,12 +311,12 @@ function M.prepare(config)
   if config["ghost-objects"] == true then
     -- The patch site must be the only copy of the entity update in the game's code
     -- section. Copies of code bytes elsewhere (heap buffers) are not game code.
-    local codeEnd = M.codeSectionEnd(A.EntityUpdateBody)
-    if not codeEnd then
+    local codeStart, codeEnd = M.codeSection(A.EntityUpdateBody)
+    if not codeStart then
       error("Interface and Visual Fixes: unsupported or occupied native capability entity update section")
     end
-    local duplicate = core.scanForAOB(P.EntityUpdate, A.EntityUpdateBody + 1, codeEnd)
-    if duplicate and duplicate ~= 0 then
+    local later = core.scanForAOB(P.EntityUpdate, A.EntityUpdateBody + 1, codeEnd)
+    if core.scanForAOB(P.EntityUpdate, codeStart, codeEnd) ~= A.EntityUpdateBody or (later and later ~= 0) then
       error("Interface and Visual Fixes: ambiguous native capability entity update")
     end
     expect(M.bytesAre(A.EntityTileWalker + 0x74, {0x0F, 0xBF, 0x14, 0x45}), true, "entity word heads")

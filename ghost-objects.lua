@@ -17,8 +17,9 @@
 -- same setting).
 --
 -- Improved Siegeengines' oil options and Custom Projectiles redirect the same
--- prologue (jmp rel32 / nop) and run it in their own code. Whichever module comes
--- first, the later one jumps on to the earlier redirect.
+-- prologue (jmp rel32 / nop) to their own code, which runs the original prologue
+-- or the handler it replaced. Ghost Objects, when it comes later, jumps on to an
+-- earlier redirect whose target lies outside the game image.
 local layout = require("native-layout")
 local A = layout.addresses
 local M = {}
@@ -46,6 +47,7 @@ local function continuation(site)
   end
   if layout.bytesAre(site, {0xE9}) and layout.bytesAre(site + 5, {0x90}) then
     local target = (site + 5 + core.readInteger(site + 1)) & 0xFFFFFFFF
+    if not layout.outsideGameImage(target) then return nil end
     log(INFO, string.format("ghost objects: chained to the existing entity update redirect 0x%08X", target))
     return string.format("jmp %d", target)
   end
@@ -57,7 +59,7 @@ function M.enable(config)
   local tail = continuation(site)
   if not tail then
     log(WARNING, "ghost objects: another module changed the start of the entity update; Ghost Objects is off")
-    return
+    return false
   end
   local every = interval(config)
   local tiles = layout.ENTITY_TILES

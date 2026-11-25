@@ -72,12 +72,16 @@ def test_redirected_entity_update_is_chained_and_unknown_start_left_alone(family
     logs = [row[2] for row in lua.globals().test_logs.values()]
     assert writes == [CAVE, site] and len(allocations) == 1
     assert f'ghost objects: chained to the existing entity update redirect 0x{site + 5 + 0x40302010:08X}' in logs
-    # Any other start: Ghost Objects stays off with a warning and startup continues.
-    lua, allocations, writes = discovery(family, occupy_prologue(b'\xcc' * 6))
-    enable(lua, {'ghost-objects': True})
-    logs = [row[2] for row in lua.globals().test_logs.values()]
-    assert allocations == [] and writes == []
-    assert 'ghost objects: another module changed the start of the entity update; Ghost Objects is off' in logs
+    assert 'installed ghost-objects' in logs
+    # Any other start, or a jump into the game image (here past the prologue) or the
+    # null region: Ghost Objects stays off with a warning and startup continues.
+    for start in (b'\xcc' * 6, b'\xe9\x01\x00\x00\x00\x90', b'\xe9' + struct.pack('<i', 0x1000 - site - 5) + b'\x90'):
+        lua, allocations, writes = discovery(family, occupy_prologue(start))
+        enable(lua, {'ghost-objects': True})
+        logs = [row[2] for row in lua.globals().test_logs.values()]
+        assert allocations == [] and writes == []
+        assert 'ghost objects: another module changed the start of the entity update; Ghost Objects is off' in logs
+        assert 'installed ghost-objects' not in logs
 
 
 def copy_update(address):

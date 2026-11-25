@@ -23,8 +23,9 @@ return {
     if #active > 0 then require("native-layout").prepare(config) end
     for _, feature in ipairs(active) do
       log(INFO, "installing " .. feature[1])
-      require(feature[2]).enable(config)
-      log(INFO, "installed " .. feature[1])
+      if require(feature[2]).enable(config) ~= false then
+        log(INFO, "installed " .. feature[1])
+      end
     end
     enabled = true
     log(INFO, "startup complete; diagnostics are startup-only, not a crash dump")
