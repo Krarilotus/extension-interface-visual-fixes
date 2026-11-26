@@ -9,17 +9,15 @@
 -- reaches it; the next entity created in that slot (a tower flag, a stone, an
 -- arrow) is then drawn on the old tile too. Saved games and maps keep the tangle.
 --
--- At the start of the entity update, whenever the game's own 0-199 tick cycle is a
--- multiple of the interval, rebuild all lists from the tile each living entity
--- stands on. Nothing walks a list at that moment. The tick cycle is saved with the
--- game and identical for every player, so the schedule needs no extension save data
--- and is the same after loading a save, in multiplayer and in replays (given the
+-- Where the entity update starts its slot loop, whenever the game's own 0-199 tick
+-- cycle is a multiple of the interval, rebuild all lists from the tile each living
+-- entity stands on. Nothing walks a list at that moment. The tick cycle is saved with
+-- the game and identical for every player, so the schedule needs no extension save
+-- data and is the same after loading a save, in multiplayer and in replays (given the
 -- same setting).
 --
--- Improved Siegeengines' oil options and Custom Projectiles redirect the same
--- prologue (jmp rel32 / nop) to their own code, which runs the original prologue
--- or the handler it replaced. Ghost Objects, when it comes later, jumps on to an
--- earlier redirect whose target lies outside the game image.
+-- Improved Siegeengines' oil options and Custom Projectiles redirect the entity
+-- update's prologue; this fix leaves the prologue to them.
 local layout = require("native-layout")
 local A = layout.addresses
 local M = {}
@@ -34,39 +32,13 @@ local function interval(config)
   return math.max(1, math.min(MAX_INTERVAL, math.floor(value)))
 end
 
--- Where the stub continues: the displaced prologue, or another module's redirect.
-local function continuation(site)
-  if layout.bytesAre(site, layout.ENTITY_UPDATE_PROLOGUE) then
-    return [[
-    push ecx
-    push ebx
-    push ebp
-    push esi
-    mov esi, ecx
-    jmp EntityUpdateResume]]
-  end
-  if layout.bytesAre(site, {0xE9}) and layout.bytesAre(site + 5, {0x90}) then
-    local target = (site + 5 + core.readInteger(site + 1)) & 0xFFFFFFFF
-    if not layout.outsideGameImage(target) then return nil end
-    log(INFO, string.format("ghost objects: chained to the existing entity update redirect 0x%08X", target))
-    return string.format("jmp %d", target)
-  end
-end
-
 function M.enable(config)
-  -- Bindings and checks ran in the shared preflight.
-  local site = A.EntityUpdate
-  local tail = continuation(site)
-  if not tail then
-    log(WARNING, "ghost objects: another module changed the start of the entity update; Ghost Objects is off")
-    return false
-  end
   local every = interval(config)
   local tiles = layout.ENTITY_TILES
   local stub = layout.allocateAssembly(string.format([[
     pushad
     pushfd
-    mov ebx, ecx
+    mov ebx, esi
     mov eax, [EntityTick]
     xor edx, edx
     mov ecx, %d
@@ -115,9 +87,10 @@ function M.enable(config)
   ghost_done:
     popfd
     popad
-%s
-  ]], every, tiles // 2, tiles // 4, tiles, BYTE_IDS, tail))
-  core.writeCode(site, {core.jmpTo(stub), 0x90})
+    mov ebx, 1
+    jmp EntityLoopResume
+  ]], every, tiles // 2, tiles // 4, tiles, BYTE_IDS))
+  core.writeCode(A.EntityLoopStart, {core.jmpTo(stub)})
   log(INFO, string.format("ghost objects: tile object lists rebuilt every %d ticks of the game's tick cycle (%d slots)",
     every, A.EntitySlots))
 end

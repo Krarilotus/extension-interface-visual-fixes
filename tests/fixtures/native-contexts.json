@@ -178,7 +178,7 @@
     },
     "EntityUpdate": {
       "address": 4229056,
-      "bytes": "51 53 55 56 8b f1 8b 0d 5c c9 1b 01 b8 67 66 66 66 f7 e9 c1 fa 02 8b c2 c1 e8 1f 03 c2 8d 04 80 03 c0 2b c8 75 07 c7 46 08 19 00 00 00"
+      "bytes": "51 53 55 56 8b f1 8b 0d 5c c9 1b 01 b8 67 66 66 66 f7 e9 c1 fa 02 8b c2 c1 e8 1f 03 c2 8d 04 80 03 c0 2b c8 75 07 c7 46 08 19 00 00 00 bb 01 00 00 00"
     },
     "EntityTileWalker": {
       "address": 4199520,
@@ -372,7 +372,7 @@
     },
     "EntityUpdate": {
       "address": 4229072,
-      "bytes": "51 53 55 56 8b f1 8b 0d 4c 14 29 01 b8 67 66 66 66 f7 e9 c1 fa 02 8b c2 c1 e8 1f 03 c2 8d 04 80 03 c0 2b c8 75 07 c7 46 08 19 00 00 00"
+      "bytes": "51 53 55 56 8b f1 8b 0d 4c 14 29 01 b8 67 66 66 66 f7 e9 c1 fa 02 8b c2 c1 e8 1f 03 c2 8d 04 80 03 c0 2b c8 75 07 c7 46 08 19 00 00 00 bb 01 00 00 00"
     },
     "EntityTileWalker": {
       "address": 4199520,

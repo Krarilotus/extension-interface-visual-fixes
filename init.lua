@@ -20,10 +20,11 @@ return {
         active[#active+1] = feature
       end
     end
-    if #active > 0 then require("native-layout").prepare(config) end
+    local off = #active > 0 and require("native-layout").prepare(config) or {}
     for _, feature in ipairs(active) do
-      log(INFO, "installing " .. feature[1])
-      if require(feature[2]).enable(config) ~= false then
+      if not off[feature[1]] then
+        log(INFO, "installing " .. feature[1])
+        require(feature[2]).enable(config)
         log(INFO, "installed " .. feature[1])
       end
     end

@@ -130,9 +130,10 @@ is played back, need the same Ghost Objects switch and interval.
 
 Use only one Ghost Objects fix: this one or the standalone Ghost Objects Fix. Improved
 Siege Engines' oil aim and oil spread options and Custom Projectiles hook the start of the
-same game function. In any load order, the module that hooks later passes on to the earlier
-hook, so all of them run. If another module changed that function start in any other way,
-Ghost Objects stays off with a warning in the log. The repair is not yet confirmed in game.
+same game function; Ghost Objects hooks a later point in it, so all of them run in any load
+order. If that point is changed or the game function is not found unambiguously, Ghost
+Objects stays off with a warning in the log and the other fixes still install. The repair
+is not yet confirmed in game.
 
 ## Validation
 

@@ -156,10 +156,12 @@ bindings.TreeFrame = function() return core.readInteger(A.TreeFrameLoad + 2) end
 bindings.TreeStage = function() return A.TreeFrame + 0x80 end
 bindings.TreeFelling = function() return A.TreeFrame + 0x76 end
 bindings.TreeKind = function() return A.TreeFrame + 0x46 end
--- Entity update (Ghost Objects). The 6-byte prologue precedes the matched body.
+-- Entity update (Ghost Objects). The matched body follows the 6-byte prologue, which
+-- other modules redirect. The 5-byte `mov ebx, 1` after it starts the slot loop and
+-- is the target of the body's first branch.
 bindings.EntityUpdateBody = function() return scan("EntityUpdate") end
-bindings.EntityUpdate = function() return A.EntityUpdateBody - 6 end
-bindings.EntityUpdateResume = function() return A.EntityUpdate + 6 end
+bindings.EntityLoopStart = function() return A.EntityUpdateBody + 39 end
+bindings.EntityLoopResume = function() return A.EntityLoopStart + 5 end
 -- GameStateStructures.gameTicksLoadBalancer, read by the entity update itself:
 -- the game's 0-199 tick cycle, saved with the game.
 bindings.EntityTick = function() return core.readInteger(A.EntityUpdateBody + 2) end
@@ -231,12 +233,12 @@ local required = {
     "ImageData", "TileRows",
   },
   ["ghost-objects"] = {
-    "EntityUpdateBody", "EntityUpdate", "EntityUpdateResume", "EntityTick", "EntityTileWalker",
+    "EntityUpdateBody", "EntityLoopStart", "EntityLoopResume", "EntityTick", "EntityTileWalker",
     "EntityByteHeads", "EntityWordHeads", "SeagullRemoval", "EntitySlots", "ImageBase",
   },
 }
--- The original entity update prologue: push ecx/ebx/ebp/esi, mov esi, ecx.
-M.ENTITY_UPDATE_PROLOGUE = {0x51, 0x53, 0x55, 0x56, 0x8B, 0xF1}
+-- mov ebx, 1
+M.ENTITY_LOOP_START = {0xBB, 0x01, 0x00, 0x00, 0x00}
 M.ENTITY_TILES = 80400 -- 400 x 400 diamond
 function M.bytesAre(address, expected)
   for i, byte in ipairs(expected) do
@@ -244,40 +246,35 @@ function M.bytesAre(address, expected)
   end
   return true
 end
--- The game image's PE header (found by AOB, checked by its ImageBase), or nil.
-local function peHeader()
+-- Start and end of the game image's executable section that contains a matched code
+-- address, read from the image's own PE headers (found by AOB, checked by their
+-- ImageBase). Nil if the headers do not describe this image or no such section exists.
+function M.codeSection(address)
   local base = A.ImageBase
   local offset = core.readInteger(base + 0x3C)
   if offset <= 0 or offset >= 0x1000 then return nil end
   local pe = base + offset
   if core.readInteger(pe) ~= 0x4550 or core.readInteger(pe + 0x34) ~= base then return nil end
-  return pe
-end
--- Start and end of the game image's section that contains a matched code address.
--- Nil if the headers do not describe this image or no section contains it.
-function M.codeSection(address)
-  local pe = peHeader()
-  if not pe then return nil end
   local count = core.readInteger(pe + 4) >> 16 & 0xFFFF
   local first = pe + 0x18 + (core.readInteger(pe + 0x14) & 0xFFFF)
   for i = 0, count - 1 do
-    local start = A.ImageBase + core.readInteger(first + i * 40 + 12)
-    local stop = start + core.readInteger(first + i * 40 + 8)
-    if address >= start and address < stop then return start, stop end
+    local header = first + i * 40
+    local start = base + core.readInteger(header + 12)
+    local stop = start + core.readInteger(header + 8)
+    if address >= start and address < stop then
+      if core.readInteger(header + 36) & 0x20000000 == 0 then return nil end
+      return start, stop
+    end
   end
   return nil
 end
--- True if an address lies outside the null region and the whole game image.
-function M.outsideGameImage(address)
-  local pe = peHeader()
-  if not pe or address < 0x10000 then return false end
-  return address < A.ImageBase or address >= A.ImageBase + core.readInteger(pe + 0x50)
-end
+-- Returns the options it turned off; any other unsupported capability stops startup.
 function M.prepare(config)
-  for option, names in pairs(required) do
-    if config[option] == true then
-      for _, name in ipairs(names) do assert(A[name], name) end
-    end
+  local function bind(option)
+    for _, name in ipairs(required[option]) do assert(A[name], name) end
+  end
+  for option in pairs(required) do
+    if config[option] == true and option ~= "ghost-objects" then bind(option) end
   end
   local function expect(actual, expected, capability)
     if actual ~= expected then
@@ -308,21 +305,31 @@ function M.prepare(config)
     expect(core.readInteger(A.CliffOffsetSource + 9), A.ImageOffsets, "offset cliff primary offsets")
     expect(core.readInteger(A.CliffOffsetSource + 25), A.ImageOffsets, "offset cliff secondary offsets")
   end
+  local off = {}
   if config["ghost-objects"] == true then
-    -- The patch site must be the only copy of the entity update in the game's code
-    -- section. Copies of code bytes elsewhere (heap buffers) are not game code.
-    local codeStart, codeEnd = M.codeSection(A.EntityUpdateBody)
-    if not codeStart then
-      error("Interface and Visual Fixes: unsupported or occupied native capability entity update section")
+    local ok, err = pcall(function()
+      bind("ghost-objects")
+      -- The patch site must be the only copy of the entity update in the game's code
+      -- section. Copies of code bytes elsewhere (heap buffers) are not game code.
+      local codeStart, codeEnd = M.codeSection(A.EntityUpdateBody)
+      if not codeStart then
+        error("Interface and Visual Fixes: unsupported or occupied native capability entity update section")
+      end
+      local later = core.scanForAOB(P.EntityUpdate, A.EntityUpdateBody + 1, codeEnd)
+      if core.scanForAOB(P.EntityUpdate, codeStart, codeEnd) ~= A.EntityUpdateBody or (later and later ~= 0) then
+        error("Interface and Visual Fixes: ambiguous native capability entity update")
+      end
+      expect(M.bytesAre(A.EntityLoopStart, M.ENTITY_LOOP_START), true, "entity update loop")
+      expect(M.bytesAre(A.EntityTileWalker + 0x74, {0x0F, 0xBF, 0x14, 0x45}), true, "entity word heads")
+      expect(M.bytesAre(A.SeagullRemoval + 0x40, {0x81, 0xF9}), true, "entity slot count")
+      expect(A.EntityByteHeads - A.EntityWordHeads, M.ENTITY_TILES * 2, "entity tile heads")
+      expect(A.EntitySlots >= 100 and A.EntitySlots <= 20000, true, "entity slot count")
+    end)
+    if not ok then
+      off["ghost-objects"] = true
+      log(WARNING, "ghost objects: " .. tostring(err):gsub("^.-:%d+: ", "") .. "; Ghost Objects is off")
     end
-    local later = core.scanForAOB(P.EntityUpdate, A.EntityUpdateBody + 1, codeEnd)
-    if core.scanForAOB(P.EntityUpdate, codeStart, codeEnd) ~= A.EntityUpdateBody or (later and later ~= 0) then
-      error("Interface and Visual Fixes: ambiguous native capability entity update")
-    end
-    expect(M.bytesAre(A.EntityTileWalker + 0x74, {0x0F, 0xBF, 0x14, 0x45}), true, "entity word heads")
-    expect(M.bytesAre(A.SeagullRemoval + 0x40, {0x81, 0xF9}), true, "entity slot count")
-    expect(A.EntityByteHeads - A.EntityWordHeads, M.ENTITY_TILES * 2, "entity tile heads")
-    expect(A.EntitySlots >= 100 and A.EntitySlots <= 20000, true, "entity slot count")
   end
+  return off
 end
 return M

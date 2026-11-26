@@ -113,7 +113,7 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
         0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE, *cliff_source.PATTERNS,
-        0x4087c0,
+        0x4087ed,
     }
     before = list(writes)
     logs = [row[2] for row in lua.globals().test_logs.values()]

@@ -1,6 +1,6 @@
-"""Ghost Objects: chaining to another module's entity update redirect, refusal of an
-ambiguous or unexpected entity update, and the emitted tile-list rebuild on the
-game's tick cycle.
+"""Ghost Objects: independence from other modules' entity update redirects, refusal
+of an ambiguous or unexpected entity update, and the emitted tile-list rebuild on
+the game's tick cycle.
 
 The contexts are instruction fragments of the SHC/SHCE 1.41 reference executables
 (tests/fixtures/native-contexts.json).
@@ -55,33 +55,39 @@ def enable(lua, config):
     module.enable(module, lua.table_from(config))
 
 
-def occupy_prologue(start):
+def occupy(offset, data):
     def change(memory, chunks):
-        at = chunks['EntityUpdate']['address'] - BASE
-        memory[at:at+6] = start
+        at = chunks['EntityUpdate']['address'] - BASE + offset
+        memory[at:at+len(data)] = data
     return change
 
 
+def ghost_logs(lua):
+    return [row[2] for row in lua.globals().test_logs.values()]
+
+
+OFF = ('ghost objects: Interface and Visual Fixes: inconsistent or occupied native capability '
+       'entity update loop; Ghost Objects is off')
+
+
 @pytest.mark.parametrize('family', ('regular', 'extreme'))
-def test_redirected_entity_update_is_chained_and_unknown_start_left_alone(family):
-    # What Improved Siegeengines' oil options and Custom Projectiles leave behind:
-    # jmp rel32 / nop. Ghost Objects continues into that redirect.
-    site = EXPECTED[family]['addresses']['EntityUpdate']
-    lua, allocations, writes = discovery(family, occupy_prologue(b'\xe9\x10\x20\x30\x40\x90'))
-    enable(lua, {'ghost-objects': True})
-    logs = [row[2] for row in lua.globals().test_logs.values()]
-    assert writes == [CAVE, site] and len(allocations) == 1
-    assert f'ghost objects: chained to the existing entity update redirect 0x{site + 5 + 0x40302010:08X}' in logs
-    assert 'installed ghost-objects' in logs
-    # Any other start, or a jump into the game image (here past the prologue) or the
-    # null region: Ghost Objects stays off with a warning and startup continues.
-    for start in (b'\xcc' * 6, b'\xe9\x01\x00\x00\x00\x90', b'\xe9' + struct.pack('<i', 0x1000 - site - 5) + b'\x90'):
-        lua, allocations, writes = discovery(family, occupy_prologue(start))
+def test_redirected_prologue_is_left_alone_and_occupied_loop_start_turns_only_ghost_objects_off(family):
+    # What Improved Siegeengines' oil options and Custom Projectiles leave behind at the
+    # prologue (jmp rel32 / nop), or any other start: Ghost Objects patches only the
+    # loop start after the matched body.
+    site = EXPECTED[family]['addresses']['EntityLoopStart']
+    for start in (b'\xe9\x10\x20\x30\x40\x90', b'\xcc' * 6):
+        lua, allocations, writes = discovery(family, occupy(0, start))
         enable(lua, {'ghost-objects': True})
-        logs = [row[2] for row in lua.globals().test_logs.values()]
-        assert allocations == [] and writes == []
-        assert 'ghost objects: another module changed the start of the entity update; Ghost Objects is off' in logs
-        assert 'installed ghost-objects' not in logs
+        assert writes == [CAVE, site] and len(allocations) == 1
+        assert 'installed ghost-objects' in ghost_logs(lua)
+    # A changed loop start: Ghost Objects stays off with a warning and startup continues.
+    lua, allocations, writes = discovery(family, occupy(45, b'\xe9\x01\x00\x00\x00'))
+    enable(lua, {'ghost-objects': True, 'distinct-dead-tree-sprites': True})
+    logs = ghost_logs(lua)
+    assert site not in writes and len(allocations) == 1
+    assert OFF in logs and 'installed ghost-objects' not in logs
+    assert 'installed distinct-dead-tree-sprites' in logs and logs[-1].startswith('startup complete;')
 
 
 def copy_update(address):
@@ -108,11 +114,13 @@ def head_distance(memory, chunks):
     (short_code_section, 'unsupported or occupied native capability entity update section'),
     (head_distance, 'inconsistent or occupied native capability entity tile heads'),
 ))
-def test_unexpected_layout_is_refused_before_any_patch(change, message):
+def test_unexpected_layout_turns_only_ghost_objects_off_before_any_patch(change, message):
     lua, allocations, writes = discovery('regular', change)
-    with pytest.raises(Exception, match=message):
-        enable(lua, {'ghost-objects': True})
+    enable(lua, {'ghost-objects': True})
+    logs = ghost_logs(lua)
     assert allocations == [] and writes == []
+    assert f'ghost objects: Interface and Visual Fixes: {message}; Ghost Objects is off' in logs
+    assert 'installed ghost-objects' not in logs and logs[-1].startswith('startup complete;')
 
 
 @pytest.mark.parametrize('family', ('regular', 'extreme'))
@@ -120,7 +128,7 @@ def test_copy_outside_the_code_section_is_not_ambiguous(family):
     # A copy of the code bytes in data or heap memory is not a second entity update.
     lua, allocations, writes = discovery(family, copy_update(0x5F0000))
     enable(lua, {'ghost-objects': True})
-    assert writes == [CAVE, EXPECTED[family]['addresses']['EntityUpdate']] and len(allocations) == 1
+    assert writes == [CAVE, EXPECTED[family]['addresses']['EntityLoopStart']] and len(allocations) == 1
 
 
 # --- Emitted stub -----------------------------------------------------------------
@@ -147,8 +155,8 @@ def emit(family, config):
         'readByte': lambda at: original[at - update['address']],
     })
     lua.execute((ROOT / 'ghost-objects.lua').read_text()).enable(lua.table_from(config))
-    assert len(allocations) == 1 and [at for at, _ in writes] == [CAVE, A['EntityUpdate']]
-    assert len(writes[1][1]) == 6 and writes[1][1][:1] == b'\xe9' and writes[1][1][5:] == b'\x90'
+    assert len(allocations) == 1 and [at for at, _ in writes] == [CAVE, A['EntityLoopStart']]
+    assert len(writes[1][1]) == 5 and writes[1][1][:1] == b'\xe9'
     logs = [row[2] for row in lua.globals().test_logs.values()]
     return writes, original, logs
 
@@ -208,9 +216,10 @@ def run(family, world, tick, config, flags=0x0A93 & ~0x400):
     A = world.A
     writes, original, logs = emit(family, config)
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
-    site = A['EntityUpdate']
-    uc.mem_map(site & ~0xFFF, 0x2000)
-    uc.mem_write(site, original)
+    site = A['EntityLoopStart']
+    update = CONTEXTS[family]['EntityUpdate']['address']
+    uc.mem_map(update & ~0xFFF, 0x2000)
+    uc.mem_write(update, original)
     uc.mem_map(CAVE, 0x1000)
     uc.mem_map(STACK - 0x1000, 0x2000)
     heads = A['EntityWordHeads'] & ~0xFFF
@@ -224,8 +233,8 @@ def run(family, world, tick, config, flags=0x0A93 & ~0x400):
     uc.mem_write(A['EntityByteHeads'], bytes(world.bytes))
     uc.mem_write(A['EntityTick'], struct.pack('<i', tick))
     uc.mem_write(STATE, bytes(world.records))
-    registers = {UC_X86_REG_EAX: 0x11111111, UC_X86_REG_EBX: 0x22222222, UC_X86_REG_ECX: STATE,
-                 UC_X86_REG_EDX: 0x44444444, UC_X86_REG_ESI: 0x55555555, UC_X86_REG_EDI: 0x66666666,
+    registers = {UC_X86_REG_EAX: 0x11111111, UC_X86_REG_EBX: 0x22222222, UC_X86_REG_ECX: 0x33333333,
+                 UC_X86_REG_EDX: 0x44444444, UC_X86_REG_ESI: STATE, UC_X86_REG_EDI: 0x66666666,
                  UC_X86_REG_EBP: 0x77777777, UC_X86_REG_ESP: STACK, UC_X86_REG_EFLAGS: flags}
     for reg, value in registers.items():
         uc.reg_write(reg, value)
@@ -235,17 +244,12 @@ def run(family, world, tick, config, flags=0x0A93 & ~0x400):
                (STATE, STATE + len(world.records)), (STACK - 0x100, STACK))
     uc.hook_add(UC_HOOK_MEM_WRITE, lambda _u, _a, at, size, _v, _d: stray.append(at) if not any(
         lo <= at and at + size <= hi for lo, hi in allowed) else None)
-    uc.emu_start(site, A['EntityUpdateResume'], count=5_000_000)
-    assert uc.reg_read(UC_X86_REG_EIP) == A['EntityUpdateResume']
+    uc.emu_start(site, A['EntityLoopResume'], count=5_000_000)
+    assert uc.reg_read(UC_X86_REG_EIP) == A['EntityLoopResume']
     assert stray == []
-    # The displaced prologue ran exactly once: push ecx/ebx/ebp/esi, mov esi, ecx.
-    assert uc.reg_read(UC_X86_REG_ESP) == STACK - 16
-    assert struct.unpack('<4I', uc.mem_read(STACK - 16, 16)) == (
-        0x55555555, 0x77777777, 0x22222222, STATE)
+    # The displaced `mov ebx, 1` ran; every other register and the flags are unchanged.
     after = {reg: uc.reg_read(reg) for reg in registers}
-    assert after[UC_X86_REG_ESI] == STATE
-    assert {r: v for r, v in after.items() if r not in (UC_X86_REG_ESI, UC_X86_REG_ESP)} == {
-        r: v for r, v in registers.items() if r not in (UC_X86_REG_ESI, UC_X86_REG_ESP)}
+    assert after == {**registers, UC_X86_REG_EBX: 1}
     result = World.__new__(World)
     result.A, result.slots = A, world.slots
     result.records = bytearray(uc.mem_read(STATE, len(world.records)))
