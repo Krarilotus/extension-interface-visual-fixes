@@ -136,6 +136,18 @@
       "address": 5125997,
       "bytes": "cd 52 50 6a 36 b9 90 a0 fe 01 e8 84 1b f7 ff 8b 86 78 85 f9 00 85 c0 0f 84 82 00 00 00 83 c7 84 57 83 c5 31"
     },
+    "LobbyMenuInitializers": {
+      "address": 5876272,
+      "bytes": "68 50 1F 4E 00 68 D0 91 4D 00 68 E0 F2 4D 00 6A 3E B9 A4 83 B9 00 E8 D5 95 F5 FF 68 20 D0 59 00 E8 0D 50 FE FF 59 C3 CC CC CC CC CC CC CC CC CC"
+    },
+    "LobbyMenuInitializer": {
+      "address": 5876528,
+      "bytes": "68 48 98 5E 00 B9 78 74 B9 00 E8 C1 95 F5 FF C3"
+    },
+    "LobbyMenuConstructor": {
+      "address": 5193984,
+      "bytes": "51 53 8B D9 33 C9 56 8B 74 24 10 89 33"
+    },
     "LobbyLoadItem": {
       "address": 6199688,
       "bytes": "03 00 00 02 bc 01 00 00 1c 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 ab 01 00 40 03 00 00 00 00 00 00 00 49 01 00 00"
@@ -329,6 +341,18 @@
     "TowerDoorCall4": {
       "address": 5126909,
       "bytes": "cd 52 50 6a 36 b9 90 d5 a7 02 e8 24 1a f7 ff 8b 86 f8 89 f9 00 85 c0 0f 84 82 00 00 00 83 c7 84 57 83 c5 31"
+    },
+    "LobbyMenuInitializers": {
+      "address": 5877344,
+      "bytes": "68 E0 22 4E 00 68 60 95 4D 00 68 70 F6 4D 00 6A 3E B9 44 85 B9 00 E8 35 95 F5 FF 68 50 D4 59 00 E8 2A 50 FE FF 59 C3 CC CC CC CC CC CC CC CC CC"
+    },
+    "LobbyMenuInitializer": {
+      "address": 5877600,
+      "bytes": "68 08 97 5E 00 B9 18 76 B9 00 E8 21 95 F5 FF C3"
+    },
+    "LobbyMenuConstructor": {
+      "address": 5194896,
+      "bytes": "51 53 8B D9 33 C9 56 8B 74 24 10 89 33"
     },
     "LobbyLoadItem": {
       "address": 6199368,

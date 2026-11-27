@@ -46,6 +46,8 @@ def fixture(family='regular'):
         'AOBScan': scan,
         'scanForAOBInMainModule': lambda pattern: tuple(scan_unique(pattern)),
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
+        'getMainImageRange': lambda: (BASE, BASE + len(memory) - 1),
+        'readBytes': lambda at, size: lua.table_from(list(memory[at-BASE:at-BASE+size])),
         'readByte': lambda at: memory[at-BASE],
         'allocateCode': lambda size: allocations.append(size),
     })

@@ -40,7 +40,7 @@ local P = {
   LeftReleased = "39 35 ? ? ? ? 0F 84 ? ? ? ? 39 35 ? ? ? ? 0F 84 ? ? ? ? A1 ? ? ? ? 3B C6 89 35 ? ? ? ?",
   LocalPlayer = "A1 ? ? ? ? 8B 54 24 20 69 C0 F4 39 00 00 01 90 ? ? ? ? 8D 80 ? ? ? ? 8B 44 24 28 50",
   LobbyLoadDraw = "83 3D ? ? ? ? 63 0F 84 89 02 00 00 39 2D ? ? ? ? 0F 84 6A 03 00 00",
-  LobbyLoadItem = "03 00 00 02 BC 01 00 00 1C 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 AB 01 00 40 03 00 00 00 00 00 00 00 49 01 00 00",
+  LobbyMenuInitializers = "68 ? ? ? ? 68 ? ? ? ? 68 ? ? ? ? 6A 3E B9 ? ? ? ? E8 ? ? ? ? 68 ? ? ? ? E8 ? ? ? ? 59 C3 CC CC CC CC CC CC CC CC CC",
   -- updateEntities after its 6-byte prologue: mov ecx, [tick] / tick % 10 / ...
   -- Matches even when another extension has replaced the prologue.
   EntityUpdate = "8B 0D ? ? ? ? B8 67 66 66 66 F7 E9 C1 FA 02 8B C2 C1 E8 1F 03 C2 8D 04 80 03 C0 2B C8 75 07 C7 46 08 19 00 00 00",
@@ -59,13 +59,7 @@ local bindings = {}
 local scanned = {}
 local function scan(name)
   if not scanned[name] then
-    local address, reason
-    if name == "LobbyLoadItem" then
-      -- This record is data and lies outside the executable sections.
-      address = core.AOBScan(P[name])
-    else
-      address, reason = core.AOBScanUnique(P[name])
-    end
+    local address, reason = core.AOBScanUnique(P[name])
     if not address then error(name .. ": " .. reason, 0) end
     scanned[name] = address
   end
@@ -110,7 +104,18 @@ bindings.CliffSelectorFallback = function() return A.CliffSelector + 93 end
 bindings.CliffSelectorReturn = function() return A.CliffSelector + 100 end
 bindings.CliffSource = function() return scan("CliffSource") end
 bindings.CliffOffsetSource = function() return scan("CliffOffsetSource") end
-bindings.LobbyLoadItem = function() return scan("LobbyLoadItem") end
+bindings.LobbyLoadItem = function()
+  -- The multiplayer menu initializer passes its 80-byte item records by address.
+  local stub = scan("LobbyMenuInitializers") + 0x100
+  local initializer = "68 ? ? ? ? B9 ? ? ? ? E8 ? ? ? ? C3"
+  assert(core.matchesAOB(initializer, stub), "unexpected lobby menu initializer")
+  local constructor = stub + 15 + core.readInteger(stub + 11)
+  assert(core.matchesAOB("51 53 8B D9 33 C9 56 8B 74 24 10 89 33", constructor),
+    "unexpected lobby menu constructor")
+  local item = core.readInteger(stub + 1) + 4 * 80
+  assert(core.matchesAOB("03 00 00 02 BC 01 00 00 1C 02 00 00 ? ? ? ? ? ? ? ? ? ? ? ? 01 00 00 00 ? ? ? ? AB 01 00 40 03 00 00 00 ? ? ? ? 49 01 00 00", item), "unexpected lobby menu item")
+  return item
+end
 bindings.LobbyLoadX = function() return A.LobbyLoadItem + 4 end
 bindings.LobbyLoadY = function() return A.LobbyLoadItem + 8 end
 bindings.LobbyLoadActive = function() return A.LobbyLoadItem + 24 end
@@ -275,13 +280,6 @@ local validate = {
   end,
   ["lobby-load"] = function()
     expect(core.readInteger(A.LobbyPrepare + 2), A.GameMode, "lobby preparation")
-    expect(core.readInteger(A.LobbyLoadItem), 0x02000003, "lobby load item")
-    expect(core.readInteger(A.LobbyLoadX), 444, "lobby load item X")
-    expect(core.readInteger(A.LobbyLoadY), 540, "lobby load item Y")
-    expect(core.readInteger(A.LobbyLoadActive), 1, "lobby load item active state")
-    expect(core.readInteger(A.LobbyLoadTexture), 0x400001AB, "lobby load item texture")
-    expect(core.readInteger(A.LobbyLoadTextureFrame), 3, "lobby load item texture frame")
-    expect(core.readInteger(A.LobbyLoadTooltip), 0x149, "lobby load item tooltip")
   end,
   ["tower-door-height"] = function()
     for i = 1, 5 do
