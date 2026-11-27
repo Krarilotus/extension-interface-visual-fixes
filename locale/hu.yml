@@ -1,4 +1,3 @@
-interface_visual_fixes: Felületi és grafikai javítások
 lobby_text: Pályaleírások az előszobában
 lobby_description: Látható marad a kiválasztott pálya leírása az előszobában.
 unique_preview_text: Egyedi épületek előnézetének törlése építés után
@@ -26,3 +25,5 @@ ghost_objects_text: Objektumlisták javítása
 ghost_objects_description: A kósza zászlók, kövek és nyilak többé nem jelennek meg, gyakran villogva, rossz mezőn.
 ghost_objects_interval_text: Javítás a tick-ciklus minden N-edik lépésében
 ghost_objects_interval_description: "1-től 200-ig. Az alacsonyabb értékek hamarabb eltüntetik a kósza objektumokat."
+bugfixes: Hibajavítások
+qol: Kényelmi funkciók

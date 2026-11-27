@@ -1,4 +1,3 @@
-interface_visual_fixes: 界面与画面修复
 lobby_text: 显示大厅地图说明
 lobby_description: 让所选地图的说明在大厅中保持可见。
 unique_preview_text: 成功建造后关闭唯一建筑预览
@@ -25,3 +24,5 @@ ghost_objects_text: 修复地块物体列表
 ghost_objects_description: 错位的旗帜、石块和箭矢不再出现在错误的地块上（往往伴随闪烁）。
 ghost_objects_interval_text: 在刻循环的每第 N 步执行修复
 ghost_objects_interval_description: "1 至 200。数值越小，错位物体清除得越快。"
+bugfixes: 错误修复
+qol: 便利性改进

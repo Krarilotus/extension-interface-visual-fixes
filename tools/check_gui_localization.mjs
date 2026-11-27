@@ -17,7 +17,8 @@ for (const [language, catalog] of Object.entries(locales)) {
       assert.equal(output[field],normalized[key],`${language}/${input.name}/${field}`);
       assert.ok(!output[field].includes('{{'));
     }
-    assert.deepEqual(output.category,[normalized.interface_visual_fixes]);
+    const category = input.name === 'lobby_load' ? normalized.qol : normalized.bugfixes;
+    assert.deepEqual(output.category, [category]);
     assert.equal(output.url,input.url);
     assert.deepEqual(output.contents,input.contents);
     assert.equal(output.contents.value,input.display==='Switch'?false:input.contents.value);

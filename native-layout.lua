@@ -327,6 +327,7 @@ function M.prepare(config)
     end)
     if not ok then
       off["ghost-objects"] = true
+      log(ERROR, "Stray tile graphics repair is off.")
       log(WARNING, "ghost objects: " .. tostring(err):gsub("^.-:%d+: ", "") .. "; Ghost Objects is off")
     end
   end

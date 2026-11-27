@@ -1,4 +1,3 @@
-interface_visual_fixes: Arayüz ve Görsel Düzeltmeler
 lobby_text: Lobide harita açıklamaları
 lobby_description: Seçilen haritanın açıklamasını lobide görünür tutar.
 unique_preview_text: Yerleştirmeden sonra benzersiz bina önizlemesini kapat
@@ -26,3 +25,5 @@ ghost_objects_text: Nesne listelerini onar
 ghost_objects_description: Sahipsiz bayrak, taş ve oklar artık yanlış karede sıkça titreyerek görünmez.
 ghost_objects_interval_text: Tik döngüsünün her N'inci adımında onar
 ghost_objects_interval_description: "1 ile 200 arasında. Daha düşük değerler sahipsiz nesneleri daha çabuk temizler."
+bugfixes: Hata düzeltmeleri
+qol: Kullanım kolaylığı

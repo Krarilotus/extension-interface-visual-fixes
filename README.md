@@ -151,3 +151,5 @@ multiplayer, replay and broader compatibility are not inferred from them.
 Interface and Visual Fixes is licensed under the GNU General Public License,
 version 3 (GPL-3.0); see [LICENSE](LICENSE). Ghost Objects is based on Monsterfish's
 Ghost Objects Fix and included under the same licence with his permission.
+
+Presets and advanced profiles can set `interface-visual-fixes.ghost-objects-interval` to adjust how often enabled stray tile graphics repair runs. The default is 10.
