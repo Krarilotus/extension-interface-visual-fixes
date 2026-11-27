@@ -1,20 +1,5 @@
 # Interface and Visual Fixes
 
-Correctifs optionnels pour SHC/SHCE 1.41 et UCP 3.0.7. Appliquez vos paramètres et redémarrez le jeu.
+Corrige les informations manquantes dans le salon d’escarmouche et les défauts visuels des aperçus de bâtiments, tours, terrains et décors. Le salon d’escarmouche solo peut aussi afficher Charger.
 
-- Garde les descriptions des cartes personnalisées visibles dans le salon.
-- Efface l’aperçu après la construction réussie d’un bâtiment unique.
-- Actualise l’aperçu des bâtiments pendant le déplacement de la caméra.
-- Distingue les arbres morts encore debout des troncs abattus.
-- Aligne les portes des tours sur les raccordements et prolonge la maçonnerie sous les tours au bord des falaises.
-- Affiche le bouton Charger existant dans le salon solo.
-- Améliore les raccords des falaises après rotation et sur les marches diagonales.
-- Reconstruit les listes d’objets des cases afin que drapeaux, pierres et flèches égarés cessent d’apparaître sur la mauvaise case.
-
-Maçonnerie sous la tour et portes à la hauteur des remparts raccordés.
-
-![Maçonnerie sous la tour et portes à la hauteur des remparts raccordés.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
-
-Textures de falaise raccordées après rotation.
-
-![Textures de falaise raccordées après rotation.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)
+![Maçonnerie de tour avec portes à la hauteur des murs adjacents.](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)

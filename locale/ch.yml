@@ -1,28 +1,28 @@
-lobby_text: 显示大厅地图说明
-lobby_description: 让所选地图的说明在大厅中保持可见。
-unique_preview_text: 成功建造后关闭唯一建筑预览
-unique_preview_description: 成功建造后取消选择市场、兵营、雇佣兵营和行会。
+lobby_text: 在大厅中保持显示地图说明
+lobby_description: 在大厅中选中地图即可查看其说明。
+unique_preview_text: 放置唯一建筑后清除预览
+unique_preview_description: 放置市场、兵营、雇佣兵营地或公会后自动清除建筑预览。
 
-camera_preview_text: 移动镜头时显示建筑预览
-camera_preview_description: 移动镜头时保持所选建筑的预览可见。
+camera_preview_text: 移动镜头时保持建筑预览可见
+camera_preview_description: 移动镜头时建筑放置预览不会消失。
 
-dead_tree_text: 区分枯树的不同阶段
-dead_tree_description: 在枯树变成倒地的树干之前，显示尚未倒下的枯树。
+dead_tree_text: 单独显示直立枯树
+dead_tree_description: 直立的枯树在倒下变成圆木前使用独立的贴图。
 
-tower_door_text: 将塔门与相连的城墙对齐
-tower_door_description: 将塔门对齐到最高的有效连接处；高度相同时选择最靠近该侧中间的位置。最外侧的门向内移动半格。将石墙纹理延伸到悬崖边的塔楼下方，从而允许更低处的城墙和 stair6 门。抬高的楼梯不计入有效连接。
-lobby_load_text: 在遭遇战大厅显示载入按钮
-lobby_load_description: 在单人遭遇战大厅中显示原有的载入按钮，并允许在没有电脑对手时载入游戏。重启游戏以应用更改。
+tower_door_text: 对齐塔门并将塔基砌石延伸至悬崖边
+tower_door_description: 塔楼门洞与相连的城墙和阶梯对齐。
+lobby_load_text: 在单人遭遇战大厅中显示“加载”按钮
+lobby_load_description: 在遭遇战大厅点击“加载”即可打开存档。
 
 tags.bugfixes: 错误修复
 tags.interface: 界面
 
-cliff_texture_text: 旋转镜头后保持悬崖纹理连续
-cliff_texture_description: 旋转镜头时，让悬崖纹理在两个可见面上都保持衔接。使用当前纹理包。
+cliff_texture_text: 旋转地图时保持悬崖贴图对齐
+cliff_texture_description: 旋转地图时悬崖壁面保持连续。
 
-ghost_objects_text: 修复地块物体列表
-ghost_objects_description: 错位的旗帜、石块和箭矢不再出现在错误的地块上（往往伴随闪烁）。
-ghost_objects_interval_text: 在刻循环的每第 N 步执行修复
-ghost_objects_interval_description: "1 至 200。数值越小，错位物体清除得越快。"
+ghost_objects_text: 清除错位的旗帜、箭矢和其他地块图形
+ghost_objects_description: 清除出现在错误地块上的残留对象。
+ghost_objects_interval_text: 地块修复间隔
+ghost_objects_interval_description: 数值越低，错位对象被清除得越快。
 bugfixes: 错误修复
 qol: 便利性改进

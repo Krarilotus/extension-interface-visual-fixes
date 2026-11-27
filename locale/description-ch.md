@@ -1,20 +1,5 @@
 # Interface and Visual Fixes
 
-适用于 SHC/SHCE 1.41 与 UCP 3.0.7 的可选修复。请应用设置并重启游戏。
+修复遭遇战大厅中缺失的信息，以及建筑预览、塔楼、地形与场景中的视觉错误。单人遭遇战大厅也可显示“加载”按钮。
 
-- 保持大厅中的自定义地图描述可见。
-- 成功放置唯一建筑后清除建造预览。
-- 移动镜头时更新建筑预览。
-- 区分尚未倒下的枯树和倒地的树干。
-- 使塔门对齐连接处，并将石墙纹理延伸到悬崖边的塔楼下方。
-- 在单人大厅中显示原有的载入按钮。
-- 改善镜头旋转后及对角阶梯处的悬崖纹理衔接。
-- 重建地块物体列表，防止错位的旗帜、石块和箭矢继续出现在错误的地块上。
-
-塔楼下方的石墙纹理，以及与连接墙体等高的门。
-
-![塔楼下方的石墙纹理，以及与连接墙体等高的门。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
-
-旋转镜头后连续的悬崖纹理。
-
-![旋转镜头后连续的悬崖纹理。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/cliff-textures.png)
+![与相连城墙高度对齐的塔楼砌石与门洞。](https://raw.githubusercontent.com/Krarilotus/extension-interface-visual-fixes/b666f94ac104c46193af8bb12c8c7c8364fb0fa0/docs/store/tower-foundation.png)
