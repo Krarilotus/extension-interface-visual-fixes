@@ -1,11 +1,11 @@
 lobby_text: Kartenbeschreibungen in der Lobby sichtbar halten
 lobby_description: Wähle eine Karte in der Lobby aus, um ihre Beschreibung zu sehen.
-unique_preview_text: Vorschau nach Platzieren einzigartiger Gebäude entfernen
-unique_preview_description: Entfernt die Vorschau nach dem Platzieren von Marktplatz, Kaserne, Söldnerlager oder Gilde.
+unique_preview_text: Bauvorschau nach einmalig baubaren Gebäuden ausblenden
+unique_preview_description: Blendet die Vorschau aus, sobald du einen Marktplatz, eine Kaserne, einen Söldnerposten oder eine Gilde platziert hast.
 camera_preview_text: Bauvorschau beim Scrollen sichtbar halten
 camera_preview_description: Die Gebäudevorschau bleibt beim Bewegen der Kamera sichtbar.
 dead_tree_text: Stehende tote Bäume separat anzeigen
-dead_tree_description: Stehende tote Bäume nutzen eigene Grafiken, bevor sie zu gefallenen Stämmen werden.
+dead_tree_description: Abgestorbene Bäume haben eine eigene Grafik, solange sie noch stehen.
 tower_door_text: Turmtüren ausrichten und Mauerwerk bis zu Klippenrändern verlängern
 tower_door_description: Turmtüren schließen bündig an angrenzende Mauern und Treppen an.
 lobby_load_text: „Laden“ in der Einzelspieler-Gefechtslobby anzeigen
@@ -14,9 +14,9 @@ tags.bugfixes: Fehlerkorrekturen
 tags.interface: Oberfläche
 cliff_texture_text: Klippentexturen beim Drehen der Karte ausgerichtet halten
 cliff_texture_description: Klippenwände bleiben beim Drehen der Karte verbunden.
-ghost_objects_text: Verirrte Flaggen, Pfeile und andere Feldgrafiken entfernen
+ghost_objects_text: Fehlplatzierte Flaggen, Pfeile und andere Grafiken entfernen
 ghost_objects_description: Entfernt Objekte, die auf dem falschen Feld erscheinen.
 ghost_objects_interval_text: Feld-Reparaturintervall
-ghost_objects_interval_description: Niedrigere Werte entfernen verirrte Objekte schneller.
+ghost_objects_interval_description: Je kleiner der Wert, desto früher verschwinden fehlplatzierte Grafiken.
 bugfixes: Fehlerkorrekturen
 qol: Komfort
