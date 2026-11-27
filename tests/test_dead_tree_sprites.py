@@ -80,12 +80,3 @@ def test_felled_stage_five_tree_keeps_original_log(kind, harvest_state):
     # Original damageTreeAndTriggerDeathIfDepleted writes 1; harvest writes 2.
     # Neither advances stage 5, and original UpdateTree1 keeps frame 146.
     test_only_standing_dead_frame_changes_without_state_writes(kind, 5, 146, False, harvest_state)
-
-
-def test_unknown_moved_or_already_changed_renderer_rejected():
-    with pytest.raises(ValueError):
-        emit(bytes(40))
-    with pytest.raises(ValueError):
-        emit(PATTERN+PATTERN)
-    with pytest.raises(Exception, match='unsupported tree renderer layout'):
-        emit(base=SITE-14)

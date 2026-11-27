@@ -1,5 +1,3 @@
--- Resolve native capabilities once through UCP's existing AOB cache.
--- No edition-specific VA/RVA fallback. See docs/native-integration-audit.md.
 local P = {
   ProcessHeap = "8B 1D ? ? ? ? FF D3 50 FF 15 ? ? ? ? 8B F0 85 F6 75 0D",
   ReallocateHeap = "FF 15 ? ? ? ? 3B C7 75 04 33 C0 EB 78 83 05 ? ? ? ? 10 8B 35 ? ? ? ?",
@@ -50,20 +48,28 @@ local P = {
   EntityTileWalker = "53 55 56 8B 74 24 10 8B C6 69 C0 E8 00 00 00 57 8D 3C 08 8B 47 60 33 ED 33 DB 3B C5 0F 84 ? ? ? ? 83 FE 19 7D 4D 0F B6 90",
   -- The seagull removal loop: `cmp ecx, <entity slots>` at +0x40.
   SeagullRemoval = "B9 01 00 00 00 56 89 0D ? ? ? ? BE 02 00 00 00 8B C1 69 C0 E8 00 00 00 66 39 B0",
-  -- The game image's DOS header: the first image at or after UCP's scan origin.
-  ImageHeader = "4D 5A 90 00 03 00 00 00 04 00 00 00 FF FF 00 00",
+  LobbyDescriptionCall = "8D 44 24 14 50 68 ? ? ? ? E8 ? ? ? ? 8B C8 A1 ? ? ? ? 83 C0 E0 C1 E0 05 99 83 E2 1F",
+  LobbyDescriptionChoice = "83 3D ? ? ? ? 00 75 ? A1 ? ? ? ? 8B 0D ? ? ? ? 2B 35 ? ? ? ? 83 C0 E0 C1 E0 05",
 }
 P.CameraPreview = P.CameraPreviewBranch
 P.CameraPreviewExit = "E8 ? ? ? ? 5E 5F 5D 5B 83 C4 08 C3 8D 49 00"
 
 local A = {}
 local bindings = {}
+local scanned = {}
 local function scan(name)
-  local ok, address = pcall(core.AOBScan, P[name])
-  if not ok or not address then
-    error("Interface and Visual Fixes: unsupported or occupied native capability " .. name)
+  if not scanned[name] then
+    local address, reason
+    if name == "LobbyLoadItem" then
+      -- This record is data and lies outside the executable sections.
+      address = core.AOBScan(P[name])
+    else
+      address, reason = core.AOBScanUnique(P[name])
+    end
+    if not address then error(name .. ": " .. reason, 0) end
+    scanned[name] = address
   end
-  return address
+  return scanned[name]
 end
 
 bindings.ProcessHeap = function() return core.readInteger(scan("ProcessHeap") + 2) end
@@ -171,7 +177,8 @@ bindings.EntityWordHeads = function() return core.readInteger(A.EntityTileWalker
 bindings.SeagullRemoval = function() return scan("SeagullRemoval") end
 -- Entity slot count (3000 SHC, 6000 SHCE), not an address.
 bindings.EntitySlots = function() return core.readInteger(A.SeagullRemoval + 0x42) end
-bindings.ImageBase = function() return scan("ImageHeader") end
+bindings.LobbyDescriptionCall = function() return scan("LobbyDescriptionCall") + 10 end
+bindings.LobbyDescriptionChoice = function() return scan("LobbyDescriptionChoice") end
 
 setmetatable(A, {__index = function(self, name)
   local resolve = bindings[name]
@@ -199,6 +206,7 @@ end
 
 -- Preflight every enabled binding before any feature installs its patches.
 local required = {
+  ["lobby-map-descriptions"] = {"LobbyDescriptionCall", "LobbyDescriptionChoice"},
   ["clear-unique-building-preview"] = {
     "PlacementEntry", "PlacementNotifyCall", "MinimapNotify", "PlacementCommandReturn", "GameMode",
     "LocalPlayer",
@@ -234,7 +242,7 @@ local required = {
   },
   ["ghost-objects"] = {
     "EntityUpdateBody", "EntityLoopStart", "EntityLoopResume", "EntityTick", "EntityTileWalker",
-    "EntityByteHeads", "EntityWordHeads", "SeagullRemoval", "EntitySlots", "ImageBase",
+    "EntityByteHeads", "EntityWordHeads", "SeagullRemoval", "EntitySlots",
   },
 }
 -- mov ebx, 1
@@ -246,89 +254,71 @@ function M.bytesAre(address, expected)
   end
   return true
 end
--- Start and end of the game image's executable section that contains a matched code
--- address, read from the image's own PE headers (found by AOB, checked by their
--- ImageBase). Nil if the headers do not describe this image or no such section exists.
-function M.codeSection(address)
-  local base = A.ImageBase
-  local offset = core.readInteger(base + 0x3C)
-  if offset <= 0 or offset >= 0x1000 then return nil end
-  local pe = base + offset
-  if core.readInteger(pe) ~= 0x4550 or core.readInteger(pe + 0x34) ~= base then return nil end
-  local count = core.readInteger(pe + 4) >> 16 & 0xFFFF
-  local first = pe + 0x18 + (core.readInteger(pe + 0x14) & 0xFFFF)
-  for i = 0, count - 1 do
-    local header = first + i * 40
-    local start = base + core.readInteger(header + 12)
-    local stop = start + core.readInteger(header + 8)
-    if address >= start and address < stop then
-      if core.readInteger(header + 36) & 0x20000000 == 0 then return nil end
-      return start, stop
-    end
+local function expect(actual, expected, capability)
+  if actual ~= expected then
+    error("unexpected " .. capability, 0)
   end
-  return nil
 end
--- Returns the options it turned off; any other unsupported capability stops startup.
-function M.prepare(config)
-  local function bind(option)
-    for _, name in ipairs(required[option]) do assert(A[name], name) end
-  end
-  for option in pairs(required) do
-    if config[option] == true and option ~= "ghost-objects" then bind(option) end
-  end
-  local function expect(actual, expected, capability)
-    if actual ~= expected then
-      error("Interface and Visual Fixes: inconsistent or occupied native capability " .. capability)
-    end
-  end
-  local function callTarget(site) return site + 5 + core.readInteger(site + 1) end
-  if config["clear-unique-building-preview"] == true then
+
+local function callTarget(site) return site + 5 + core.readInteger(site + 1) end
+
+local validate = {
+  ["lobby-map-descriptions"] = function()
+    expect(A.LobbyDescriptionChoice - A.LobbyDescriptionCall, 0xEB, "lobby description layout")
+  end,
+  ["clear-unique-building-preview"] = function()
     expect(callTarget(A.PlacementNotifyCall), A.MinimapNotify, "placement notification")
     expect(callTarget(A.PlacementCommandReturn - 5), A.PlacementEntry, "placement command")
-  end
-  if config["building-preview-during-camera-movement"] == true then
+  end,
+  ["building-preview-during-camera-movement"] = function()
     expect(A.CameraPreviewExit, scan("CameraPreviewExit") + 6, "camera exit")
-  end
-  if config["lobby-load"] == true then
+  end,
+  ["lobby-load"] = function()
     expect(core.readInteger(A.LobbyPrepare + 2), A.GameMode, "lobby preparation")
-  end
-  if config["tower-door-height"] == true then
+    expect(core.readInteger(A.LobbyLoadItem), 0x02000003, "lobby load item")
+    expect(core.readInteger(A.LobbyLoadX), 444, "lobby load item X")
+    expect(core.readInteger(A.LobbyLoadY), 540, "lobby load item Y")
+    expect(core.readInteger(A.LobbyLoadActive), 1, "lobby load item active state")
+    expect(core.readInteger(A.LobbyLoadTexture), 0x400001AB, "lobby load item texture")
+    expect(core.readInteger(A.LobbyLoadTextureFrame), 3, "lobby load item texture frame")
+    expect(core.readInteger(A.LobbyLoadTooltip), 0x149, "lobby load item tooltip")
+  end,
+  ["tower-door-height"] = function()
     for i = 1, 5 do
       expect(callTarget(A["TowerDoorCall" .. i]), A.DrawBuildingOverlay, "tower overlay")
     end
     expect(callTarget(A.FoundationDrawCall), A.DrawCliff, "tower foundation")
-  end
-  if config["cliff-texture-direction"] == true then
+  end,
+  ["cliff-texture-direction"] = function()
     expect(core.readInteger(A.CliffSource + 23), A.ImageOffsets, "secondary cliff offsets")
     expect(core.readInteger(A.CliffOffsetSource + 2), A.PrimaryImage, "offset cliff primary image")
     expect(core.readInteger(A.CliffOffsetSource + 18), A.SecondaryImage, "offset cliff secondary image")
     expect(core.readInteger(A.CliffOffsetSource + 9), A.ImageOffsets, "offset cliff primary offsets")
     expect(core.readInteger(A.CliffOffsetSource + 25), A.ImageOffsets, "offset cliff secondary offsets")
-  end
+  end,
+  ["ghost-objects"] = function()
+    expect(M.bytesAre(A.EntityLoopStart, M.ENTITY_LOOP_START), true, "entity update loop")
+    expect(M.bytesAre(A.EntityTileWalker + 0x74, {0x0F, 0xBF, 0x14, 0x45}), true, "entity word heads")
+    expect(M.bytesAre(A.SeagullRemoval + 0x40, {0x81, 0xF9}), true, "entity slot count")
+    expect(A.EntityByteHeads - A.EntityWordHeads, M.ENTITY_TILES * 2, "entity tile heads")
+    expect(A.EntitySlots >= 100 and A.EntitySlots <= 20000, true, "entity slot count")
+  end,
+}
+
+local function bind(option, names)
+  for _, name in ipairs(names) do assert(A[name], name) end
+  if validate[option] then validate[option]() end
+end
+
+function M.prepare(config)
   local off = {}
-  if config["ghost-objects"] == true then
-    local ok, err = pcall(function()
-      bind("ghost-objects")
-      -- The patch site must be the only copy of the entity update in the game's code
-      -- section. Copies of code bytes elsewhere (heap buffers) are not game code.
-      local codeStart, codeEnd = M.codeSection(A.EntityUpdateBody)
-      if not codeStart then
-        error("Interface and Visual Fixes: unsupported or occupied native capability entity update section")
+  for option, names in pairs(required) do
+    if config[option] == true then
+      local ok, reason = pcall(bind, option, names)
+      if not ok then
+        off[option] = true
+        log(ERROR, option .. " is off: " .. tostring(reason):match("^[^\r\n]+"))
       end
-      local later = core.scanForAOB(P.EntityUpdate, A.EntityUpdateBody + 1, codeEnd)
-      if core.scanForAOB(P.EntityUpdate, codeStart, codeEnd) ~= A.EntityUpdateBody or (later and later ~= 0) then
-        error("Interface and Visual Fixes: ambiguous native capability entity update")
-      end
-      expect(M.bytesAre(A.EntityLoopStart, M.ENTITY_LOOP_START), true, "entity update loop")
-      expect(M.bytesAre(A.EntityTileWalker + 0x74, {0x0F, 0xBF, 0x14, 0x45}), true, "entity word heads")
-      expect(M.bytesAre(A.SeagullRemoval + 0x40, {0x81, 0xF9}), true, "entity slot count")
-      expect(A.EntityByteHeads - A.EntityWordHeads, M.ENTITY_TILES * 2, "entity tile heads")
-      expect(A.EntitySlots >= 100 and A.EntitySlots <= 20000, true, "entity slot count")
-    end)
-    if not ok then
-      off["ghost-objects"] = true
-      log(ERROR, "Stray tile graphics repair is off.")
-      log(WARNING, "ghost objects: " .. tostring(err):gsub("^.-:%d+: ", "") .. "; Ghost Objects is off")
     end
   end
   return off

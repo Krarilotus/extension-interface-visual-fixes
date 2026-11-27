@@ -82,12 +82,8 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
             cache[name] = lua.execute((ROOT/f'{name}.lua').read_text())
         return cache[name]
 
-    def scan_from(pattern, start, stop):
-        match = aob(pattern).search(memory, max(start-BASE, 0), stop-BASE)
-        return BASE + match.start() if match else 0
-
     framework_core(lua, {
-        'AOBScan': scan, 'scanForAOB': scan_from,
+        'AOBScan': scan, 'scanForAOBInMainModule': lambda pattern: (scan(pattern), None, None),
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'readByte': lambda at: memory[at-BASE],
         'allocateCode': allocate, 'allocate': data, 'writeCode': write,

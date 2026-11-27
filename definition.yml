@@ -3,6 +3,8 @@ display-name: Interface and Visual Fixes
 version: 0.2.2
 author: Krarilotus
 type: module
+dependencies:
+  framework: ^3.0.8
 game: [SHC==1.41, SHCE==1.41]
 tags: [bugfixes, interface]
 meta:

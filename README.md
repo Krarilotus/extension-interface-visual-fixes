@@ -49,7 +49,7 @@ still under investigation; diagnostics are not a claim that it is fixed.
   Monsterfish's [Ghost Objects Fix](https://github.com/Monsterfisch/GhostObjectsFix).
 
 Enable the module, switch on the fixes you want (or select a plugin that does),
-apply your settings and restart the game. The module targets UCP 3.0.7 with
+apply your settings and restart the game. The module targets UCP 3.0.8 with
 SHC or SHCE 1.41.
 
 ## Feature screenshots

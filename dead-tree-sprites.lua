@@ -4,10 +4,7 @@ local M = {}
 
 function M.enable()
   -- renderMap consumes a frame locally; never change serialized tree state.
-  local site = core.AOBScan(layout.patterns.TreeFrameLoad) + 15
-  if site ~= A.TreeFrameLoad then
-    error("Interface and Visual Fixes: unsupported tree renderer layout")
-  end
+  local site = A.TreeFrameLoad
   local wrapper = core.allocateCode(58)
   core.writeCode(wrapper, {
     -- TEST EAX flags are consumed after the frame load. ESI is a byte offset.

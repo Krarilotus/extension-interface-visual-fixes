@@ -63,11 +63,6 @@ def test_unsupported_orientation_retains_original_fallback(orientation):
         assert execute(orientation,face,7,13)==execute(orientation,face,7,13,False)
 
 
-def test_signature_checked_before_any_write():
-    with pytest.raises(Exception,match='unsupported cliff texture'):emit(moved=True)
-    with pytest.raises(ValueError):emit(missing=True)
-
-
 DIRECTIONS=((0,-1),(1,-1),(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1))
 PHASE={0:(1,-1),2:(-1,-1),4:(-1,1),6:(1,1)}
 

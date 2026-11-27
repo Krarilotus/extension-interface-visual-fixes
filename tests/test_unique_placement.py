@@ -95,8 +95,3 @@ def test_ordinary_expandable_keep_and_unrecognized_tools_unchanged(mapper,extrem
     {'caller':0x4ed601},{'caller':0x441d64},{'caller':0x481f3d}])
 def test_remote_cancel_changed_tool_editor_and_noncommand_callers_unchanged(kwargs,extreme):
     assert execute(**kwargs,extreme=extreme)==kwargs.get('selected',77)
-
-def test_unsupported_layout_fails_before_write():
-    with pytest.raises(Exception):emit(bytes(0x120000))
-    b=bytearray(fixture());b[SITE+1-0x400000]^=1
-    with pytest.raises(Exception,match='notification was changed'):emit(bytes(b))

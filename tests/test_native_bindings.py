@@ -37,13 +37,14 @@ def fixture(family='regular'):
         scans.append(pattern)
         return BASE + hits[0].start()
 
-    def scan_from(pattern, start, stop):
-        match = aob(pattern).search(memory, max(start-BASE, 0), stop-BASE)
-        return BASE + match.start() if match else 0
+    def scan_unique(pattern):
+        scans.append(pattern)
+        hits = [BASE + hit.start() for hit in aob(pattern).finditer(memory)]
+        return (hits + [None, None])[:2] + [None]
 
     framework_core(lua, {
         'AOBScan': scan,
-        'scanForAOB': scan_from,
+        'scanForAOBInMainModule': lambda pattern: tuple(scan_unique(pattern)),
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'readByte': lambda at: memory[at-BASE],
         'allocateCode': lambda size: allocations.append(size),
@@ -59,7 +60,8 @@ def fixture(family='regular'):
 def test_all_bindings_match_independent_reference_and_are_retained(family):
     lua, layout, _, _, scans, allocations = fixture(family)
     layout.prepare(lua.table_from(dict.fromkeys(OPTIONS, True)))
-    expected = EXPECTED[family]['addresses']
+    expected = {name: address for name, address in EXPECTED[family]['addresses'].items()
+                if name != 'ImageBase'}
     assert {name: layout.addresses[name] for name in expected} == expected
     count = len(scans)
     logs = [row[2] for row in lua.globals().test_logs.values()]
@@ -73,17 +75,37 @@ def test_all_bindings_match_independent_reference_and_are_retained(family):
     assert allocations == []
 
 
-@pytest.mark.parametrize('name', ('RenderMapEntry', 'ProcessHeap', 'PlacementEntry',
-                                  'MinimapNotify', 'LobbyLoadItem', 'ImageHeaders'))
-def test_missing_capability_stops_before_any_patch_allocation(name):
-    lua, _, memory, chunks, _, allocations = fixture()
+@pytest.mark.parametrize('name,affected', (
+    ('RenderMapEntry', {'tower-door-height', 'cliff-texture-direction'}),
+    ('ProcessHeap', {'cliff-texture-direction'}),
+    ('PlacementEntry', {'clear-unique-building-preview'}),
+    ('MinimapNotify', {'clear-unique-building-preview'}),
+    ('LobbyLoadItem', {'lobby-load'}),
+    ('ImageHeaders', {'tower-door-height', 'cliff-texture-direction'}),
+    ('CameraPreviewBranch', {'building-preview-during-camera-movement'}),
+    ('TreeFrameLoad', {'distinct-dead-tree-sprites'}),
+    *[(site, {'cliff-texture-direction'}) for site in ('CliffSelector', 'CliffSource', 'CliffOffsetSource')],
+    *[(site, {'tower-door-height'}) for site in (
+        'TowerDoorCall1', 'TowerDoorCall2', 'TowerDoorCall3', 'TowerDoorCall4', 'TowerDoorCall5',
+        'FoundationDrawCall', 'BuildingRefresh', 'BuildingRefreshTile', 'MapReset', 'TowerFoundationSelect',
+    )],
+))
+def test_missing_capability_disables_only_affected_features(name, affected):
+    lua, layout, memory, chunks, _, allocations = fixture()
     memory[chunks[name]['address'] - BASE] = 0x90
-    init = lua.execute((ROOT / 'init.lua').read_text())
-    enabled = dict.fromkeys(OPTIONS, True)
-    enabled['lobby-map-descriptions'] = True
-    with pytest.raises(Exception, match='unsupported or occupied native capability'):
-        init.enable(init, lua.table_from(enabled))
-    assert allocations == []
+    off = layout.prepare(lua.table_from(dict.fromkeys(OPTIONS, True)))
+    assert set(off) == affected
+    logs = [row[2] for row in lua.globals().test_logs.values() if row[1] == 2]
+    assert {line.split(' is off:')[0] for line in logs} == affected
+    assert len(logs) == len(affected) and allocations == []
+
+
+@pytest.mark.parametrize('offset', (4, 8, 24, 32, 36, 44))
+def test_changed_load_item_disables_only_lobby_load(offset):
+    lua, layout, memory, chunks, _, allocations = fixture()
+    memory[chunks['LobbyLoadItem']['address'] - BASE + offset] ^= 1
+    off = layout.prepare(lua.table_from(dict.fromkeys(OPTIONS, True)))
+    assert set(off) == {'lobby-load'} and allocations == []
 
 
 @pytest.mark.parametrize('name,call_offset', (('TowerDoorCall1', 10),
@@ -94,15 +116,17 @@ def test_redirected_call_is_not_accepted_by_wildcarded_operand(name, call_offset
     operand = chunks[name]['address'] - BASE + call_offset + 1
     old = struct.unpack_from('<i', memory, operand)[0]
     struct.pack_into('<i', memory, operand, old + 9)
-    with pytest.raises(Exception, match='inconsistent or occupied native capability'):
-        layout.prepare(lua.table_from(dict.fromkeys(OPTIONS, True)))
+    off = layout.prepare(lua.table_from(dict.fromkeys(OPTIONS, True)))
+    assert set(off) == ({'clear-unique-building-preview'} if name == 'PlacementNotifyCall'
+                        else {'tower-door-height'})
     assert allocations == []
 
 
 def test_disabled_feature_does_not_require_its_context():
     lua, layout, memory, chunks, _, _ = fixture()
     memory[chunks['CliffSource']['address'] - BASE] = 0x90
-    layout.prepare(lua.table_from({'building-preview-during-camera-movement': True}))
+    off = layout.prepare(lua.table_from({'building-preview-during-camera-movement': True}))
+    assert not list(off)
 
 
 @pytest.mark.parametrize('family', ('regular', 'extreme'))

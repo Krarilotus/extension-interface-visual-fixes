@@ -5,10 +5,7 @@ local M = {}
 function M.enable()
   -- One image contains consecutive left/right face strips. Its base phase
   -- follows the horizontal projection, including two steps per front diagonal.
-  local site = core.AOBScan(layout.patterns.CliffSelector)
-  if site ~= A.CliffSelector then
-    error("Interface and Visual Fixes: unsupported cliff texture selector layout")
-  end
+  local site = A.CliffSelector
   -- Keep the existing graphics refresh and face classification. Use all 32
   -- rock strips; the old clamp duplicated frame1 instead of allowing frame32.
   local selector = layout.allocateAssembly([[

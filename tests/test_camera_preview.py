@@ -85,12 +85,3 @@ def test_existing_input_gate_and_abi(scrolling, start, held, released, size, ext
     assert struct.unpack('<II', uc.mem_read(STACK-8, 8)) == (values[5], values[6])
     if not start:
         assert uc.reg_read(UC_X86_REG_EFLAGS) == observed['flags']
-
-
-def test_unknown_moved_or_already_changed_guard_rejected():
-    with pytest.raises(ValueError):
-        emit(bytes(40))
-    with pytest.raises(ValueError):
-        emit(PATTERN+PATTERN)
-    with pytest.raises(Exception, match='unsupported camera preview layout'):
-        emit(base=SITE-5)

@@ -162,12 +162,6 @@ def test_incompatible_dimensions_or_size_pass_through(at,value):
     assert resolve(uc,entry,100)==RAW
 
 
-@pytest.mark.parametrize('site',PATTERNS)
-def test_guarded_source_and_shared_frame_sites(site):
-    with pytest.raises(Exception,match='unsupported'):emit(moved=site)
-    with pytest.raises(ValueError):emit(missing=site)
-
-
 def set_strip(uc,rows,width=30,index=100,offset=0,salt=0):
     size=rows*width*2
     uc.mem_write(uc.iv_address(0xc9a590+index*4),struct.pack('<I',size))

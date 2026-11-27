@@ -27,9 +27,18 @@ local DEFAULT_INTERVAL = 10 -- the entity update's own 10-tick cadence
 local MAX_INTERVAL = 200 -- one full tick cycle
 
 local function interval(config)
-  local value = type(config) == "table" and tonumber(config["ghost-objects-interval"]) or nil
-  if value == nil or value ~= value then value = DEFAULT_INTERVAL end
-  return math.max(1, math.min(MAX_INTERVAL, math.floor(value)))
+  local value = config and config["ghost-objects-interval"]
+  if value == nil then return DEFAULT_INTERVAL end
+  if type(value) ~= "number" then
+    log(ERROR, "Stray tile graphics repair interval must be a number. Using the default.")
+    return DEFAULT_INTERVAL
+  end
+  local ticks = math.tointeger(value)
+  if not ticks or ticks < 1 or ticks > MAX_INTERVAL then
+    log(WARNING, "Stray tile graphics repair interval must be a whole number from 1 to 200. Using the default.")
+    return DEFAULT_INTERVAL
+  end
+  return ticks
 end
 
 function M.enable(config)

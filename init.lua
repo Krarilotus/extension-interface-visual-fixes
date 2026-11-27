@@ -16,8 +16,11 @@ return {
     log(INFO, "startup diagnostics schema=1; begin")
     local active = {}
     for _, feature in ipairs(features) do
-      if config[feature[1]] == true then
+      local value = config[feature[1]]
+      if value == true then
         active[#active+1] = feature
+      elseif value ~= nil and type(value) ~= "boolean" then
+        log(ERROR, feature[1] .. " must be a boolean.")
       end
     end
     local off = #active > 0 and require("native-layout").prepare(config) or {}

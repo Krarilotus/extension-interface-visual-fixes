@@ -19,7 +19,7 @@ def test_each_description_is_packaged_concise_and_has_real_screenshots(language)
     assert len(text.split()) < 230
     assert '\ufffd' not in text
     images = re.findall(r'!\[([^\]]+)\]\(([^)]+)\)', text)
-    assert len(images) == (1 if language == 'en' else 2)
+    assert len(images) == 1
     for caption, url in images:
         assert caption.strip()
         match = re.fullmatch(

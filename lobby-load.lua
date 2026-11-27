@@ -5,21 +5,7 @@ local enabled = false
 
 function M.enable()
   if enabled then return end
-  local draw = core.AOBScan(layout.patterns.LobbyLoadDraw)
-  local action = core.AOBScan(layout.patterns.LobbyLoadAction) + 5
-  local prepare = core.AOBScan(layout.patterns.LobbyPrepare)
-  -- These predicates belong to the Load cases, not the shared Start/team helper.
-  if draw ~= A.LobbyLoadDraw or action ~= A.LobbyLoadAction or prepare ~= A.LobbyPrepare
-      or core.readInteger(draw + 2) ~= A.LobbyMode
-      or core.readInteger(A.LobbyLoadItem) ~= 0x02000003
-      or core.readInteger(A.LobbyLoadX) ~= 444
-      or core.readInteger(A.LobbyLoadY) ~= 540
-      or core.readInteger(A.LobbyLoadActive) ~= 1
-      or core.readInteger(A.LobbyLoadTexture) ~= 0x400001AB
-      or core.readInteger(A.LobbyLoadTextureFrame) ~= 3
-      or core.readInteger(A.LobbyLoadTooltip) ~= 0x149 then
-    error("Interface and Visual Fixes: unsupported SHC 1.41 lobby Load layout")
-  end
+  local draw, action, prepare = A.LobbyLoadDraw, A.LobbyLoadAction, A.LobbyPrepare
   local guard = core.allocateCode(73)
   core.writeCode(guard, {
     0x83, 0x3D, {A.LobbyMode}, 0x63,

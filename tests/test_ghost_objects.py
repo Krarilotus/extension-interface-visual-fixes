@@ -24,7 +24,7 @@ TILES, STRIDE = 80400, 0xE8
 
 
 def discovery(family='regular', change=None):
-    """Production discovery over the contexts, with UCP's first-match scanner semantics."""
+    """Production discovery over the executable section from the contexts."""
     memory = bytearray(b'\xcc' * 0x200000)
     for fragment in CONTEXTS[family].values():
         at = fragment['address'] - BASE
@@ -39,9 +39,16 @@ def discovery(family='regular', change=None):
         match = aob(pattern).search(memory, max(start - BASE, 0), stop - BASE)
         return BASE + match.start() if match else None
 
+    def unique(pattern):
+        pe = struct.unpack_from('<I', memory, 0x3C)[0]
+        section = pe + 0x18 + 0xE0
+        size, start = struct.unpack_from('<II', memory, section + 8)
+        hits = [BASE + m.start() for m in aob(pattern).finditer(memory, start, start + size)]
+        return tuple((hits + [None, None])[:2]) + (None,)
+
     framework_core(lua, {
         'AOBScan': lambda pattern: first(pattern),
-        'scanForAOB': lambda pattern, start, stop: first(pattern, start, stop) or 0,
+        'scanForAOBInMainModule': unique,
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'readByte': lambda at: memory[at-BASE],
         'allocateCode': lambda size: allocations.append(size) or CAVE,
@@ -66,8 +73,7 @@ def ghost_logs(lua):
     return [row[2] for row in lua.globals().test_logs.values()]
 
 
-OFF = ('ghost objects: Interface and Visual Fixes: inconsistent or occupied native capability '
-       'entity update loop; Ghost Objects is off')
+OFF = 'ghost-objects is off: unexpected entity update loop'
 
 
 @pytest.mark.parametrize('family', ('regular', 'extreme'))
@@ -81,7 +87,7 @@ def test_redirected_prologue_is_left_alone_and_occupied_loop_start_turns_only_gh
         enable(lua, {'ghost-objects': True})
         assert writes == [CAVE, site] and len(allocations) == 1
         assert 'installed ghost-objects' in ghost_logs(lua)
-    # A changed loop start: Ghost Objects stays off with a warning and startup continues.
+    # A changed loop start: Ghost Objects stays off with an error and startup continues.
     lua, allocations, writes = discovery(family, occupy(45, b'\xe9\x01\x00\x00\x00'))
     enable(lua, {'ghost-objects': True, 'distinct-dead-tree-sprites': True})
     logs = ghost_logs(lua)
@@ -110,16 +116,16 @@ def head_distance(memory, chunks):
 
 @pytest.mark.parametrize('change,message', (
     # Inside the code section (.text ends at 0x59D806).
-    (copy_update(0x590000), 'ambiguous native capability entity update'),
-    (short_code_section, 'unsupported or occupied native capability entity update section'),
-    (head_distance, 'inconsistent or occupied native capability entity tile heads'),
+    (copy_update(0x590000), 'EntityUpdate: found more than once'),
+    (short_code_section, 'EntityUpdate: not found'),
+    (head_distance, 'unexpected entity tile heads'),
 ))
 def test_unexpected_layout_turns_only_ghost_objects_off_before_any_patch(change, message):
     lua, allocations, writes = discovery('regular', change)
     enable(lua, {'ghost-objects': True})
     logs = ghost_logs(lua)
     assert allocations == [] and writes == []
-    assert f'ghost objects: Interface and Visual Fixes: {message}; Ghost Objects is off' in logs
+    assert f'ghost-objects is off: {message}' in logs
     assert 'installed ghost-objects' not in logs and logs[-1].startswith('startup complete;')
 
 
@@ -307,10 +313,16 @@ def test_caller_direction_flag_is_cleared_for_the_fill_and_restored():
     assert_rebuilt(result, world)
 
 
-@pytest.mark.parametrize('value,effective', ((None, 10), (0, 1), (500, 200)))
-def test_interval_setting_is_clamped_to_one_tick_cycle(value, effective):
+@pytest.mark.parametrize('value,effective,problem', (
+    (None, 10, None), (1, 1, None), (200, 200, None),
+    (0, 10, 'whole number'), (500, 10, 'whole number'), (2.5, 10, 'whole number'),
+    ('ten', 10, 'be a number'),
+))
+def test_invalid_interval_uses_default(value, effective, problem):
     config = {'ghost-objects': True}
     if value is not None:
         config['ghost-objects-interval'] = value
     _, _, logs = emit('regular', config)
     assert logs[-1].startswith(f'ghost objects: tile object lists rebuilt every {effective} ticks ')
+    if problem:
+        assert sum(problem in line for line in logs) == 1

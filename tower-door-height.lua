@@ -3,34 +3,7 @@ local A = layout.addresses
 local M = {}
 
 function M.enable()
-  -- Existing renderGmOverlayBuilding2 calls, including the shared exit draw.
-  -- Validate every site before allocating or writing anything.
-  local sites = {
-    {A.TowerDoorCall1, layout.patterns.TowerDoorCall1},
-    {A.TowerDoorCall2, layout.patterns.TowerDoorCall2},
-    {A.TowerDoorCall3, layout.patterns.TowerDoorCall3},
-    {A.TowerDoorCall4, layout.patterns.TowerDoorCall4},
-    {A.TowerDoorCall5, layout.patterns.TowerDoorCall5},
-  }
-  for _, site in ipairs(sites) do
-    if core.AOBScan(site[2]) + 10 ~= site[1] then
-      error("Interface and Visual Fixes: unsupported tower door renderer layout")
-    end
-  end
-
-  local updateSites = {
-    {A.RenderMapEntry, layout.patterns.RenderMapEntry},
-    {A.FoundationDrawCall, layout.patterns.FoundationDrawCall},
-    {A.BuildingRefresh, "89 9C 0F 94 02 00 00"},
-    {A.BuildingRefreshTile, layout.patterns.BuildingRefreshTile, 6},
-    {A.MapReset, layout.patterns.MapReset},
-    {A.TowerFoundationSelect, layout.patterns.TowerFoundationSelect, 10},
-  }
-  for _, site in ipairs(updateSites) do
-    if core.AOBScan(site[2]) + (site[3] or 0) ~= site[1] then
-      error("Interface and Visual Fixes: unsupported tower connection update layout")
-    end
-  end
+  local sites = {A.TowerDoorCall1, A.TowerDoorCall2, A.TowerDoorCall3, A.TowerDoorCall4, A.TowerDoorCall5}
 
   -- Lower doors cross the row where vanilla draws the building overlay.
   -- Foundation columns in later rows would erase them. Keep each affected draw
@@ -626,7 +599,7 @@ function M.enable()
   ]])
   core.writeCode(A.FoundationDrawCall, {core.callTo(foundationDraw)})
   for _, site in ipairs(sites) do
-    core.writeCode(site[1], {core.callTo(wrapper)})
+    core.writeCode(site, {core.callTo(wrapper)})
   end
   core.writeCode(A.BuildingRefresh, {core.jmpTo(beginUpdate), 0x90, 0x90})
   core.writeCode(A.BuildingRefreshTile, {core.jmpTo(visitTile), 0x90, 0x90})

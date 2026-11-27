@@ -4,14 +4,9 @@ local M = {}
 
 function M.enable()
   local sites = {
-    {A.CliffSource, layout.patterns.CliffSource, 30},
-    {A.CliffOffsetSource, layout.patterns.CliffOffsetSource, 32},
+    {A.CliffSource, 30},
+    {A.CliffOffsetSource, 32},
   }
-  for _, site in ipairs(sites) do
-    if core.AOBScan(site[2]) ~= site[1] then
-      error("Interface and Visual Fixes: unsupported cliff source layout")
-    end
-  end
   local epoch = require("render-frame").getEpoch()
   -- Each native half spans a complete strip, in screen order. The centre
   -- columns join the end of image N to the start of N+1 (32 wraps to 1).
@@ -263,9 +258,9 @@ function M.enable()
       ]] or [[
         mov edx, [SecondaryImage]
         mov eax, [edx*4+ImageOffsets]
-      ]]) .. string.format("jmp 0x%X", site[1]+site[3]))
+      ]]) .. string.format("jmp 0x%X", site[1]+site[2]))
     local patch = {core.jmpTo(wrapper)}
-    for _ = 6, site[3] do patch[#patch+1] = 0x90 end
+    for _ = 6, site[2] do patch[#patch+1] = 0x90 end
     core.writeCode(site[1], patch)
   end
 end

@@ -6,10 +6,7 @@ function M.enable()
   -- The existing handler has already computed building size and mouse world XY.
   -- Restrict the added idle path to positive-size building/brush previews; unit,
   -- assembly-point and other special tools retain their original scrolling gate.
-  local site = core.AOBScan(layout.patterns.CameraPreview) + 6
-  if site ~= A.CameraPreviewBranch then
-    error("Interface and Visual Fixes: unsupported camera preview layout")
-  end
+  local site = A.CameraPreviewBranch
   local resume = site + 6
   local finish = A.CameraPreviewExit
   local wrapper = core.allocateCode(39)
