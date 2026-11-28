@@ -1,13 +1,13 @@
 # Offline regression tests
 
 Install Python dependencies from `requirements-test.txt` and FASM (or set `FASM`
-to its executable). The harness runs UCP 3.0.7's actual Lua compiler and assembler
+to its executable). The harness runs UCP 3.0.8's actual Lua compiler and assembler
 wrappers, with native memory I/O and fixture scanning substituted for the game.
 Fetch the pinned framework source before running tests:
 
 ```sh
 git clone --filter=blob:none --no-checkout https://github.com/UnofficialCrusaderPatch/UnofficialCrusaderPatch3.git .framework-fixture
-git -C .framework-fixture checkout 77c6accf14a55fb95434fe6ffd96516e005568b5 -- content/ucp/code/core.lua content/ucp/code/utils.lua
+git -C .framework-fixture checkout a67270a7fa43f6a443f133a2d226b82133d08158 -- content/ucp/code/core.lua content/ucp/code/utils.lua
 python -m pytest -q
 ```
 

@@ -220,14 +220,6 @@ def test_shared_exit_call_and_unsupported_contexts_untouched(kwargs):
     assert execute(**kwargs) == (500,500)
 
 
-@pytest.mark.parametrize('site', list(SITES))
-def test_every_site_is_validated_before_any_write(site):
-    with pytest.raises(Exception, match='unsupported tower door renderer layout'):
-        emit(moved=site)
-    with pytest.raises(ValueError):
-        emit(missing=site)
-
-
 def draw_again(ctx):
     uc=ctx['uc']
     uc.mem_write(STACK,struct.pack('<5I',STOP,54,ctx['frame'],500,500))
@@ -432,13 +424,6 @@ def test_other_buildings_backing_cannot_supply_lower_tower_door():
     refresh_connections(ctx)
     assert selected_index(ctx) is None
     assert draw_again(ctx) is None
-
-
-@pytest.mark.parametrize('site',list(UPDATES))
-def test_update_and_load_signatures_are_validated_before_allocation(site):
-    with pytest.raises(Exception,match='unsupported tower connection update layout'):
-        emit(moved=site)
-    with pytest.raises(ValueError): emit(missing=site)
 
 
 @pytest.mark.parametrize('kind,orientation,frame', list(itertools.product(

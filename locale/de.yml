@@ -1,26 +1,25 @@
-interface_visual_fixes: Oberflächen- und Grafikkorrekturen
-lobby_text: Kartenbeschreibungen in der Lobby
-lobby_description: Hält die Beschreibung der gewählten Karte in der Lobby sichtbar.
-unique_preview_text: Bauvorschau einzigartiger Gebäude nach dem Bau beenden
-unique_preview_description: Hebt die Auswahl von Markt, Kaserne, Söldnerlager und Gilden nach erfolgreichem Bau auf.
-camera_preview_text: Bauvorschau beim Scrollen anzeigen
-camera_preview_description: Hält die Vorschau des gewählten Gebäudes während der Kamerabewegung sichtbar.
-dead_tree_text: Stadien abgestorbener Bäume unterscheiden
-dead_tree_description: Zeigt abgestorbene Bäume zunächst stehend und danach als umgestürzte Stämme.
-
-tower_door_text: Turmtüren an verbindenden Mauern ausrichten
-tower_door_description: Richtet Türen an der höchsten geeigneten Verbindung aus; bei gleicher Höhe entscheidet die Nähe zur Seitenmitte. Äußere Türen rücken eine halbe Kachel nach innen. Verlängert das Mauerwerk unter Türmen am Klippenrand und ermöglicht tiefere Türen an Wällen und Stair6. Erhöhte Treppen zählen nicht.
-lobby_load_text: Laden in der Gefechtslobby anzeigen
-lobby_load_description: Zeigt die vorhandene Laden-Schaltfläche in der Einzelspieler-Gefechtslobby an und ermöglicht
-  das Laden ohne KI-Gegner. Das Spiel neu starten, um Änderungen anzuwenden.
-
+lobby_text: Kartenbeschreibungen in der Lobby sichtbar halten
+lobby_description: Wähle eine Karte in der Lobby aus, um ihre Beschreibung zu sehen.
+unique_preview_text: Bauvorschau nach einmalig baubaren Gebäuden ausblenden
+unique_preview_description: Blendet die Vorschau aus, sobald du einen Marktplatz, eine Kaserne, einen Söldnerposten oder eine Gilde platziert hast.
+camera_preview_text: Bauvorschau beim Scrollen sichtbar halten
+camera_preview_description: Die Gebäudevorschau bleibt beim Bewegen der Kamera sichtbar.
+dead_tree_text: Stehende tote Bäume separat anzeigen
+dead_tree_description: Abgestorbene Bäume haben eine eigene Grafik, solange sie noch stehen.
+tower_door_text: Turmtüren ausrichten und Mauerwerk bis zu Klippenrändern verlängern
+tower_door_description: Turmtüren schließen bündig an angrenzende Mauern und Treppen an.
+lobby_load_text: „Laden“ in der Einzelspieler-Gefechtslobby anzeigen
+lobby_load_description: Klicke in der Gefechtslobby auf „Laden“, um einen Spielstand zu öffnen.
 tags.bugfixes: Fehlerkorrekturen
 tags.interface: Oberfläche
-
-cliff_texture_text: Klippen-Texturen beim Drehen verbinden
-cliff_texture_description: Verbindet Klippen-Texturen auf beiden sichtbaren Seiten auch nach dem Drehen der Kamera. Verwendet das aktuelle Texturpaket.
-
-ghost_objects_text: Objektlisten reparieren
-ghost_objects_description: Verirrte Flaggen, Steine und Pfeile erscheinen nicht mehr, oft flackernd, auf dem falschen Feld. Deaktiviere bei der Nutzung dieses Fixes die Optionen zum Ölzielen und zur Ölausbreitung in Improved Siege Engines.
-ghost_objects_interval_text: Bei jedem N-ten Schritt des Tick-Zyklus reparieren
-ghost_objects_interval_description: "Von 1 bis 200. Kleinere Werte entfernen verirrte Objekte schneller."
+cliff_texture_text: Klippentexturen beim Drehen der Karte ausgerichtet halten
+cliff_texture_description: Klippenwände bleiben beim Drehen der Karte verbunden.
+ghost_objects_text: Fehlplatzierte Flaggen, Pfeile und andere Grafiken entfernen
+ghost_objects_description: Entfernt Objekte, die auf dem falschen Feld erscheinen.
+ghost_objects_interval_text: Feld-Reparaturintervall
+ghost_objects_interval_description: Je kleiner der Wert, desto früher verschwinden fehlplatzierte Grafiken.
+bugfixes: Fehlerkorrekturen
+qol: Komfort
+cat_display_previews: Kartenanzeige und Vorschauen
+cat_lobby_multiplayer: Lobby und Mehrspieler
+cat_saves_lobby: Spielstände und Lobby

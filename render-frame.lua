@@ -6,10 +6,6 @@ local M = {}
 
 function M.getEpoch()
   if epoch then return epoch end
-  local pattern = layout.patterns.RenderMapEntry
-  if core.AOBScan(pattern) ~= A.RenderMapEntry then
-    error("Interface and Visual Fixes: unsupported map renderer layout")
-  end
   epoch = core.allocate(4, true)
   log(INFO, string.format("render epoch=0x%08X", epoch))
   local entry = layout.allocateAssembly(string.format([[

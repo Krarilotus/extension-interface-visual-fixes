@@ -28,15 +28,14 @@ def fixture():
 
 def emit(blob=None, base=SITE-10, cave=CAVE):
     blob = fixture() if blob is None else blob
-    lua = LuaRuntime(unpack_returned_tuples=True)
+    lua = LuaRuntime(unpack_returned_tuples=True, component_bindings=False)
     writes = []
     allocations = []
     def scan(pattern):
         regex = b''.join(b'.' if p == '?' else re.escape(bytes([int(p,16)]))
                          for p in pattern.split())
         found = list(re.finditer(regex, blob, re.DOTALL))
-        if len(found) != 1:
-            raise ValueError('AOB must match once: '+str([hex(base+m.start()) for m in found]))
+        assert found, pattern
         return base + found[0].start()
     def write(address, code):
         writes.append((address, code))
@@ -47,7 +46,12 @@ def emit(blob=None, base=SITE-10, cave=CAVE):
         'AOBScan':scan, 'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
         'allocateCode':allocate, 'writeCode':write,
     })
-    lua.execute((ROOT/'lobby-description.lua').read_text()).enable()
+    module = lua.execute((ROOT/'init.lua').read_text())
+    module.enable(module, lua.table_from({'lobby-map-descriptions': True}))
+    if not writes:
+        errors = [row[2] for row in lua.globals().test_logs.values() if row[1] == 2]
+        assert len(errors) == 1 and allocations == []
+        raise ValueError(errors[0])
     assert allocations == [15]
     return writes
 
@@ -82,7 +86,7 @@ def test_selected_lookup_rebinds_source_and_preserves_abi(stale_source,builtin,f
 
 
 def test_unrecognized_or_moved_layout_rejected():
-    with pytest.raises(ValueError,match='AOB must match once'):
+    with pytest.raises(ValueError,match='LobbyDescriptionCall: not found'):
         emit(b'\x90'*0x200)
-    with pytest.raises(Exception,match='unsupported lobby description layout'):
+    with pytest.raises(Exception,match='unexpected lobby description layout'):
         emit(fixture()[:0xf5]+b'\x90'+fixture()[0xf5:])

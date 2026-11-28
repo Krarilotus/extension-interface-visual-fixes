@@ -1,29 +1,25 @@
-interface_visual_fixes: Corrections de l’interface et de l’affichage
-lobby_text: Descriptions des cartes du salon
-lobby_description: Garde visible la description de la carte sélectionnée dans le salon.
-unique_preview_text: Fermer l’aperçu des bâtiments uniques après construction
-unique_preview_description: Désélectionne le marché, la caserne, le camp de mercenaires et les guildes après une construction réussie.
-
-camera_preview_text: Afficher l’aperçu des bâtiments lors du défilement
-camera_preview_description: Garde visible l’aperçu du bâtiment sélectionné pendant le déplacement de la caméra.
-
-dead_tree_text: Distinguer les stades des arbres morts
-dead_tree_description: Affiche les arbres morts encore debout avant qu’ils ne deviennent des troncs abattus.
-
-tower_door_text: Aligner les portes des tours sur les murs reliés
-tower_door_description: Aligne les portes sur le raccordement admissible le plus haut ; le plus proche du centre du côté départage les égalités. Les portes extérieures rentrent d’une demi-case. Prolonge la maçonnerie sous les tours au bord des falaises, permettant des portes plus basses vers les murs et stair6. Les escaliers surélevés ne comptent pas.
-lobby_load_text: Afficher Charger dans le salon d’escarmouche
-lobby_load_description: Affiche le bouton Charger existant dans le salon d’escarmouche solo et permet de charger
-  une partie sans adversaire IA. Redémarrez le jeu pour appliquer les modifications.
-
+lobby_text: Garder les descriptions de cartes visibles dans le salon
+lobby_description: Sélectionnez une carte dans le salon pour afficher sa description.
+unique_preview_text: Effacer l’aperçu après placement d’un bâtiment unique
+unique_preview_description: Efface l’aperçu après avoir placé le marché, la caserne, le camp de mercenaires ou une guilde.
+camera_preview_text: Garder l’aperçu de placement visible en déplaçant la caméra
+camera_preview_description: L’aperçu du bâtiment reste visible lorsque vous déplacez la caméra.
+dead_tree_text: Afficher séparément les arbres morts debout
+dead_tree_description: Les arbres morts debout utilisent un visuel distinct avant de devenir des troncs tombés.
+tower_door_text: Aligner les portes des tours et prolonger la maçonnerie au bord des falaises
+tower_door_description: Les portes des tours s’alignent avec les murs et escaliers adjacents.
+lobby_load_text: Afficher Charger dans le salon d’escarmouche solo
+lobby_load_description: Cliquez sur Charger dans le salon d’escarmouche pour ouvrir une sauvegarde.
 tags.bugfixes: Corrections
 tags.interface: Interface
-
-cliff_texture_text: Raccorder les textures des falaises
-cliff_texture_description: Préserve la continuité des textures sur les deux faces visibles après rotation de la caméra. Utilise le pack de textures actuel.
-
-ghost_objects_text: Réparer les listes d'objets
-ghost_objects_description: |-
-  Les drapeaux, pierres et flèches égarés ne s'affichent plus, souvent en scintillant, sur la mauvaise case. Désactivez les options de visée et d'écoulement d'huile d'Improved Siege Engines lorsque vous utilisez ce correctif.
-ghost_objects_interval_text: Réparer à chaque N-ième étape du cycle de ticks
-ghost_objects_interval_description: "De 1 à 200. Des valeurs plus basses effacent les objets égarés plus tôt."
+cliff_texture_text: Garder les textures de falaise alignées en pivotant la carte
+cliff_texture_description: Les parois de falaise restent continues lorsque vous pivotez la carte.
+ghost_objects_text: Supprimer les drapeaux, flèches et autres graphismes de case égarés
+ghost_objects_description: Efface les objets qui apparaissent sur la mauvaise case.
+ghost_objects_interval_text: Intervalle de réparation des cases
+ghost_objects_interval_description: Des valeurs plus basses effacent les objets égarés plus rapidement.
+bugfixes: Corrections de bugs
+qol: Qualité de vie
+cat_display_previews: Affichage de la carte et aperçus
+cat_lobby_multiplayer: Salon et multijoueur
+cat_saves_lobby: Sauvegardes et salon

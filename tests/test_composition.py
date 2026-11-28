@@ -82,13 +82,11 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
             cache[name] = lua.execute((ROOT/f'{name}.lua').read_text())
         return cache[name]
 
-    def scan_from(pattern, start, stop):
-        match = aob(pattern).search(memory, max(start-BASE, 0), stop-BASE)
-        return BASE + match.start() if match else 0
-
     framework_core(lua, {
-        'AOBScan': scan, 'scanForAOB': scan_from,
+        'AOBScan': scan,
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
+        'getMainImageRange': lambda: (BASE, BASE + len(memory) - 1),
+        'readBytes': lambda at, size: lua.table_from(list(memory[at-BASE:at-BASE+size])),
         'readByte': lambda at: memory[at-BASE],
         'allocateCode': allocate, 'allocate': data, 'writeCode': write,
     })
@@ -113,7 +111,7 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
     assert {address for address, _ in writes if address < CAVE} == {
         0x4287bd, 0x516a0f, 0x445263, 0x4eb831, *doors.SITES,
         0x42afb9, 0x4426e0, 0x42733a, *doors.UPDATES, cliffs.SITE, *cliff_source.PATTERNS,
-        0x4087c0,
+        0x4087ed,
     }
     before = list(writes)
     logs = [row[2] for row in lua.globals().test_logs.values()]

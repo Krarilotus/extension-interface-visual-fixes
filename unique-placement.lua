@@ -5,15 +5,8 @@ local M = {}
 function M.enable()
   -- This stack-sensitive acknowledgement is verified for both 1.41 executables.
   -- Failed eligibility/tutorial paths never reach the post-commit notification.
-  local site = core.AOBScan(layout.patterns.PlacementNotifyCall) + 6
-  local entry = core.AOBScan(layout.patterns.PlacementEntry)
-  if site ~= A.PlacementNotifyCall or entry ~= A.PlacementEntry then
-    error("Interface and Visual Fixes: unsupported placement acknowledgement layout")
-  end
-  local original = site + 5 + core.readInteger(site + 1)
-  if original ~= A.MinimapNotify then
-    error("Interface and Visual Fixes: placement notification was changed")
-  end
+  local site = A.PlacementNotifyCall
+  local original = A.MinimapNotify
   -- At wrapper entry: return-to-command +0x20, actor +0x24, mapper +0x18.
   -- PUSHFD/PUSH EAX add eight bytes to those offsets. The minimap argument and
   -- its this pointer stay untouched; the original function still consumes them.

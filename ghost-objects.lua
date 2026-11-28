@@ -9,12 +9,15 @@
 -- reaches it; the next entity created in that slot (a tower flag, a stone, an
 -- arrow) is then drawn on the old tile too. Saved games and maps keep the tangle.
 --
--- At the start of the entity update, whenever the game's own 0-199 tick cycle is a
--- multiple of the interval, rebuild all lists from the tile each living entity
--- stands on. Nothing walks a list at that moment. The tick cycle is saved with the
--- game and identical for every player, so the schedule needs no extension save data
--- and is the same after loading a save, in multiplayer and in replays (given the
+-- Where the entity update starts its slot loop, whenever the game's own 0-199 tick
+-- cycle is a multiple of the interval, rebuild all lists from the tile each living
+-- entity stands on. Nothing walks a list at that moment. The tick cycle is saved with
+-- the game and identical for every player, so the schedule needs no extension save
+-- data and is the same after loading a save, in multiplayer and in replays (given the
 -- same setting).
+--
+-- Improved Siegeengines' oil options and Custom Projectiles redirect the entity
+-- update's prologue; this fix leaves the prologue to them.
 local layout = require("native-layout")
 local A = layout.addresses
 local M = {}
@@ -24,22 +27,27 @@ local DEFAULT_INTERVAL = 10 -- the entity update's own 10-tick cadence
 local MAX_INTERVAL = 200 -- one full tick cycle
 
 local function interval(config)
-  local value = type(config) == "table" and tonumber(config["ghost-objects-interval"]) or nil
-  if value == nil or value ~= value then value = DEFAULT_INTERVAL end
-  return math.max(1, math.min(MAX_INTERVAL, math.floor(value)))
+  local value = config and config["ghost-objects-interval"]
+  if value == nil then return DEFAULT_INTERVAL end
+  if type(value) ~= "number" then
+    log(ERROR, "Stray tile graphics repair interval must be a number. Using the default.")
+    return DEFAULT_INTERVAL
+  end
+  local ticks = math.tointeger(value)
+  if not ticks or ticks < 1 or ticks > MAX_INTERVAL then
+    log(WARNING, "Stray tile graphics repair interval must be a whole number from 1 to 200. Using the default.")
+    return DEFAULT_INTERVAL
+  end
+  return ticks
 end
 
 function M.enable(config)
-  -- Bindings and checks ran in the shared preflight; recheck the prologue right
-  -- before writing it.
-  local site = A.EntityUpdate
-  layout.requireOriginalEntityUpdate()
   local every = interval(config)
   local tiles = layout.ENTITY_TILES
   local stub = layout.allocateAssembly(string.format([[
     pushad
     pushfd
-    mov ebx, ecx
+    mov ebx, esi
     mov eax, [EntityTick]
     xor edx, edx
     mov ecx, %d
@@ -88,14 +96,10 @@ function M.enable(config)
   ghost_done:
     popfd
     popad
-    push ecx
-    push ebx
-    push ebp
-    push esi
-    mov esi, ecx
-    jmp EntityUpdateResume
+    mov ebx, 1
+    jmp EntityLoopResume
   ]], every, tiles // 2, tiles // 4, tiles, BYTE_IDS))
-  core.writeCode(site, {core.jmpTo(stub), 0x90})
+  core.writeCode(A.EntityLoopStart, {core.jmpTo(stub)})
   log(INFO, string.format("ghost objects: tile object lists rebuilt every %d ticks of the game's tick cycle (%d slots)",
     every, A.EntitySlots))
 end

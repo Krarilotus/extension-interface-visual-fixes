@@ -1,28 +1,25 @@
-interface_visual_fixes: Arayüz ve Görsel Düzeltmeler
-lobby_text: Lobide harita açıklamaları
-lobby_description: Seçilen haritanın açıklamasını lobide görünür tutar.
-unique_preview_text: Yerleştirmeden sonra benzersiz bina önizlemesini kapat
-unique_preview_description: Başarılı yerleştirmeden sonra pazar, kışla, paralı asker kampı ve lonca seçimini kaldırır.
-
-camera_preview_text: Kaydırırken bina önizlemelerini göster
-camera_preview_description: Kamera hareket ettirilirken seçili binanın önizlemesini görünür tutar.
-
-dead_tree_text: Ölü ağaç aşamalarını ayır
-dead_tree_description: Ölü ağaçları devrilmiş kütüklere dönüşmeden önce ayakta duran hâlleriyle gösterir.
-
-tower_door_text: Kule kapılarını bağlı duvarlara hizala
-tower_door_description: Kapıları en yüksek uygun bağlantıya hizalar; eşitlik durumunda kenarın merkezine en yakın olan seçilir. Dıştaki kapılar yarım kare içeri kayar. Uçurum kenarındaki kulelerin altına duvar dokusunu uzatarak daha alçak duvar ve stair6 kapılarına izin verir. Yükseltilmiş merdivenler sayılmaz.
-lobby_load_text: Çatışma lobisinde Yükle düğmesini göster
-lobby_load_description: Tek oyunculu çatışma lobisinde mevcut Yükle düğmesini gösterir ve yapay zekâ rakibi olmadan
-  oyun yüklemeye izin verir. Değişiklikleri uygulamak için oyunu yeniden başlatın.
-
+lobby_text: Lobide harita açıklamalarını görünür tut
+lobby_description: Açıklamasını görmek için lobide bir harita seçin.
+unique_preview_text: Tekil bina yerleştirdikten sonra önizlemeyi temizle
+unique_preview_description: Pazar, kışla, paralı asker kampı veya bir lonca yerleştirdikten sonra önizlemeyi temizler.
+camera_preview_text: Kamerayı kaydırırken yerleştirme önizlemesini görünür tut
+camera_preview_description: Kamerayı hareket ettirirken bina önizlemesi görünür kalır.
+dead_tree_text: Ayaktaki kuru ağaçları ayrı göster
+dead_tree_description: Ayaktaki kuru ağaçlar devrilmiş kütüklere dönüşmeden önce ayrı grafik kullanır.
+tower_door_text: Kule kapılarını hizala ve duvar örgüsünü uçurum kenarlarına uzat
+tower_door_description: Kule kapıları bağlanan surlar ve merdivenlerle hizalanır.
+lobby_load_text: Tek oyunculu çarpışma lobisinde Yükle düğmesini göster
+lobby_load_description: Kayıtlı bir oyunu açmak için çarpışma lobisinde Yükle’ye tıklayın.
 tags.bugfixes: Hata düzeltmeleri
 tags.interface: Arayüz
-
-cliff_texture_text: Döndürürken uçurum dokularını birleştir
-cliff_texture_description: Kamera döndürüldüğünde uçurum dokularını görünen iki yüzde de birbirine bağlar. Mevcut doku paketini kullanır.
-
-ghost_objects_text: Nesne listelerini onar
-ghost_objects_description: Sahipsiz bayrak, taş ve oklar artık yanlış karede sıkça titreyerek görünmez. Bu düzeltmeyi kullanırken Improved Siege Engines içindeki yağ hedefleme ve yağ yayılma ayarlarını kapatın.
-ghost_objects_interval_text: Tik döngüsünün her N'inci adımında onar
-ghost_objects_interval_description: "1 ile 200 arasında. Daha düşük değerler sahipsiz nesneleri daha çabuk temizler."
+cliff_texture_text: Haritayı döndürürken uçurum dokularını hizalı tut
+cliff_texture_description: Haritayı döndürdüğünüzde uçurum yüzeyleri birleşik kalır.
+ghost_objects_text: Yersiz bayrak, ok ve diğer kare grafiklerini temizle
+ghost_objects_description: Yanlış karede görünen nesneleri temizler.
+ghost_objects_interval_text: Kare onarım aralığı
+ghost_objects_interval_description: Daha düşük değerler yersiz nesneleri daha çabuk temizler.
+bugfixes: Hata düzeltmeleri
+qol: Kullanım kolaylığı
+cat_display_previews: Harita görünümü ve önizlemeler
+cat_lobby_multiplayer: Lobi ve çok oyunculu
+cat_saves_lobby: Kayıtlar ve lobi

@@ -49,7 +49,7 @@ still under investigation; diagnostics are not a claim that it is fixed.
   Monsterfish's [Ghost Objects Fix](https://github.com/Monsterfisch/GhostObjectsFix).
 
 Enable the module, switch on the fixes you want (or select a plugin that does),
-apply your settings and restart the game. The module targets UCP 3.0.7 with
+apply your settings and restart the game. The module targets UCP 3.0.8 with
 SHC or SHCE 1.41.
 
 ## Feature screenshots
@@ -129,11 +129,11 @@ the fix needs no extra save data. All players in a multiplayer game, and a repla
 is played back, need the same Ghost Objects switch and interval.
 
 Use only one Ghost Objects fix: this one or the standalone Ghost Objects Fix. Improved
-Siege Engines' oil aim and oil spread options change the same game function. If they, or
-the standalone fix, changed it first while Ghost Objects is on, **UCP stops at startup
-with an error** that names them; turn them off, or switch Ghost Objects off. If this
-module loads first, Improved Siege Engines turns its oil feature off with a warning in
-the log. The repair is not yet confirmed in game.
+Siege Engines' oil aim and oil spread options and Custom Projectiles hook the start of the
+same game function; Ghost Objects hooks a later point in it, so all of them run in any load
+order. If that point is changed or the game function is not found, Ghost
+Objects stays off with a warning in the log and the other fixes still install. The repair
+is not yet confirmed in game.
 
 ## Validation
 
@@ -151,3 +151,5 @@ multiplayer, replay and broader compatibility are not inferred from them.
 Interface and Visual Fixes is licensed under the GNU General Public License,
 version 3 (GPL-3.0); see [LICENSE](LICENSE). Ghost Objects is based on Monsterfish's
 Ghost Objects Fix and included under the same licence with his permission.
+
+Presets and advanced profiles can set `interface-visual-fixes.ghost-objects-interval` to adjust how often enabled stray tile graphics repair runs. The default is 10.

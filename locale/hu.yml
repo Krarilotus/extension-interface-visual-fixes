@@ -1,28 +1,25 @@
-interface_visual_fixes: Felületi és grafikai javítások
-lobby_text: Pályaleírások az előszobában
-lobby_description: Látható marad a kiválasztott pálya leírása az előszobában.
-unique_preview_text: Egyedi épületek előnézetének törlése építés után
-unique_preview_description: Sikeres építés után megszünteti a piac, laktanya, zsoldostábor és céhek kijelölését.
-
-camera_preview_text: Épületek előnézetének megjelenítése görgetés közben
-camera_preview_description: Látható marad a kiválasztott épület előnézete a kamera mozgatása közben.
-
-dead_tree_text: Elhalt fák állapotainak megkülönböztetése
-dead_tree_description: Megmutatja az álló elhalt fákat, mielőtt kidőlt törzsekké válnának.
-
-tower_door_text: Toronyajtók igazítása a csatlakozó falakhoz
-tower_door_description: Az ajtókat a legmagasabb megfelelő csatlakozáshoz igazítja; egyenlőség esetén az oldal közepéhez közelebbi dönt. A szélső ajtók fél mezővel beljebb kerülnek. Meghosszabbítja a falazatot a sziklaszéli tornyok alatt, lehetővé téve az alacsonyabb fal- és stair6-ajtókat. A megemelt lépcsők nem számítanak.
-lobby_load_text: Betöltés megjelenítése a csata előszobájában
-lobby_load_description: Megjeleníti a meglévő Betöltés gombot az egyjátékos csata előszobájában, és lehetővé teszi
-  a betöltést gépi ellenfél nélkül. A módosítások alkalmazásához indítsd újra a játékot.
-
+lobby_text: Térképleírások láthatóan tartása az előszobában
+lobby_description: Válassz egy térképet az előszobában a leírásának megtekintéséhez.
+unique_preview_text: Előnézet törlése egyedi épület elhelyezése után
+unique_preview_description: Törli az előnézetet a piac, kaszárnya, zsoldostábor vagy egy céh elhelyezése után.
+camera_preview_text: Építési előnézet megtartása görgetés közben
+camera_preview_description: Az épület előnézete látható marad a kamera mozgatása közben.
+dead_tree_text: Álló száraz fák külön megjelenítése
+dead_tree_description: Az álló száraz fák külön grafikát kapnak, mielőtt kidőlt rönkökké válnak.
+tower_door_text: Toronyajtók igazítása és falazat kiterjesztése a sziklaperemekig
+tower_door_description: A toronyajtók illeszkednek a csatlakozó várfalakhoz és lépcsőkhöz.
+lobby_load_text: Betöltés megjelenítése az egyjátékos csetepaté-előszobában
+lobby_load_description: Kattints a Betöltés gombra a csetepaté-előszobában egy mentés megnyitásához.
 tags.bugfixes: Hibajavítások
 tags.interface: Kezelőfelület
-
-cliff_texture_text: Sziklatextúrák illesztése forgatáskor
-cliff_texture_description: A kamera forgatása után is illeszti a sziklatextúrákat mindkét látható oldalon. A jelenlegi textúracsomagot használja.
-
-ghost_objects_text: Objektumlisták javítása
-ghost_objects_description: A kósza zászlók, kövek és nyilak többé nem jelennek meg, gyakran villogva, rossz mezőn. A javítás használatakor kapcsold ki az olajcélzás és olajterjedés beállításait az Improved Siege Engines modulban.
-ghost_objects_interval_text: Javítás a tick-ciklus minden N-edik lépésében
-ghost_objects_interval_description: "1-től 200-ig. Az alacsonyabb értékek hamarabb eltüntetik a kósza objektumokat."
+cliff_texture_text: Sziklatextúrák igazításának megtartása térképforgatáskor
+cliff_texture_description: A sziklafalak összefüggőek maradnak a térkép forgatásakor.
+ghost_objects_text: Elkallódott zászlók, nyilak és egyéb mezőgrafikák eltávolítása
+ghost_objects_description: Eltávolítja a rossz mezőn megjelenő objektumokat.
+ghost_objects_interval_text: Mezőjavítási időköz
+ghost_objects_interval_description: Kisebb értékek hamarabb eltávolítják az elkallódott objektumokat.
+bugfixes: Hibajavítások
+qol: Kényelmi funkciók
+cat_display_previews: Térképmegjelenítés és előnézetek
+cat_lobby_multiplayer: Előtér és többjátékos mód
+cat_saves_lobby: Mentések és előtér

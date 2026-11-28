@@ -1,26 +1,29 @@
-interface_visual_fixes: Interface and Visual Fixes
-lobby_text: Show lobby map descriptions
-lobby_description: Keeps the selected map's description visible in the lobby.
-unique_preview_text: Clear unique-building preview after placement
-unique_preview_description: Deselects the marketplace, barracks, mercenary post and guilds after successful placement.
-camera_preview_text: Show building previews while scrolling
-camera_preview_description: Keeps the selected building preview visible while moving the camera.
-dead_tree_text: Distinguish dead tree stages
-dead_tree_description: Shows standing dead trees before they become fallen logs.
+lobby_text: Keep map descriptions visible in the lobby
+lobby_description: Select a map in the lobby to see its description.
+unique_preview_text: Clear the preview after placing a unique building
+unique_preview_description: Clears the preview after placing the market, barracks, mercenary post or a guild.
+camera_preview_text: Keep placement previews visible while scrolling
+camera_preview_description: The building preview stays visible as you move the camera.
+dead_tree_text: Show standing dead trees separately
+dead_tree_description: Standing dead trees use distinct artwork before they become fallen logs.
 
-tower_door_text: Align tower doors with connecting walls
-tower_door_description: Aligns doors with the highest eligible connection; nearest to the side centre breaks ties. Outer doors move half a tile inward. Extends masonry below cliff-edge towers, allowing lower wall and stair6 doors. Raised stairs do not count.
-lobby_load_text: Show Load in skirmish lobby
-lobby_load_description: Shows the existing Load button in the single-player skirmish lobby and allows loading without
-  an AI opponent. Restart the game to apply changes.
+tower_door_text: Align tower doors and extend masonry to cliff edges
+tower_door_description: Tower doors line up with connecting walls and stairs.
+lobby_load_text: Show Load in the single-player skirmish lobby
+lobby_load_description: Click Load in the skirmish lobby to open a saved game.
 
 tags.bugfixes: Bug fixes
 tags.interface: Interface
 
-cliff_texture_text: Continue cliff textures after rotation
-cliff_texture_description: Keeps cliff textures connected along both visible faces when rotating the camera. Uses the current texture pack.
+cliff_texture_text: Keep cliff textures aligned when turning the map
+cliff_texture_description: Cliff faces stay connected as you turn the map.
 
-ghost_objects_text: Repair tile object lists
-ghost_objects_description: Stray flags, stones and arrows no longer show up, often flickering, on the wrong tile. Turn off the Improved Siege Engines oil aim and oil spread options when using this fix.
-ghost_objects_interval_text: Repair on every N-th step of the tick cycle
-ghost_objects_interval_description: "From 1 to 200. Lower numbers clear stray objects sooner."
+ghost_objects_text: Remove stray flags, arrows and other tile graphics
+ghost_objects_description: Clears objects that appear on the wrong tile.
+ghost_objects_interval_text: Tile repair interval
+ghost_objects_interval_description: Lower values clear stray objects sooner.
+bugfixes: Bugfixes
+qol: Quality of Life
+cat_display_previews: Map display and previews
+cat_lobby_multiplayer: Lobby and multiplayer
+cat_saves_lobby: Saves and lobby
