@@ -94,15 +94,25 @@ def head_distance(memory, chunks):
     struct.pack_into('<I', memory, at, struct.unpack_from('<I', memory, at)[0] + 2)
 
 
-@pytest.mark.parametrize('change,message', (
-    (head_distance, 'unexpected entity tile heads'),
+def remove_entity_update(memory, chunks):
+    fragment = chunks['EntityUpdate']
+    at = fragment['address'] - BASE
+    size = len(bytes.fromhex(fragment['bytes']))
+    memory[at:at+size] = b'\xcc' * size
+
+
+@pytest.mark.parametrize('family,change,message', (
+    ('regular', remove_entity_update, 'EntityUpdate: not found'),
+    ('extreme', remove_entity_update, 'EntityUpdate: not found'),
+    ('regular', head_distance, 'unexpected entity tile heads'),
 ))
-def test_unexpected_layout_turns_only_ghost_objects_off_before_any_patch(change, message):
-    lua, allocations, writes = discovery('regular', change)
+def test_missing_or_unexpected_layout_turns_only_ghost_objects_off_before_any_patch(family, change, message):
+    lua, allocations, writes = discovery(family, change)
     enable(lua, {'ghost-objects': True})
     logs = ghost_logs(lua)
     assert allocations == [] and writes == []
-    assert f'ghost-objects is off: {message}' in logs
+    errors = [row[2] for row in lua.globals().test_logs.values() if row[1] == lua.globals().ERROR]
+    assert errors == [f'ghost-objects is off: {message}']
     assert 'installed ghost-objects' not in logs and logs[-1].startswith('startup complete;')
 
 
