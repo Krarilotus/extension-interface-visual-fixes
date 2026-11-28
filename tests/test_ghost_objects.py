@@ -1,5 +1,5 @@
 """Ghost Objects: independence from other modules' entity update redirects, refusal
-of an ambiguous or unexpected entity update, and the emitted tile-list rebuild on
+of an unexpected entity update, and the emitted tile-list rebuild on
 the game's tick cycle.
 
 The contexts are instruction fragments of the SHC/SHCE 1.41 reference executables
@@ -35,20 +35,13 @@ def discovery(family='regular', change=None):
     lua = LuaRuntime(component_bindings=False)
     allocations, writes = [], []
 
-    def first(pattern, start=BASE, stop=BASE + len(memory)):
-        match = aob(pattern).search(memory, max(start - BASE, 0), stop - BASE)
-        return BASE + match.start() if match else None
-
-    def unique(pattern):
-        pe = struct.unpack_from('<I', memory, 0x3C)[0]
-        section = pe + 0x18 + 0xE0
-        size, start = struct.unpack_from('<II', memory, section + 8)
-        hits = [BASE + m.start() for m in aob(pattern).finditer(memory, start, start + size)]
-        return tuple((hits + [None, None])[:2]) + (None,)
+    def scan(pattern):
+        match = aob(pattern).search(memory)
+        assert match, pattern
+        return BASE + match.start()
 
     framework_core(lua, {
-        'AOBScan': lambda pattern: first(pattern),
-        'scanForAOBInMainModule': unique,
+        'AOBScan': scan,
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'readByte': lambda at: memory[at-BASE],
         'allocateCode': lambda size: allocations.append(size) or CAVE,
@@ -96,28 +89,12 @@ def test_redirected_prologue_is_left_alone_and_occupied_loop_start_turns_only_gh
     assert 'installed distinct-dead-tree-sprites' in logs and logs[-1].startswith('startup complete;')
 
 
-def copy_update(address):
-    def change(memory, chunks):
-        data = bytes.fromhex(chunks['EntityUpdate']['bytes'])
-        memory[address-BASE:address-BASE+len(data)] = data
-    return change
-
-
-def short_code_section(memory, chunks):
-    # .text (first section) no longer reaches the entity update.
-    pe = struct.unpack_from('<I', memory, 0x3C)[0]
-    struct.pack_into('<I', memory, pe + 0x18 + 0xE0 + 8, 0x100)
-
-
 def head_distance(memory, chunks):
     at = chunks['EntityTileWalker']['address'] - BASE + 0x78
     struct.pack_into('<I', memory, at, struct.unpack_from('<I', memory, at)[0] + 2)
 
 
 @pytest.mark.parametrize('change,message', (
-    # Inside the code section (.text ends at 0x59D806).
-    (copy_update(0x590000), 'EntityUpdate: found more than once'),
-    (short_code_section, 'EntityUpdate: not found'),
     (head_distance, 'unexpected entity tile heads'),
 ))
 def test_unexpected_layout_turns_only_ghost_objects_off_before_any_patch(change, message):
@@ -127,14 +104,6 @@ def test_unexpected_layout_turns_only_ghost_objects_off_before_any_patch(change,
     assert allocations == [] and writes == []
     assert f'ghost-objects is off: {message}' in logs
     assert 'installed ghost-objects' not in logs and logs[-1].startswith('startup complete;')
-
-
-@pytest.mark.parametrize('family', ('regular', 'extreme'))
-def test_copy_outside_the_code_section_is_not_ambiguous(family):
-    # A copy of the code bytes in data or heap memory is not a second entity update.
-    lua, allocations, writes = discovery(family, copy_update(0x5F0000))
-    enable(lua, {'ghost-objects': True})
-    assert writes == [CAVE, EXPECTED[family]['addresses']['EntityLoopStart']] and len(allocations) == 1
 
 
 # --- Emitted stub -----------------------------------------------------------------

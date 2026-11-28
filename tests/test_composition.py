@@ -83,7 +83,7 @@ def test_eight_options_compose_without_duplicate_or_overlapping_patches():
         return cache[name]
 
     framework_core(lua, {
-        'AOBScan': scan, 'scanForAOBInMainModule': lambda pattern: (scan(pattern), None, None),
+        'AOBScan': scan,
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'getMainImageRange': lambda: (BASE, BASE + len(memory) - 1),
         'readBytes': lambda at, size: lua.table_from(list(memory[at-BASE:at-BASE+size])),

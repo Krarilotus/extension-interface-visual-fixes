@@ -37,14 +37,8 @@ def fixture(family='regular'):
         scans.append(pattern)
         return BASE + hits[0].start()
 
-    def scan_unique(pattern):
-        scans.append(pattern)
-        hits = [BASE + hit.start() for hit in aob(pattern).finditer(memory)]
-        return (hits + [None, None])[:2] + [None]
-
     framework_core(lua, {
         'AOBScan': scan,
-        'scanForAOBInMainModule': lambda pattern: tuple(scan_unique(pattern)),
         'readInteger': lambda at: struct.unpack_from('<i', memory, at-BASE)[0],
         'getMainImageRange': lambda: (BASE, BASE + len(memory) - 1),
         'readBytes': lambda at, size: lua.table_from(list(memory[at-BASE:at-BASE+size])),

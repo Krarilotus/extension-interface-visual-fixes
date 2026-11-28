@@ -59,8 +59,8 @@ local bindings = {}
 local scanned = {}
 local function scan(name)
   if not scanned[name] then
-    local address, reason = core.AOBScanUnique(P[name])
-    if not address then error(name .. ": " .. reason, 0) end
+    local ok, address = pcall(core.AOBScan, P[name])
+    if not ok then error(name .. ": not found", 0) end
     scanned[name] = address
   end
   return scanned[name]

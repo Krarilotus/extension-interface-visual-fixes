@@ -35,15 +35,15 @@ def emit(blob=None, base=SITE-10, cave=CAVE):
         regex = b''.join(b'.' if p == '?' else re.escape(bytes([int(p,16)]))
                          for p in pattern.split())
         found = list(re.finditer(regex, blob, re.DOTALL))
-        hits = [base + m.start() for m in found]
-        return tuple((hits + [None, None])[:2]) + (None,)
+        assert found, pattern
+        return base + found[0].start()
     def write(address, code):
         writes.append((address, code))
     def allocate(size):
         allocations.append(size)
         return cave
     framework_core(lua, {
-        'AOBScan':scan, 'scanForAOBInMainModule':scan, 'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
+        'AOBScan':scan, 'readInteger':lambda a:struct.unpack_from('<i',blob,a-base)[0],
         'allocateCode':allocate, 'writeCode':write,
     })
     module = lua.execute((ROOT/'init.lua').read_text())
