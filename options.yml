@@ -2,74 +2,74 @@ meta:
   version: 1.0.0
 options:
   - name: lobby_map_descriptions
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_lobby_multiplayer}}']
     text: '{{lobby_text}}'
-    description: '{{lobby_description}}'
+    tooltip: '{{lobby_description}}'
     display: Switch
     url: interface-visual-fixes.lobby-map-descriptions
     contents:
       value: false
   - name: clear_unique_building_preview
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{unique_preview_text}}'
-    description: '{{unique_preview_description}}'
+    tooltip: '{{unique_preview_description}}'
     display: Switch
     url: interface-visual-fixes.clear-unique-building-preview
     contents:
       value: false
   - name: building_preview_during_camera_movement
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{camera_preview_text}}'
-    description: '{{camera_preview_description}}'
+    tooltip: '{{camera_preview_description}}'
     display: Switch
     url: interface-visual-fixes.building-preview-during-camera-movement
     contents:
       value: false
   - name: distinct_dead_tree_sprites
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{dead_tree_text}}'
-    description: '{{dead_tree_description}}'
+    tooltip: '{{dead_tree_description}}'
     display: Switch
     url: interface-visual-fixes.distinct-dead-tree-sprites
     contents:
       value: false
   - name: tower_door_height
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{tower_door_text}}'
-    description: '{{tower_door_description}}'
+    tooltip: '{{tower_door_description}}'
     display: Switch
     url: interface-visual-fixes.tower-door-height
     contents:
       value: false
   - name: lobby_load
-    category: ['{{qol}}']
+    category: ['{{qol}}', '{{cat_saves_lobby}}']
     text: '{{lobby_load_text}}'
-    description: '{{lobby_load_description}}'
+    tooltip: '{{lobby_load_description}}'
     display: Switch
     url: interface-visual-fixes.lobby-load
     contents:
       value: false
   - name: cliff_texture_direction
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{cliff_texture_text}}'
-    description: '{{cliff_texture_description}}'
+    tooltip: '{{cliff_texture_description}}'
     display: Switch
     url: interface-visual-fixes.cliff-texture-direction
     contents:
       value: false
   - name: ghost_objects
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{ghost_objects_text}}'
-    description: '{{ghost_objects_description}}'
+    tooltip: '{{ghost_objects_description}}'
     display: Switch
     url: interface-visual-fixes.ghost-objects
     contents:
       value: false
   - name: ghost_objects_interval
     hidden: true
-    category: ['{{bugfixes}}']
+    category: ['{{bugfixes}}', '{{cat_display_previews}}']
     text: '{{ghost_objects_interval_text}}'
-    description: '{{ghost_objects_interval_description}}'
+    tooltip: '{{ghost_objects_interval_description}}'
     display: Number
     url: interface-visual-fixes.ghost-objects-interval
     enabled: interface-visual-fixes.ghost-objects

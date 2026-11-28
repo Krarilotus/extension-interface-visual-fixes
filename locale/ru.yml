@@ -20,3 +20,6 @@ ghost_objects_interval_text: Интервал очистки клеток
 ghost_objects_interval_description: Меньшие значения быстрее убирают лишние объекты.
 bugfixes: Исправления ошибок
 qol: Удобство игры
+cat_display_previews: Отображение карты и предпросмотр
+cat_lobby_multiplayer: Лобби и сетевая игра
+cat_saves_lobby: Сохранения и лобби

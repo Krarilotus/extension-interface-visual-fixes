@@ -20,3 +20,6 @@ ghost_objects_interval_text: بازهٔ ترمیم کاشی‌ها
 ghost_objects_interval_description: مقادیر کمتر، اشیای سرگردان را زودتر پاک می‌کنند.
 bugfixes: رفع خطاها
 qol: سهولت استفاده
+cat_display_previews: نمایش نقشه و پیش‌نمایش‌ها
+cat_lobby_multiplayer: لابی و چندنفره
+cat_saves_lobby: ذخیره‌ها و لابی

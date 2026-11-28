@@ -20,3 +20,6 @@ ghost_objects_interval_text: Mezőjavítási időköz
 ghost_objects_interval_description: Kisebb értékek hamarabb eltávolítják az elkallódott objektumokat.
 bugfixes: Hibajavítások
 qol: Kényelmi funkciók
+cat_display_previews: Térképmegjelenítés és előnézetek
+cat_lobby_multiplayer: Előtér és többjátékos mód
+cat_saves_lobby: Mentések és előtér

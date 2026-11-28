@@ -20,3 +20,6 @@ ghost_objects_interval_text: Kare onarım aralığı
 ghost_objects_interval_description: Daha düşük değerler yersiz nesneleri daha çabuk temizler.
 bugfixes: Hata düzeltmeleri
 qol: Kullanım kolaylığı
+cat_display_previews: Harita görünümü ve önizlemeler
+cat_lobby_multiplayer: Lobi ve çok oyunculu
+cat_saves_lobby: Kayıtlar ve lobi

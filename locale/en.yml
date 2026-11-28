@@ -24,3 +24,6 @@ ghost_objects_interval_text: Tile repair interval
 ghost_objects_interval_description: Lower values clear stray objects sooner.
 bugfixes: Bugfixes
 qol: Quality of Life
+cat_display_previews: Map display and previews
+cat_lobby_multiplayer: Lobby and multiplayer
+cat_saves_lobby: Saves and lobby

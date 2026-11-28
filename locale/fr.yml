@@ -20,3 +20,6 @@ ghost_objects_interval_text: Intervalle de réparation des cases
 ghost_objects_interval_description: Des valeurs plus basses effacent les objets égarés plus rapidement.
 bugfixes: Corrections de bugs
 qol: Qualité de vie
+cat_display_previews: Affichage de la carte et aperçus
+cat_lobby_multiplayer: Salon et multijoueur
+cat_saves_lobby: Sauvegardes et salon

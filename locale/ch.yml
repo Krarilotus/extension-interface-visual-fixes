@@ -26,3 +26,6 @@ ghost_objects_interval_text: 地块修复间隔
 ghost_objects_interval_description: 数值越低，错位对象被清除得越快。
 bugfixes: 错误修复
 qol: 便利性改进
+cat_display_previews: 地图显示与预览
+cat_lobby_multiplayer: 大厅与多人游戏
+cat_saves_lobby: 存档与大厅

@@ -20,3 +20,6 @@ ghost_objects_interval_text: Feld-Reparaturintervall
 ghost_objects_interval_description: Je kleiner der Wert, desto früher verschwinden fehlplatzierte Grafiken.
 bugfixes: Fehlerkorrekturen
 qol: Komfort
+cat_display_previews: Kartenanzeige und Vorschauen
+cat_lobby_multiplayer: Lobby und Mehrspieler
+cat_saves_lobby: Spielstände und Lobby

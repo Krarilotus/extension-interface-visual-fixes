@@ -20,3 +20,6 @@ ghost_objects_interval_text: Intervalo de reparación de casillas
 ghost_objects_interval_description: Los valores más bajos eliminan antes los objetos fuera de lugar.
 bugfixes: Correcciones de errores
 qol: Comodidad de juego
+cat_display_previews: Visualización del mapa y vistas previas
+cat_lobby_multiplayer: Sala y multijugador
+cat_saves_lobby: Partidas guardadas y sala
